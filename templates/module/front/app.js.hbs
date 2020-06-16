@@ -1,0 +1,33 @@
+import Dashboard from '../../../components/ui/Dashboard';
+
+import Index from '../views/Index';
+import Create from '../views/Create';
+import Edit from '../views/Edit';
+
+let routes = [
+    {
+        path: '/{{identifiers.kebab_plural}}',
+        component: Dashboard,
+        meta: { section: '{{identifiers.kebab_plural}}' },
+
+        children: [
+            {
+                path: '',
+                name: '{{identifiers.kebab_plural}}.index',
+                component: Index,
+            },
+            {
+                path: 'create',
+                name: '{{identifiers.kebab_plural}}.create',
+                component: Create,
+            },
+            {
+                path: ':id/edit',
+                name: '{{identifiers.kebab_plural}}.edit',
+                component: Edit,
+            },
+        ],
+    },
+];
+
+export default routes;

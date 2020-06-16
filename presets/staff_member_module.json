@@ -1,0 +1,171 @@
+{
+      "identifiers": {
+        "camel_singular": "staffMember",
+        "camel_plural": "staffMembers",
+        "label_singular": "Staff Member",
+        "label_plural": "Staff Members",
+        "kebab_singular": "staff-member",
+        "kebab_plural": "staff-members",
+        "pascal_singular": "StaffMember",
+        "pascal_plural": "StaffMembers",
+        "snake_singular": "staff_member",
+        "snake_plural": "staff_members"
+      },
+
+      "fields": [
+        {
+          "type": "string",
+          "required": true,
+          "default": null,
+          "nullable": false,
+          "update_in_controller": true,
+          "validate_in_controller": true,
+          "show_in_admin_index": true,
+          "show_in_admin_form": true,
+
+          "identifiers": {
+            "label": "Name",
+            "snake": "name",
+            "camel": "name"
+          }
+        },
+
+        {
+          "type": "string",
+          "required": false,
+          "default": null,
+          "nullable": true,
+          "update_in_controller": true,
+          "validate_in_controller": true,          
+          "show_in_admin_index": false,
+          "show_in_admin_form": false,
+          "identifiers": {
+            "label": "Slug",
+            "snake": "slug",
+            "camel": "slug"
+          }
+        },
+
+        {
+          "type": "text",
+          "required": true,
+          "default": null,
+          "nullable": false,
+          "update_in_controller": true,
+          "show_in_admin_index": false,
+          "show_in_admin_form": true,
+
+          "identifiers": {
+            "label": "Description",
+            "snake": "description",
+            "camel": "description"
+          }
+        },
+
+        {
+          "type": "image",
+          "required": true,
+          "default": null,
+          "nullable": false,
+          "update_in_controller": true,
+          "validate_in_controller": true,
+          "show_in_admin_index": false,
+          "show_in_admin_form": true,
+
+          "identifiers": {
+            "label": "Image",
+            "snake": "image",
+            "camel": "image"
+          }
+        },
+
+        {
+          "type": "date",
+          "required": true,
+          "default": null,
+          "nullable": true,
+          "update_in_controller": false,
+          "validate_in_controller": true,
+          "show_in_admin_index": false,
+          "show_in_admin_form": true,
+
+          "identifiers": {
+            "label": "Published At",
+            "snake": "published_at",
+            "camel": "publishedAt"
+          }
+        },
+
+        {
+          "type": "integer",
+          "required": true,
+          "default": null,
+          "nullable": false,
+          "update_in_controller": false,
+          "validate_in_controller": false,
+          "show_in_admin_index": false,
+          "show_in_admin_form": false,
+
+          "identifiers": {
+            "label": "order",
+            "snake": "order",
+            "camel": "order"
+          }
+        }
+      ],
+
+      "features": [
+        {
+          "type": "Sortable",
+          "options": {}
+        },
+
+        {
+          "type": "HasSlug",
+          "options": {
+            "generate_from": "name",
+            "save_to": "slug"
+          }
+        },
+
+        {
+          "type": "HasSeoFields",
+          "options": {}
+        },
+
+        {
+          "type": "HasMedia",
+          "options": {
+            "groups": [
+              {
+                "name": "image",
+                "conversion": "1400x600"
+              }
+            ],
+
+            "conversions": [
+              {
+                "name": "1400x600",
+                "width": "1400",
+                "height": "600"
+              }
+            ]
+          }
+        },
+
+        {
+          "type": "Draftable",
+          "options": {}
+        },
+
+        {
+          "type": "Linkable",
+          "options": {
+            "label_field": "title",
+            "url_field": "slug",
+            "search_query_field": "title",
+            "synchronises_menu_item_urls": true
+          }
+        }
+      ]
+    }

@@ -1,0 +1,56 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class Create{{identifiers.pascal_plural}}Table extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('{{identifiers.snake_plural}}', function (Blueprint $table) {
+            {{#no-break}}
+            $table->bigIncrements('id');
+
+            {{#each fields}}
+            {{#if-type-is "string"}}
+            $table->string('{{identifiers.snake}}'){{#if default}}->default('{{default}}'){{/if}}{{#if this.nullable}}->nullable(){{/if}};
+            {{/if-type-is}}
+
+            {{#if-type-is "text"}}
+            $table->text('{{identifiers.snake}}'){{#if default}}->default('{{default}}'){{/if}}{{#if this.nullable}}->nullable(){{/if}};
+            {{/if-type-is}}
+
+            {{#if-type-is "date"}}
+            $table->timestamp('{{identifiers.snake}}'){{#if default}}->default('{{default}}'){{/if}}{{#if this.nullable}}->nullable(){{/if}};
+            {{/if-type-is}}
+
+            {{#if-type-is "boolean"}}
+            $table->boolean('{{identifiers.snake}}'){{#if default}}->default({{default}}){{/if}}{{#if this.nullable}}->nullable(){{/if}};
+            {{/if-type-is}}
+
+            {{#if-type-is "integer"}}
+            $table->unsignedInteger('{{identifiers.snake}}'){{#if default}}->default({{default}}){{/if}}{{#if this.nullable}}->nullable(){{/if}};
+            {{/if-type-is}}
+            {{/each}}
+            {{/no-break}}
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('{{identifiers.snake_plural}}');
+    }
+}

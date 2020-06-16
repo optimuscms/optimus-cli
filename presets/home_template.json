@@ -1,0 +1,85 @@
+{
+    "identifiers": {
+        "template_id": "home",
+        "template_name": "Home",
+        "file_name": "Home"
+    },
+
+    "fields": [
+        {
+            "type": "string",
+            "required": true,
+            "options": {},
+            "identifiers": {
+                "label": "Banner Heading",
+                "snake": "banner_heading"
+            }
+        },
+
+        {
+            "type": "string",
+            "required": true,
+            "options": {},
+            "identifiers": {
+                "label": "Banner Subheading",
+                "snake": "banner_subheading"
+            }
+        },
+
+        {
+            "type": "image",
+            "required": true,
+            "options": {
+                "group": "banner_image",
+                "conversions": [
+                    "1200x630"
+                ]
+
+            },            
+            "identifiers": {
+                "label": "Banner Image",
+                "snake": "banner_image"
+            }
+        },
+
+        {
+            "type": "string",
+            "required": true,
+            "options": {},            
+            "identifiers": {
+                "label": "Introduction Heading",
+                "snake": "introduction_heading"
+            }
+        },
+
+        {
+            "type": "string",
+            "required": true,
+            "options": {},            
+            "identifiers": {
+                "label": "Introduction Subheading",
+                "snake": "introduction_subheading"
+            }
+        },
+
+        {
+            "type": "text",
+            "required": true,
+            "options": {},            
+            "identifiers": {
+                "label": "Introduction Content",
+                "snake": "introduction_content"
+            }
+        },
+
+        {
+            "type": "url",
+            "required": true,
+            "options": {},            
+            "identifiers": {
+                "label": "Introduction Video URL",
+                "snake": "introduction_video_url"
+            }
+        }
+    ]
+}

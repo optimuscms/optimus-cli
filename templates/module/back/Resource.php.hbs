@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class {{identifiers.pascal_singular}}Resource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'updated_at' => (string) $this->updated_at,
+            'created_at' => (string) $this->created_at,
+            {{#no-break}}
+
+            {{#each fields}}
+            {{#if-not-type-is "image"}}'{{this.identifiers.snake}}' => $this->{{this.identifiers.snake}},{{/if-not-type-is}}
+            {{/each}}
+
+            {{#if-has-feature "Draftable"}}
+            'is_published' => $this->isPublished(),
+            {{/if-has-feature}}
+
+            {{#if-has-feature "HasSeoFields"}}
+            'meta' => $this->whenLoaded('meta', function () {
+                return new MetaResource($this->meta);
+            }),
+            {{/if-has-feature}}
+
+            {{#if-has-feature "HasMedia"}}
+            $this->mergeWhen($this->resource->relationLoaded('media'), function () {
+                return [
+                    {{#each fields}}
+                    {{#if-type-is "image"}}'{{this.identifiers.snake}}' => new MediaResource($this->getFirstMedia('{{this.identifiers.snake}}')){{/if-type-is}}
+                    {{/each}}
+                ];
+            }),
+            {{/if-has-feature}}
+
+            {{/no-break}}
+        ];
+    }
+}
