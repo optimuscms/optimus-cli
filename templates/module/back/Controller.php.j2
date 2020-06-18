@@ -251,7 +251,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
                     {{ validation_rule(field.identifiers.snake, 'boolean', field.required, field.nullable) }}
 
                 {%- elif field.type == 'image' %}
-                    {{ validation_rule(field.identifiers.snake + '_id', 'exists:media,id', field.required, field.nullable) }}
+                    {{ validation_rule(field.identifiers.snake ~ '_id', 'exists:media,id', field.required, field.nullable) }}
                 {%- endif %}
             {% endif %}
         {% endfor -%}
