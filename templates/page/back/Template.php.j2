@@ -29,7 +29,7 @@ class {{ identifiers.file_name }}Template implements PageTemplate
                 {% elif field.type == 'url' %}
                     '{{ field.identifiers.snake }}' => '{% if field.required %}required|{% endif %}url',
                 {% elif field.type == 'image' %}
-                    '{{ field.identifiers.snake }}_id' => '{% if field.required %}required|{% endif %}exists:media:id',
+                    '{{ field.identifiers.snake }}_id' => '{% if field.required %}required|{% endif %}exists:media,id',
                 {% endif %}
             {% endfor %}
         ])->validate();
