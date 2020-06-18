@@ -81,6 +81,9 @@ class TemplateParser(object):
         """
         compiled_block = str(options['fn'](this)).rstrip()
 
+        if not len(compiled_block):
+            return ''
+
         return compiled_block[:-1] if compiled_block[-1] == ',' else compiled_block
 
     def __left_strip_helper(self, this, options):
@@ -94,7 +97,7 @@ class TemplateParser(object):
         return compiled_block.lstrip()
 
     def __if_has_feature_helper(self, this, options, feature_type: str):
-        """Renders the provided block if the user-provided JSON has the feature_type provided
+        """Renders the provided block if the JSON schema has the feature_type provided
         :param this: the current execution context in the handlebars template
         :param options: the handlebars options dictionary
         :param feature_type: the string feature type to check for
@@ -111,7 +114,7 @@ class TemplateParser(object):
         return options['fn'](this)
 
     def __if_not_has_feature_helper(self, this, options, feature_type):
-        """Renders the provided block if the user-provided JSON does not have the feature_type provided
+        """Renders the provided block if the JSON schema does not have the feature_type provided
         :param this: the current execution context in the handlebars template
         :param options: the handlebars options dictionary
         :param feature_type: the string feature type to check for

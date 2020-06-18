@@ -109,7 +109,7 @@ class Generator(object):
                       (tag, destination_path))
                 return False
 
-            # Render and prepend the partial to the tag in the destination file
+            # Render and the partial and replace the tag contents
             with open(destination_path, 'w') as destination_file:
                 rendered_partial = self.__parser.render_file(
                     '%s/%s/%s' % (config.TEMPLATE_DIR,

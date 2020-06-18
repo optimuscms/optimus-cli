@@ -24,9 +24,26 @@ class {{identifiers.pascal_plural}}Controller extends Controller
     {
         /** @var Collection ${{identifiers.camel_plural}} */
         ${{identifiers.camel_plural}} = {{identifiers.pascal_singular}}::query()
-            {{#if-has-feature "Draftable"}}->withDrafts(){{/if-has-feature}}
-            ->with({{#no-trailing-comma}}{{#if-has-feature "HasMedia"}}'media',{{/if-has-feature}}{{#if-has-feature "HasSeoFields"}}'meta',{{/if-has-feature}}{{/no-trailing-comma}})
-            {{#if-has-feature "Sortable"}}->ordered(){{/if-has-feature}}
+            {{#if-has-feature "Draftable"}}
+                ->withDrafts()
+            {{/if-has-feature}}
+
+            ->with(
+                {{#no-trailing-comma}}
+                    {{#if-has-feature "HasMedia"}}
+                        'media',
+                    {{/if-has-feature}}
+                    
+                    {{#if-has-feature "HasSeoFields"}}
+                        'meta',
+                    {{/if-has-feature}}
+                {{/no-trailing-comma}}
+            )
+
+            {{#if-has-feature "Sortable"}}
+                ->ordered()
+            {{/if-has-feature}}
+
             ->applyFilters($request->all())
             ->paginate();
 
@@ -50,21 +67,21 @@ class {{identifiers.pascal_plural}}Controller extends Controller
         ${{identifiers.camel_singular}}->save();
 
         {{#if-has-feature "HasMedia"}}
-        $this->attachMedia(${{identifiers.camel_singular}}, $request);
+            $this->attachMedia(${{identifiers.camel_singular}}, $request);
         {{/if-has-feature}}
 
         {{#if-has-feature "HasSeoFields"}}
-        // Save meta...
-        ${{identifiers.camel_singular}}->saveMeta(
-            $request->input('meta', [])
-        );
+            // Save meta...
+            ${{identifiers.camel_singular}}->saveMeta(
+                $request->input('meta', [])
+            );
         {{/if-has-feature}}
 
         {{#if-has-feature "Draftable"}}
-        // Schedule the {{identifiers.label_singular}}...
-        ${{identifiers.camel_singular}}->publishAt(
-            Carbon::parse($request->input('published_at'))
-        );
+            // Schedule the {{identifiers.label_singular}}...
+            ${{identifiers.camel_singular}}->publishAt(
+                Carbon::parse($request->input('published_at'))
+            );
         {{/if-has-feature}}
 
         return new {{identifiers.pascal_singular}}Resource(${{identifiers.camel_singular}});
@@ -80,8 +97,21 @@ class {{identifiers.pascal_plural}}Controller extends Controller
     {
         /** @var {{identifiers.pascal_singular}} ${{identifiers.pascal_singular}} */
         ${{identifiers.camel_singular}} = {{identifiers.pascal_singular}}::query()
-            {{#if-has-feature "Draftable"}}->withDrafts(){{/if-has-feature}}
-            ->with({{#no-trailing-comma}}{{#if-has-feature "HasMedia"}}'media',{{/if-has-feature}}{{#if-has-feature "HasSeoFields"}}'meta',{{/if-has-feature}}{{/no-trailing-comma}})
+            {{#if-has-feature "Draftable"}}
+                ->withDrafts()
+            {{/if-has-feature}}
+            
+            ->with(
+                {{#no-trailing-comma}}
+                    {{#if-has-feature "HasMedia"}}
+                        'media',
+                    {{/if-has-feature}}
+                    
+                    {{#if-has-feature "HasSeoFields"}}
+                        'meta',
+                    {{/if-has-feature}}
+                {{/no-trailing-comma}})
+
             ->findOrFail($id);
 
         return new {{identifiers.pascal_singular}}Resource(${{identifiers.camel_singular}});
@@ -98,7 +128,10 @@ class {{identifiers.pascal_plural}}Controller extends Controller
     {
         /** @var {{identifiers.camel_singular}} ${{identifiers.pascal_singular}} */
         ${{identifiers.camel_singular}} = {{identifiers.pascal_singular}}::query()
-            {{#if-has-feature "Draftable"}}->withDrafts(){{/if-has-feature}}
+            {{#if-has-feature "Draftable"}}
+                ->withDrafts()
+            {{/if-has-feature}}
+
             ->findOrFail($id);
 
         $this->validate{{identifiers.pascal_singular}}($request);
@@ -110,50 +143,53 @@ class {{identifiers.pascal_plural}}Controller extends Controller
         ${{identifiers.camel_singular}}->save();
         
         {{#if-has-feature "HasMedia"}}
-        $this->attachMedia(${{identifiers.camel_singular}}, $request);
+            $this->attachMedia(${{identifiers.camel_singular}}, $request);
         {{/if-has-feature}}
 
         {{#if-has-feature "HasSeoFields"}}
-        // Save meta...
-        ${{identifiers.camel_singular}}->saveMeta(
-            $request->input('meta', [])
-        );
+            // Save meta...
+            ${{identifiers.camel_singular}}->saveMeta(
+                $request->input('meta', [])
+            );
         {{/if-has-feature}}
 
         {{#if-has-feature "Draftable"}}
-        // Schedule the {{identifiers.label_singular}}...
-        ${{identifiers.camel_singular}}->publishAt(
-            Carbon::parse($request->input('published_at'))
-        );
+            // Schedule the {{identifiers.label_singular}}...
+            ${{identifiers.camel_singular}}->publishAt(
+                Carbon::parse($request->input('published_at'))
+            );
         {{/if-has-feature}}
 
         return new {{identifiers.pascal_singular}}Resource(${{identifiers.camel_singular}});
     }
 
     {{#if-has-feature "Sortable"}}
-    /**
-    * Move the specified {{#to-lower}}{{identifiers.label_singular}}{{/to-lower}}.
-    *
-    * @param Request $request
-    * @param int $id
-    * @return Response
-    */
-    public function move(Request $request, $id)
-    {
-        ${{identifiers.camel_singular}} = {{identifiers.pascal_singular}}::query()
-            {{#if-has-feature "Draftable"}}->withDrafts(){{/if-has-feature}}
-            ->findOrFail($id);
+        /**
+        * Move the specified {{#to-lower}}{{identifiers.label_singular}}{{/to-lower}}.
+        *
+        * @param Request $request
+        * @param int $id
+        * @return Response
+        */
+        public function move(Request $request, $id)
+        {
+            ${{identifiers.camel_singular}} = {{identifiers.pascal_singular}}::query()
+                {{#if-has-feature "Draftable"}}
+                    ->withDrafts()
+                {{/if-has-feature}}
 
-        $request->validate([
-            'direction' => 'required|in:up,down',
-        ]);
+                ->findOrFail($id);
 
-        $request->input('direction') === 'down'
-            ? ${{identifiers.camel_singular}}->moveOrderDown()
-            : ${{identifiers.camel_singular}}->moveOrderUp();
+            $request->validate([
+                'direction' => 'required|in:up,down',
+            ]);
 
-        return response()->noContent();
-    }
+            $request->input('direction') === 'down'
+                ? ${{identifiers.camel_singular}}->moveOrderDown()
+                : ${{identifiers.camel_singular}}->moveOrderUp();
+
+            return response()->noContent();
+        }
     {{/if-has-feature}}
 
     /**
@@ -165,7 +201,10 @@ class {{identifiers.pascal_plural}}Controller extends Controller
     public function destroy($id)
     {
         {{identifiers.camel_singular}}::query()
-            {{#if-has-feature "Draftable"}}->withDrafts(){{/if-has-feature}}
+            {{#if-has-feature "Draftable"}}
+                ->withDrafts()
+            {{/if-has-feature}}
+
             ->findOrFail($id)
             ->delete();
 
@@ -181,30 +220,109 @@ class {{identifiers.pascal_plural}}Controller extends Controller
     protected function validate{{identifiers.pascal_singular}}(Request $request)
     {
         {{#no-break}}
+            {{#if-has-feature "HasSeoFields"}}
+                $request->validate(array_merge([
+            {{/if-has-feature}}
 
-        {{#if-has-feature "HasSeoFields"}}$request->validate(array_merge([{{/if-has-feature}}
+            {{#if-not-has-feature "HasSeoFields"}}
+                $request->validate([
+            {{/if-not-has-feature}}
 
-        {{#if-not-has-feature "HasSeoFields"}}$request->validate([{{/if-not-has-feature}}
+            {{#each fields}}
+                {{#if validate_in_controller}}
+                    {{#if-type-is "string"}}
+                        '{{identifiers.snake}}' => '
+                            {{#if this.nullable}}
+                                nullable|
+                            {{/if}}
+                            
+                            {{#if required}
+                                }required|
+                            {{/if}}
+                            
+                            string|max:255
+                        ',
+                    {{/if-type-is}}
+                    
+                    {{#if-type-is "text"}}
+                        '{{identifiers.snake}}' => '
+                            {{#if this.nullable}}
+                                nullable|
+                            {{/if}}
+                            
+                            {{#if required}}
+                                required|
+                            {{/if}}
+                            
+                            string
+                        ',
+                    {{/if-type-is}}
+                    
+                    {{#if-type-is "date"}}
+                        '{{identifiers.snake}}' => '
+                            {{#if this.nullable}}
+                                nullable|
+                            {{/if}}
+                            
+                            {{#if required}}
+                                required|
+                            {{/if}}
+                            
+                            date
+                        ',
+                    {{/if-type-is}}
+                    
+                    {{#if-type-is "integer"}}
+                        '{{identifiers.snake}}' => '
+                            {{#if this.nullable}}
+                                nullable|
+                            {{/if}}
+                            
+                            {{#if required}}
+                                required|
+                            {{/if}}
+                            
+                            number
+                        ',
+                    {{/if-type-is}}
+                    
+                    {{#if-type-is "boolean"}}
+                        '{{identifiers.snake}}' => '
+                            {{#if this.nullable}}
+                                nullable|
+                            {{/if}}
+                            
+                            {{#if required}}
+                                present|
+                            {{/if}}
+                            
+                            boolean
+                        ',
+                    {{/if-type-is}}
+                    
+                    {{#if-type-is "image"}}
+                        '{{identifiers.snake}}_id' => '
+                            {{#if this.nullable}}
+                                nullable|
+                            {{/if}}
+                            
+                            {{#if required}}
+                                required|
+                            {{/if}}
 
-        {{#each fields}}
-        {{#if validate_in_controller}}
-            {{#if-type-is "string"}}'{{identifiers.snake}}' => '{{#if this.nullable}}nullable|{{/if}}{{#if required}}required|{{/if}}string|max:255',{{/if-type-is}}
-            
-            {{#if-type-is "text"}}'{{identifiers.snake}}' => '{{#if this.nullable}}nullable|{{/if}}{{#if required}}required|{{/if}}string',{{/if-type-is}}
-            
-            {{#if-type-is "date"}}'{{identifiers.snake}}' => '{{#if this.nullable}}nullable|{{/if}}{{#if required}}required|{{/if}}date',{{/if-type-is}}
-            
-            {{#if-type-is "integer"}}'{{identifiers.snake}}' => '{{#if this.nullable}}nullable|{{/if}}{{#if required}}required|{{/if}}number',{{/if-type-is}}
-            
-            {{#if-type-is "boolean"}}'{{identifiers.snake}}' => '{{#if this.nullable}}nullable|{{/if}}{{#if required}}present|{{/if}}boolean',{{/if-type-is}}
-            
-            {{#if-type-is "image"}}'{{identifiers.snake}}_id' => '{{#if this.nullable}}nullable|{{/if}}{{#if required}}required|{{/if}}exists:media,id',{{/if-type-is}}
-        {{/if}}
-        {{/each}}
+                            exists:media,id
+                        ',
+                    {{/if-type-is}}
+                {{/if}}
+            {{/each}}
 
-        {{#if-has-feature "HasSeoFields"}}], Meta::rules()));{{/if-has-feature}}
+            {{#if-has-feature "HasSeoFields"}}
+                ], Meta::rules()));
+            {{/if-has-feature}}
 
-        {{#if-not-has-feature "HasSeoFields"}}]);{{/if-not-has-feature}}
+            {{#if-not-has-feature "HasSeoFields"}}
+                ]);
+            {{/if-not-has-feature}}
         {{/no-break}}
 
     }
@@ -212,29 +330,29 @@ class {{identifiers.pascal_plural}}Controller extends Controller
     protected function populate{{identifiers.pascal_singular}}({{identifiers.pascal_singular}} ${{identifiers.camel_singular}}, Request $request)
     {
         return tap (${{identifiers.camel_singular}}, function ({{identifiers.pascal_singular}} ${{identifiers.camel_singular}}) use ($request) {
-        {{#each fields}}
-            {{#if update_in_controller}}
-            {{#if-not-type-is "image"}}
-            ${{@root.identifiers.camel_singular}}->{{identifiers.snake}} = $request->input('{{identifiers.snake}}');
-            {{/if-not-type-is}}
-            {{/if}}
-        {{/each}}
+            {{#each fields}}
+                {{#if update_in_controller}}
+                    {{#if-not-type-is "image"}}
+                        ${{@root.identifiers.camel_singular}}->{{identifiers.snake}} = $request->input('{{identifiers.snake}}');
+                    {{/if-not-type-is}}
+                {{/if}}
+            {{/each}}
         });
     }
 
     {{#if-has-feature "HasMedia"}}
-    protected function attachMedia ({{identifiers.pascal_singular}} ${{identifiers.camel_singular}}, Request $request)
-    {
-    {{#each fields}}
-        {{#if update_in_controller}}
-        {{#if-type-is "image"}}
-        ${{@root.identifiers.camel_singular}}->attachMedia(
-            $request->input('{{identifiers.snake}}_id'),
-            '{{identifiers.snake}}'
-        );
-        {{/if-type-is}}
-        {{/if}}
-    {{/each}}
-    }
+        protected function attachMedia ({{identifiers.pascal_singular}} ${{identifiers.camel_singular}}, Request $request)
+        {
+            {{#each fields}}
+                {{#if update_in_controller}}
+                    {{#if-type-is "image"}}
+                        ${{@root.identifiers.camel_singular}}->attachMedia(
+                            $request->input('{{identifiers.snake}}_id'),
+                            '{{identifiers.snake}}'
+                        );
+                    {{/if-type-is}}
+                {{/if}}
+            {{/each}}
+        }
     {{/if-has-feature}}
 }
