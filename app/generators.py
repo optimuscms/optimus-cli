@@ -18,7 +18,7 @@ class Generator(object):
                   self.__template_path)
 
         # Run prettier
-        os.system('prettier --write "**/*.js" &>/dev/null')
+        os.system('prettier --write "**/*.php" "!vendor/" &>/dev/null')
 
         # Run php-cs-fixer and eslint
         os.system('php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
