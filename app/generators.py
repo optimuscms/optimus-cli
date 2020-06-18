@@ -261,12 +261,12 @@ class PageGenerator(Generator):
     def _get_appended_files(self):
         return [
             [
-                'back/appends/OptimusImports.php.hbs',
+                'back/appends/OptimusImports.php.j2',
                 'imports',
                 'app/Providers/OptimusServiceProvider.php'
             ],
             [
-                'back/appends/OptimusPageTemplates.php.hbs',
+                'back/appends/OptimusPageTemplates.php.j2',
                 'page-templates',
                 'app/Providers/OptimusServiceProvider.php'
             ]
