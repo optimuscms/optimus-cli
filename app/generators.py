@@ -144,84 +144,85 @@ class ModuleGenerator(Generator):
     def _get_template_files(self):
         return [
             [
-                'back/Controller.php.hbs',
+                'back/Controller.php.j2',
                 'app/Http/Controllers/Back/Api/{{identifiers.pascal_plural}}Controller.php'
             ],
-            [
-                'back/Model.php.hbs',
-                'app/Models/{{identifiers.pascal_singular}}.php'
-            ],
-            [
-                'back/Resource.php.hbs',
-                'app/Http/Resources/{{identifiers.pascal_singular}}Resource.php'
-            ],
-            [
-                'back/Migration.php.hbs',
-                'database/migrations/%s_create_{{identifiers.snake_plural}}_table.php' % self.__get_datetime()
-            ],
-            [
-                'front/api.js.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/api.js'
-            ],
-            [
-                'front/app.js.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/app.js'
-            ],
-            [
-                'front/Create.vue.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Create.vue'
-            ],
-            [
-                'front/Edit.vue.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Edit.vue'
-            ],
-            [
-                'front/Index.vue.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Index.vue'
-            ],
-            [
-                'front/Form.vue.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/partials/Form.vue'
-            ]
+            
+            # [
+            #     'back/Model.php.hbs',
+            #     'app/Models/{{identifiers.pascal_singular}}.php'
+            # ],
+            # [
+            #     'back/Resource.php.hbs',
+            #     'app/Http/Resources/{{identifiers.pascal_singular}}Resource.php'
+            # ],
+            # [
+            #     'back/Migration.php.hbs',
+            #     'database/migrations/%s_create_{{identifiers.snake_plural}}_table.php' % self.__get_datetime()
+            # ],
+            # [
+            #     'front/api.js.hbs',
+            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/api.js'
+            # ],
+            # [
+            #     'front/app.js.hbs',
+            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/app.js'
+            # ],
+            # [
+            #     'front/Create.vue.hbs',
+            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Create.vue'
+            # ],
+            # [
+            #     'front/Edit.vue.hbs',
+            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Edit.vue'
+            # ],
+            # [
+            #     'front/Index.vue.hbs',
+            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Index.vue'
+            # ],
+            # [
+            #     'front/Form.vue.hbs',
+            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/views/partials/Form.vue'
+            # ]
         ]
 
     def _get_partial_files(self):
         return [
-            [
-                'back/partials/Routes.php.hbs',
-                'routes',
-                'routes/admin.php'
-            ],
-            [
-                'back/partials/OptimusImports.php.hbs',
-                'imports',
-                'app/Providers/OptimusServiceProvider.php'
-            ],
-            [
-                'back/partials/OptimusLinkableTypes.php.hbs',
-                'linkable-types',
-                'app/Providers/OptimusServiceProvider.php'
-            ],
-            [
-                'back/partials/OptimusMediaConversions.php.hbs',
-                'media-conversions',
-                'app/Providers/OptimusServiceProvider.php'
-            ],
-            [
-                'front/partials/Dashboard.vue.hbs',
-                'navigation',
-                'resources/js/back/components/ui/Dashboard.vue'
-            ],
-            [
-                'front/partials/RouterImports.js.hbs',
-                'imports',
-                'resources/js/back/router/index.js'
-            ],
-            [
-                'front/partials/RouterRoutes.js.hbs',
-                'routes',
-                'resources/js/back/router/index.js'
-            ],
+            # [
+            #     'back/partials/Routes.php.hbs',
+            #     'routes',
+            #     'routes/admin.php'
+            # ],
+            # [
+            #     'back/partials/OptimusImports.php.hbs',
+            #     'imports',
+            #     'app/Providers/OptimusServiceProvider.php'
+            # ],
+            # [
+            #     'back/partials/OptimusLinkableTypes.php.hbs',
+            #     'linkable-types',
+            #     'app/Providers/OptimusServiceProvider.php'
+            # ],
+            # [
+            #     'back/partials/OptimusMediaConversions.php.hbs',
+            #     'media-conversions',
+            #     'app/Providers/OptimusServiceProvider.php'
+            # ],
+            # [
+            #     'front/partials/Dashboard.vue.hbs',
+            #     'navigation',
+            #     'resources/js/back/components/ui/Dashboard.vue'
+            # ],
+            # [
+            #     'front/partials/RouterImports.js.hbs',
+            #     'imports',
+            #     'resources/js/back/router/index.js'
+            # ],
+            # [
+            #     'front/partials/RouterRoutes.js.hbs',
+            #     'routes',
+            #     'resources/js/back/router/index.js'
+            # ],
         ]
 
     def __get_datetime(self):

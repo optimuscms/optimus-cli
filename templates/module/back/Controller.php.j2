@@ -1,0 +1,346 @@
+<?php
+
+namespace App\Http\Controllers\Back\Api;
+
+use App\Http\Controllers\Back\Controller;
+use App\Http\Resources\{{identifiers.pascal_singular}}Resource;
+use App\Models\Meta;
+use App\Models\{{identifiers.pascal_singular}};
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Response;
+
+class {{ identifiers.pascal_plural }}Controller extends Controller
+{
+    /**
+     * Display a paginated list of {{ identifiers.label_plural }}.
+     *
+     * @param Request $request
+     * @return ResourceCollection
+     */
+    public function index(Request $request)
+    {
+        /** @var Collection ${{ identifiers.camel_plural }} */
+        ${{ identifiers.camel_plural }} = {{ identifiers.pascal_singular }}::query()
+        {% for feature in features %}
+            {% if 'Draftable' in feature.type %}
+                ->withDrafts()
+            {% endif $}
+
+            {% if 'Sortable' in feature.type %}
+                ->ordered()
+            {% endif %}
+        {% endfor %}
+
+            ->with([
+            {% for feature in features %}
+                {% if 'HasMedia' in feature.type %}
+                    'media',
+                {% endif $}
+
+                {% if 'HasSeoFields' in feature.type %}
+                    'meta',
+                {% endif $
+            {% endfor %}
+            ])
+
+            ->applyFilters($request->all())
+            ->paginate();
+
+        return {{ identifiers.pascal_singular }}Resource::collection(${{ identifiers.camel_plural }});
+    }
+
+    /**
+     * Create a new {{ identifiers.label_singular }}.
+     *
+     * @param Request $request
+     * @return {{ identifiers.pascal_singular }}Resource
+     */
+    public function store(Request $request)
+    {
+        $this->validate{{ identifiers.pascal_singular }}($request);
+
+        ${{ identifiers.camel_singular }} = $this->populate{{ identifiers.pascal_singular }}(
+            new {{ identifiers.pascal_singular }}(), $request
+        );
+
+        ${{ identifiers.camel_singular }}->save();
+
+        {% for feature in features %}
+            {% if 'HasMedia' in feature.type %}
+                $this->attachMedia(${{identifiers.camel_singular}}, $request);
+            {% endif %}
+
+            {% if 'HasSeoFields' in feature.type %}
+                // Save meta...
+                ${{identifiers.camel_singular}}->saveMeta(
+                    $request->input('meta', [])
+                );
+            {% endif %}
+
+            {% if 'Draftable' in feature.type %}
+                // Schedule the {{ identifiers.label_singular }}...
+                ${{ identifiers.camel_singular }}->publishAt(
+                    Carbon::parse($request->input('published_at'))
+                );
+            {% endif %}
+        {% endfor %}
+
+        return new {{ identifiers.pascal_singular }}Resource(${{ identifiers.camel_singular }});
+    }
+
+    /**
+     * Display the specified {{ identifiers.label_singular }}.
+     *
+     * @param int $id
+     * @return {{ identifiers.pascal_singular }}Resource
+     */
+    public function show($id)
+    {
+        /** @var {{ identifiers.pascal_singular }} ${{ identifiers.pascal_singular }} */
+        ${{ identifiers.camel_singular }} = {{ identifiers.pascal_singular }}::query()
+        {% for feature in features %}
+            {% if 'Draftable' in feature.type %}
+                ->withDrafts()
+            {% endif $}
+        {% endfor %}
+
+            ->with([
+            {% for feature in features %}
+                {% if 'HasMedia' in feature.type %}
+                    'media',
+                {% endif $}
+
+                {% if 'HasSeoFields' in feature.type %}
+                    'meta',
+                {% endif $
+            {% endfor %}
+            ])
+
+            ->findOrFail($id);
+
+        return new {{ identifiers.pascal_singular }}Resource(${{ identifiers.camel_singular }});
+    }
+
+    /**
+     * Update the specified {{ identifiers.label_singular }}.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return {{ identifiers.pascal_singular }}Resource
+     */
+    public function update(Request $request, $id)
+    {
+        /** @var {{ identifiers.camel_singular }} ${{ identifiers.pascal_singular }} */
+        ${{ identifiers.camel_singular }} = {{ identifiers.pascal_singular }}::query()
+        {% for feature in features %}
+            {% if 'Draftable' in feature.type %}
+                ->withDrafts()
+            {% endif $}
+        {% endfor %}
+
+            ->findOrFail($id);
+
+        $this->validate{{ identifiers.pascal_singular }}($request);
+
+        ${{ identifiers.camel_singular }} = $this->populate{{ identifiers.pascal_singular }}(
+            ${{ identifiers.camel_singular }}, $request
+        );
+
+        ${{ identifiers.camel_singular }}->save();
+
+        {% for feature in features %}
+            {% if 'HasMedia' in feature.type %}
+                $this->detatchMedia();
+
+                $this->attachMedia(${{identifiers.camel_singular}}, $request);
+            {% endif %}
+
+            {% if 'HasSeoFields' in feature.type %}
+                // Save meta...
+                ${{identifiers.camel_singular}}->saveMeta(
+                    $request->input('meta', [])
+                );
+            {% endif %}
+
+            {% if 'Draftable' in feature.type %}
+                // Schedule the {{ identifiers.label_singular }}...
+                ${{ identifiers.camel_singular }}->publishAt(
+                    Carbon::parse($request->input('published_at'))
+                );
+            {% endif %}
+        {% endfor %}
+
+        return new {{ identifiers.pascal_singular }}Resource(${{ identifiers.camel_singular }});
+    }
+
+    {% for feature in features %}
+        {% if 'Sortable' in feature.type %}
+            /**
+            * Move the specified {{identifiers.label_singular}}.
+            *
+            * @param Request $request
+            * @param int $id
+            * @return Response
+            */
+            public function move(Request $request, $id)
+            {
+                ${{ identifiers.camel_singular }} = {{ identifiers.pascal_singular }}::query()
+                {% for feature in features %}
+                    {% if 'Draftable' in feature.type %}
+                        ->withDrafts()
+                    {% endif $}
+                {% endfor %}
+
+                    ->findOrFail($id);
+
+                $request->validate([
+                    'direction' => 'required|in:up,down',
+                ]);
+
+                $request->input('direction') === 'down'
+                    ? ${{identifiers.camel_singular}}->moveOrderDown()
+                    : ${{identifiers.camel_singular}}->moveOrderUp();
+
+                return response()->noContent();
+            }
+        {% endif $}
+    {% endfor %}
+
+    /**
+     * Delete the specified {{ identifiers.label_singular }}.
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        {{ identifiers.camel_singular }}::query()
+        {% for feature in features %}
+            {% if 'Draftable' in feature.type %}
+                ->withDrafts()
+            {% endif $}
+        {% endfor %}
+
+            ->findOrFail($id)
+            ->delete();
+
+        return response()->noContent();
+    }
+
+    /**
+     * Validate the request.
+     *
+     * @param Request $request
+     * @return void*
+     */
+    protected function validate{{ identifiers.pascal_singular }}(Request $request)
+    {
+        {% for feature in features %}
+            {% if 'HasSeoFields' in feature.type %}
+                $request->validate(array_merge([
+            {% endif $}
+
+            {% if not 'HasSeoFields' in feature.type %}
+                $request->validate([
+            {% endif $}
+        {% endfor %}
+
+        {% for field in fields %}
+            {% if field.validate_in_controller %}
+                {% if 'string' in field.type %}
+                    '{{identifiers.snake}}' => '
+                        {% if field.nullable %}nullable|{% endif %}
+                        {% if field.required %}required|{% endif %}
+                        string|max:255
+                    ',
+                {% endif %}
+
+                {% if 'text' in field.type %}
+                    '{{identifiers.snake}}' => '
+                        {% if field.nullable %}nullable|{% endif %}
+                        {% if field.required %}required|{% endif %}
+                        string
+                    ',
+                {% endif %}
+
+                {% if 'date' in field.type %}
+                    '{{identifiers.snake}}' => '
+                        {% if field.nullable %}nullable|{% endif %}
+                        {% if field.required %}required|{% endif %}
+                        date
+                    ',
+                {% endif %}
+
+                {% if 'integer' in field.type %}
+                    '{{identifiers.snake}}' => '
+                        {% if field.nullable %}nullable|{% endif %}
+                        {% if field.required %}required|{% endif %}
+                        number
+                    ',
+                {% endif %}
+
+                {% if 'boolean' in field.type %}
+                    '{{identifiers.snake}}' => '
+                        {% if field.nullable %}nullable|{% endif %}
+                        {% if field.required %}present|{% endif %}
+                        boolean
+                    ',
+                {% endif %}
+
+                {% if 'image' in field.type %}
+                    '{{identifiers.snake}}' => '
+                        {% if field.nullable %}nullable|{% endif %}
+                        {% if field.required %}required|{% endif %}
+                        exists:media,id
+                    ',
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% for feature in features %}
+            {% if 'HasSeoFields' in feature.type %}
+                ], Meta::rules()));
+            {% endif $}
+
+            {% if not 'HasSeoFields' in feature.type %}
+                ]);
+            {% endif $}
+        {% endfor %}
+    }
+
+    protected function populate{{ identifiers.pascal_singular }}(
+        {{identifiers.pascal_singular }} ${{ identifiers.camel_singular }},
+        Request $request
+    ) {
+        return tap (${{ identifiers.camel_singular }}, function ({{ identifiers.pascal_singular }} ${{ identifiers.camel_singular }}) use (
+            $request
+        ) {
+            {% for field in fields %}
+                {% if field.update_in_controller and not 'image' in field.type %}
+                    ${{ identifiers.camel_singular }}->{{ field.identifiers.snake }} = $request->input('{{ field.identifiers.snake }}');
+                {% endif %}
+            {% endfor %}
+        });
+    }
+
+    {% for feature in features %}
+        {% if 'HasMedia' in feature.type %}
+            protected function attachMedia (
+                {{ identifiers.pascal_singular }} ${{identifiers.camel_singular}}, 
+                Request $request
+            ) {
+                {% for field in fields %}
+                    {% if field.update_in_controller and 'image' in field.type %}
+                        ${{ identifiers.camel_singular }}->attachMedia(
+                                $request->input('{{ field.identifiers.snake }}_id'),
+                                '{{ field.identifiers.snake }}'
+                            );
+                    {% endif %}
+                {% endfor %}
+            }
+        {% endif %}
+    {% endfor %}
+}
