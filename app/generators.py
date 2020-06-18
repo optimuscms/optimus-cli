@@ -256,7 +256,7 @@ class PageGenerator(Generator):
         ]
 
     # todo - better name
-    def _get_appended_files(self):
+    def _get_partial_files(self):
         return [
             [
                 'back/appends/OptimusImports.php.j2',
