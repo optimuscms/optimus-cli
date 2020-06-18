@@ -17,7 +17,6 @@ class Generator(object):
             print('Successfully generated files for %s, formatting...' %
                   self.__template_path)
 
-        # Run prettier
         os.system('prettier --write "**/*.php" "!vendor/" &>/dev/null')
 
         # Run php-cs-fixer and eslint
@@ -69,6 +68,10 @@ class Generator(object):
 
                 destination_file.write(rendered_template)
 
+            # Run prettier if destination file is PHP
+            if destination_path.endswith('.php'):
+                os.system('prettier %s --write &>/dev/null' % destination_path)
+
         return True
 
     def __generate_appends(self):
@@ -82,13 +85,13 @@ class Generator(object):
 
             # Ensure the destination folder exists
             if not os.path.exists(destination_directory):
-                print('Couldn\'t find the directory %s to update, aborting...' %
+                print('Couldn\'t find the directory "%s" to update append, aborting...' %
                       destination_directory)
                 return False
 
             # Ensure the destination file exists
             if not os.path.isfile(destination_path):
-                print('Couldn\'t find the file %s to update, aborting...' %
+                print('Couldn\'t find the file "%s" to update, aborting...' %
                       destination_path)
                 return False
 
