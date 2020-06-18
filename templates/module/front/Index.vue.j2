@@ -69,7 +69,7 @@
                     {% for field in fields %}
                         {% if field.show_in_admin_index %}
                             <td>
-                                {{ '{{ ' + identifiers.camel_singular + '.' + identifiers.snake + ' }}' }}
+                                {{ '{{ ' + identifiers.camel_singular + '.' + field.identifiers.snake + ' }}' }}
                             </td>
                         {% endif %}
                     {% endfor %}
