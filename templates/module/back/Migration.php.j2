@@ -1,0 +1,49 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class Create{{ identifiers.pascal_plural }}Table extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('{{ identifiers.snake_plural }}', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            {% for field in fields %}
+                {% if field.type is 'string' %}
+                    $table->string('{{ field.identifiers.snake }}')
+                    {% if field.nullable %}->nullable(){% endif %}
+                    {% if field.default %}->default(){% endif %};
+                {% elif field.type is 'text' %}
+                    $table->text('{{ field.identifiers.snake }}')
+                    {% if field.nullable %}->nullable(){% endif %}
+                    {% if field.default %}->default(){% endif %};
+                {% elif field.type is 'date' %}
+                    $table->timestamp('{{ field.identifiers.snake }}')
+                    {% if field.nullable %}->nullable(){% endif %}
+                    {% if field.default %}->default(){% endif %};
+                {% elif field.type is 'boolean' %}
+                    $table->boolean('{{ field.identifiers.snake }}')
+                    {% if field.nullable %}->nullable(){% endif %}
+                    {% if field.default %}->default(){% endif %};
+                {% elif field.type is 'integer' %}
+                    $table->integer('{{ field.identifiers.snake }}')
+                    {% if field.nullable %}->nullable(){% endif %}
+                    {% if field.default %}->default(){% endif %};
+                {% endif %}
+            {% endfor %}
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('{{ identifiers.snake_plural }}');
+    }
+}
