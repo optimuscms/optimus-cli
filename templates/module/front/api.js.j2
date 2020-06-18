@@ -7,6 +7,6 @@ export const create{{ identifiers.pascal_singular }} = params => client.create('
 export const update{{ identifiers.pascal_singular }} = (id, params) => client.update(`{{ identifiers.kebab_plural }}/${id}`, params);
 export const delete{{ identifiers.pascal_singular }} = id => client.destroy(`{{ identifiers.kebab_plural }}/${id}`);
 
-{% if has_feature('sortable') %}
+{% if has_feature('Sortable') %}
     export const move{{ identifiers.pascal_singular }} = (id, direction) => client.put(`{{identifiers.kebab_plural }}/${id}/move`, { direction });
 {% endif %}

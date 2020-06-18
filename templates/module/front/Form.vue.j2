@@ -10,24 +10,24 @@
                             {% for field in fields %}
                                 {% if field.show_in_admin_form %}
 
-                                    <!-- {{ identifiers.label }} -->
+                                    <!-- {{ field.identifiers.label }} -->
                                     <o-form-field
-                                        input="{{ identifiers.snake }}"
-                                        label="{{ identifiers.label }}"
-                                        {% if field.required %}required{% endif %}
+                                        input="{{ field.identifiers.snake }}"
+                                        label="{{ field.identifiers.label }}"
+                                        {%+ if field.required %}required{% endif -%}
                                     >
                                         {% if field.type == 'string' %}
                                             <o-input
-                                                id="{{ identifiers.snake }}"
-                                                v-model="form.{{ identifiers.snake }}"
-                                                {% if field.required %}required{% endif %}
+                                                id="{{ field.identifiers.snake }}"
+                                                v-model="form.{{ field.identifiers.snake }}"
+                                                {%+ if field.required %}required{% endif -%}
                                             />
                                         {% endif %}
 
                                         {% if field.type == 'text' %}
                                             <editor
-                                                id="{{ identifiers.snake }}"
-                                                v-model="form.{{ identifiers.snake }}"
+                                                id="{{ field.identifiers.snake }}"
+                                                v-model="form.{{ field.identifiers.snake }}"
                                             />
                                         {% endif %}
 
@@ -41,10 +41,10 @@
 
                                                 <div class="control">
                                                     <o-input
-                                                        id="{{ identifiers.snake }}"
-                                                        v-model="form.{{ identifiers.snake }}"
+                                                        id="{{ field.identifiers.snake }}"
+                                                        v-model="form.{{ field.identifiers.snake }}"
                                                         type="datetime-local"
-                                                        {% if field.required %}required{% endif %}
+                                                        {%+ if field.required %}required{% endif %}
                                                     />
                                                 </div>
                                             </div>
@@ -52,18 +52,18 @@
 
                                         {% if field.type == 'boolean' %}
                                             <o-checkbox
-                                                id="{{ identifiers.snake }}"
-                                                v-model="form.{{ identifiers.snake }}"
+                                                id="{{ field.identifiers.snake }}"
+                                                v-model="form.{{ field.identifiers.snake }}"
                                                 label="Yes"
-                                                {% if field.required %}required{% endif %}
+                                                {%+ if field.required %}required{% endif %}
                                             />
                                         {% endif %}
 
                                         {% if field.type == 'image' %}
                                             <media-picker
-                                                id="{{ identifiers.snake }}_id"
-                                                v-model="form.{{ identifiers.snake }}_id"
-                                                :media="getItemAttribute('{{ identifiers.snake }}')"
+                                                id="{{ field.identifiers.snake }}_id"
+                                                v-model="form.{{ field.identifiers.snake }}_id"
+                                                :media="getItemAttribute('{{ field.identifiers.snake }}')"
                                                 show-preview
                                                 accepted-extensions="image"
                                             />
@@ -90,14 +90,14 @@
                                         :disabled="getItemAttribute('has_fixed_path', false)"
                                     />
                                 </o-form-field>
-                            {{/if-has-feature}}
+                            {% endif %}
 
                             {% if has_feature('HasSeoFields') %}
                                 <o-meta-fields
                                     v-model="form.meta"
                                     :item="getItemAttribute('meta')"
                                 />
-                            {{/if-has-feature}}
+                            {% endif %}
                         </o-tab>
                     </o-tabs>  
                 </div>
@@ -143,19 +143,19 @@ export default {
                 {% for field in fields %}
                     {% if field.show_in_admin_form %}
                         {% if field.type == 'string' %}
-                            {{ identifiers.snake }}: '',
+                            {{ field.identifiers.snake }}: '',
 
                         {% elif field.type == 'text' %}
-                            {{ identifiers.snake }}: '',
+                            {{ field.identifiers.snake }}: '',
 
                         {% elif field.type == 'date' %}
-                            {{ identifiers.snake }}: moment().format('YYYY-MM-DDTHH:mm'),
+                            {{ field.identifiers.snake }}: moment().format('YYYY-MM-DDTHH:mm'),
 
                         {% elif field.type == 'boolean' %}
-                            {{ identifiers.snake }}: {{ identifiers.default }},
+                            {{ field.identifiers.snake }}: {{ field.identifiers.default }},
 
                         {% elif field.type == 'image' %}
-                            {{ identifiers.snake }}_id: null,
+                            {{ field.identifiers.snake }}_id: null,
                         {% endif %}
                     {% endif %}
                 {% endfor %}
@@ -165,27 +165,31 @@ export default {
 
     watch: {
         item(item) {
-            {% if has_feature('HasSeoFields') %}const meta = item.meta;{% endif %}
+            {% if has_feature('HasSeoFields') %}
+                const meta = item.meta;
+            {% endif %}
 
             this.form = {
-                {% if has_feature('HasSlug') %}slug: item.slug,{% endif %}
+                {% if has_feature('HasSlug') %}
+                    slug: item.slug,
+                {% endif %}
                 
                 {% for field in fields %}
                     {% if field.show_in_admin_form %}
                         {% if field.type == 'string' %}
-                            {{ identifiers.snake }}: item.{{ identifiers.snake }},
+                            {{ field.identifiers.snake }}: item.{{ field.identifiers.snake }},
 
                         {% elif field.type == 'text' %}
-                            {{ identifiers.snake }}: item.{{ identifiers.snake }},
+                            {{ field.identifiers.snake }}: item.{{ field.identifiers.snake }},
 
                         {% elif field.type == 'date' %}
-                            {{ identifiers.snake }}: moment(item.{{ identifiers.snake }}).format('YYYY-MM-DDTHH:mm'),
+                            {{ field.identifiers.snake }}: moment(item.{{ field.identifiers.snake }}).format('YYYY-MM-DDTHH:mm'),
 
                         {% elif field.type == 'boolean' %}
-                            {{ identifiers.snake }}: false,
+                            {{ field.identifiers.snake }}: false,
 
                         {% elif field.type == 'image' %}
-                            {{ identifiers.snake }}_id: item.{{ identifiers.snake }} ? item.{{ identifiers.snake }}.id : null,
+                            {{ field.identifiers.snake }}_id: item.{{ field.identifiers.snake }} ? item.{{ field.identifiers.snake }}.id : null,
                         {% endif %}
                     {% endif %}
                 {% endfor %}
