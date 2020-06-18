@@ -1,0 +1,82 @@
+<?php
+
+namespace App\PageTemplates;
+
+use App\Contracts\PageTemplate;
+use App\Http\Resources\MediaResource;
+use App\Models\Page;
+
+class {{ identifiers.file_name }}Template implements PageTemplate
+{
+    public static function getId(): string
+    {
+        return '{{ identifiers.template_id }}';
+    }
+
+    public static function getName(): string
+    {
+        return '{{ identifiers.template_name }}';
+    }
+
+    public static function validateData(array $data)
+    {
+        validator($data, [
+            {% for field in fields %}
+                {% if field.type == 'string' %}
+                    '{{ field.identifiers.snake }}' => '{% if field.required %}required|{% endif %}string|max:255',
+                {% elif field.type == 'text' %}
+                    '{{ field.identifiers.snake }}' => '{% if field.required %}required|{% endif %}string',
+                {% elif field.type == 'url' %}
+                    '{{ field.identifiers.snake }}' => '{% if field.required %}required|{% endif %}url',
+                {% elif field.type == 'image' %}
+                    '{{ field.identifiers.snake }}' => '{% if field.required %}required|{% endif %}exists:media:id',
+                {% endif %}
+            {% endfor %}
+        ])->validate();
+    }
+
+    public static function saveData(Page $page, array $data)
+    {
+        $page->addContents([
+            {% for field in fields %}
+                {% if field.type in ['string', 'text', 'url'] %}
+                    '{{ field.identifiers.snake }}' => $data['{{ field.identifiers.snake }}'],
+                {% endif %}
+            {% endfor %}
+        ]);
+        
+        {% for field in fields %}
+            {% if field.type == 'image' %}
+                $page->attachMedia($data['{{ field.identifiers.snake }}_id'], '{{ options.group }}', [
+                    {% for conversion in options.conversions %}
+                        {{ conversion }}
+                    {% endfor %}
+                ]);
+            {% endif %}
+        {% endfor %}
+    }
+
+    public static function resetData(Page $page)
+    {
+        $page->clearContents();
+        $page->detachMedia();
+    }
+
+    public static function getData(Page $page): array
+    {
+        return [
+            {% for field in fields %}
+                {% if field.type != 'image' %}
+                    '{{ identifiers.snake }}' => $page->getContent('{{ field.identifiers.snake }}'),
+                {% else %}
+                    '{{ identifiers.snake }}' => new MediaResource($page->getFirstMedia('{{ field.options.group }}')),
+                {% endif %}
+            {% endfor %}
+        ];
+    }
+
+    public static function render(Page $page)
+    {
+        return view('front.{{ identifiers.template_id }}', compact('page'));
+    }
+}
