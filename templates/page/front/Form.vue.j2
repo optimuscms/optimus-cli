@@ -1,54 +1,44 @@
 <template>
     <div class="field">
-    {{#each fields}}
-        {{#no-break}}
-        <!-- {{identifiers.label}} -->
-        <o-form-field
-            input="{{identifiers.snake}}"
-            label="{{identifiers.label}}"
-            {{#if required}}required{{/if}}
-        >
-            {{#if-type-is "string"}}
-            <o-input
-                id="{{identifiers.snake}}"
-                v-model="form.{{identifiers.snake}}"
-                {{#if required}}required{{/if}}
-            />
-            {{/if-type-is}}
-        
-            {{#if-type-is "text"}}
-            <editor
-                id="{{identifiers.snake}}"
-                v-model="form.{{identifiers.snake}}"
-            />
-            {{/if-type-is}}
-        
-            {{#if-type-is "url"}}
-            <o-input
-                id="{{identifiers.snake}}"
-                v-model="form.{{identifiers.snake}}"
-                type="url"
-                {{#if required}}required{{/if}}
-            />
-            {{/if-type-is}}
-        
-            {{#if-type-is "image"}}
-            <media-picker
-                id="{{identifiers.snake}}_id"
-                v-model="form.{{identifiers.snake}}_id"
-                :media="getItemAttribute('{{identifiers.snake}}')"
-                show-preview
-            />
-            
-            <template slot="help">
-                This image will be constrained to TODOpx width
-            </template>
-            {{/if-type-is}}
-        </o-form-field>
-        {{/no-break}}
+        {% for field in fields %}
+            <!-- {{ field.identifiers.label }} -->
+            <o-form-field
+                input="{{ field.identifiers.snake }}"
+                label="{{ field.identifiers.label }}"
+                {% if field.required %}required{% endif %}
+            >
+                {% if field.type == 'string' %}
+                    <o-input
+                        id="{{ field.identifiers.snake }}"
+                        v-model="form.{{ field.identifiers.snake }}"
+                        {% if field.required %}required{% endif %}
+                    />
+                {% elif field.type == 'text' %}
+                    <editor
+                        id="{{ field.identifiers.snake }}"
+                        v-model="form.{{ field.identifiers.snake }}"
+                    />
+                {% elif field.type == 'url' %}
+                    <o-input
+                        id="{{ field.identifiers.snake }}"
+                        v-model="form.{{ field.identifiers.snake }}"
+                        type="url"
+                        {% if field.required %}required{% endif %}
+                    />
+                {% elif field.type == 'image' %}
+                    <media-picker
+                        id="{{ field.identifiers.snake}}_id"
+                        v-model="form.{{ field.identifiers.snake}}_id"
+                        :media="getItemAttribute('{{ field.identifiers.snake }}')"
+                        show-preview
+                    />
 
-
-    {{/each}}
+                    <template slot="help">
+                        This image will be constrained to TODOpx width
+                    </template>
+                {% endif %}
+            </o-form-field>
+        {% endfor %}
     </div>
 </template>
 
@@ -61,18 +51,13 @@ export default {
     data() {
         return {
             form: {
-            {{#no-break}}
-            {{#each fields}}
-                {{#if-not-type-is "image"}}
-                {{identifiers.snake}}: '',
-                {{/if-not-type-is}}
-
-                {{#if-type-is "image"}}
-                {{identifiers.snake}}_id: null,
-                {{/if-type-is}}
-            {{/each}}
-            {{/no-break}}
-
+                {% for field in fields %}
+                    {% if field.type != 'image' %}
+                        {{ field.identifiers.snake }}: '',
+                    {% else %}
+                        {{ field.identifiers.snake }}_id: null,
+                    {% endif %}
+                {% endfor %}
             },
         };
     },
@@ -85,18 +70,13 @@ export default {
                 }
 
                 this.form = {
-                {{#no-break}}
-                {{#each fields}}
-                    {{#if-not-type-is "image"}}
-                    {{identifiers.snake}}: item.{{identifiers.snake}},
-                    {{/if-not-type-is}}
-
-                    {{#if-type-is "image"}}
-                    {{identifiers.snake}}_id: item.{{identifiers.snake}} ? item.{{identifiers.snake}}.id : null,
-                    {{/if-type-is}}
-                {{/each}}
-                {{/no-break}}
-                
+                    {% for field in fields %}
+                        {% if field.type != 'image' %}
+                            {{ field.identifiers.snake }}: item.{{ field.identifiers.snake }},
+                        {% else %}
+                            {{ field.identifiers.snake }}_id: item.{{ field.identifiers.snake }} ? item.{{ field.identifiers.snake }}.id : null,
+                        {% endif %}
+                    {% endfor %}
                 };
             },
             immediate: true,

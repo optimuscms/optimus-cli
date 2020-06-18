@@ -244,12 +244,12 @@ class PageGenerator(Generator):
     def _get_template_files(self):
         return [
             [
-                'back/Template.php.hbs',
-                'app/PageTemplates/{{identifiers.file_name}}Template.php'
+                'back/Template.php.j2',
+                'app/PageTemplates/{{ identifiers.file_name }}Template.php'
             ],
             [
-                'front/Form.vue.hbs',
-                'resources/js/back/modules/pages/views/templates/{{identifiers.file_name}}.vue'
+                'front/Form.vue.j2',
+                'resources/js/back/modules/pages/views/templates/{{ identifiers.file_name }}.vue'
             ]
         ]
 
