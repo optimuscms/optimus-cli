@@ -69,7 +69,7 @@ class {{ identifiers.file_name }}Template implements PageTemplate
                 {% if field.type != 'image' %}
                     '{{ field.identifiers.snake }}' => $page->getContent('{{ field.identifiers.snake }}'),
                 {% else %}
-                    '{{ field.identifiers.snake }}' => new MediaResource($page->getFirstMedia('{{ field.options.group }}')),
+                    '{{ field.identifiers.snake }}_id' => new MediaResource($page->getFirstMedia('{{ field.options.group }}')),
                 {% endif %}
             {% endfor %}
         ];
