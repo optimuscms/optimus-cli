@@ -1,6 +1,5 @@
-<?php
 
-namespace App\Http\Controllers\Back\Api;
+<?php namespace App\Http\Controllers\Back\Api;
 
 use App\Http\Controllers\Back\Controller;
 use App\Http\Resources\StaffMemberResource;
@@ -15,7 +14,7 @@ use Illuminate\Http\Response;
 class StaffMembersController extends Controller
 {
     /**
-     * Display a paginated list of Staff Members.
+     * Display a paginated list of staff members.
      *
      * @param Request $request
      * @return ResourceCollection
@@ -24,68 +23,9 @@ class StaffMembersController extends Controller
     {
         /** @var Collection $staffMembers */
         $staffMembers = StaffMember::query()
-        
-            
-
-            
-                ->ordered()
-            
-        
-            
-
-            
-        
-            
-
-            
-        
-            
-
-            
-        
-            
-                ->withDrafts()
-            
-
-            
-        
-            
-
-            
-        
-
-            ->with([
-            
-                
-
-                
-            
-                
-
-                
-            
-                
-
-                
-                    'meta',
-                
-            
-                
-                    'media',
-                
-
-                
-            
-                
-
-                
-            
-                
-
-                
-            
-            ])
-
+            ->withDrafts()
+            ->with(['media', 'meta'])
+            ->ordered()
             ->applyFilters($request->all())
             ->paginate();
 
@@ -93,7 +33,7 @@ class StaffMembersController extends Controller
     }
 
     /**
-     * Create a new Staff Member.
+     * Create a new staff member.
      *
      * @param Request $request
      * @return StaffMemberResource
@@ -102,67 +42,23 @@ class StaffMembersController extends Controller
     {
         $this->validateStaffMember($request);
 
-        $staffMember = $this->populateStaffMember(
-            new StaffMember(), $request
-        );
+        $staffMember = $this->populateStaffMember(new StaffMember(), $request);
 
         $staffMember->save();
 
-        
-            
+        $this->attachMedia($staffMember, $request);
 
-            
+        // Save meta...
+        $staffMember->saveMeta($request->input('meta', []));
 
-            
-        
-            
-
-            
-
-            
-        
-            
-
-            
-                // Save meta...
-                $staffMember->saveMeta(
-                    $request->input('meta', [])
-                );
-            
-
-            
-        
-            
-                $this->attachMedia($staffMember, $request);
-            
-
-            
-
-            
-        
-            
-
-            
-
-            
-                // Schedule the Staff Member...
-                $staffMember->publishAt(
-                    Carbon::parse($request->input('published_at'))
-                );
-            
-        
-            
-
-            
-
-            
-        
+        // Schedule the staff member...
+        $staffMember->publishAt(Carbon::parse($request->input('published_at')));
 
         return new StaffMemberResource($staffMember);
     }
 
     /**
-     * Display the specified Staff Member.
+     * Display the specified staff member.
      *
      * @param int $id
      * @return StaffMemberResource
@@ -171,61 +67,15 @@ class StaffMembersController extends Controller
     {
         /** @var StaffMember $StaffMember */
         $staffMember = StaffMember::query()
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                ->withDrafts()
-            
-        
-            
-        
-
-            ->with([
-            
-                
-
-                
-            
-                
-
-                
-            
-                
-
-                
-                    'meta',
-                
-            
-                
-                    'media',
-                
-
-                
-            
-                
-
-                
-            
-                
-
-                
-            
-            ])
-
+            ->withDrafts()
+            ->with(['media', 'meta'])
             ->findOrFail($id);
 
         return new StaffMemberResource($staffMember);
     }
 
     /**
-     * Update the specified Staff Member.
+     * Update the specified staff member.
      *
      * @param Request $request
      * @param int $id
@@ -235,142 +85,55 @@ class StaffMembersController extends Controller
     {
         /** @var staffMember $StaffMember */
         $staffMember = StaffMember::query()
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                ->withDrafts()
-            
-        
-            
-        
+            ->withDrafts()
 
             ->findOrFail($id);
 
         $this->validateStaffMember($request);
 
-        $staffMember = $this->populateStaffMember(
-            $staffMember, $request
-        );
+        $staffMember = $this->populateStaffMember($staffMember, $request);
 
         $staffMember->save();
 
-        
-            
+        $this->detatchMedia();
 
-            
+        $this->attachMedia($staffMember, $request);
 
-            
-        
-            
+        // Save meta...
+        $staffMember->saveMeta($request->input('meta', []));
 
-            
-
-            
-        
-            
-
-            
-                // Save meta...
-                $staffMember->saveMeta(
-                    $request->input('meta', [])
-                );
-            
-
-            
-        
-            
-                $this->detatchMedia();
-
-                $this->attachMedia($staffMember, $request);
-            
-
-            
-
-            
-        
-            
-
-            
-
-            
-                // Schedule the Staff Member...
-                $staffMember->publishAt(
-                    Carbon::parse($request->input('published_at'))
-                );
-            
-        
-            
-
-            
-
-            
-        
+        // Schedule the staff member...
+        $staffMember->publishAt(Carbon::parse($request->input('published_at')));
 
         return new StaffMemberResource($staffMember);
     }
 
-    
-        
-            /**
-            * Move the specified Staff Member.
-            *
-            * @param Request $request
-            * @param int $id
-            * @return Response
-            */
-            public function move(Request $request, $id)
-            {
-                $staffMember = StaffMember::query()
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                        ->withDrafts()
-                    
-                
-                    
-                
+    /**
+     * Move the specified staff member.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return Response
+     */
+    public function move(Request $request, $id)
+    {
+        $staffMember = StaffMember::query()
+            ->withDrafts()
+            ->findOrFail($id);
 
-                    ->findOrFail($id);
+        $request->validate([
+            'direction' => 'required|in:up,down',
+        ]);
 
-                $request->validate([
-                    'direction' => 'required|in:up,down',
-                ]);
+        $request->input('direction') === 'down'
+            ? $staffMember->moveOrderDown()
+            : $staffMember->moveOrderUp();
 
-                $request->input('direction') === 'down'
-                    ? $staffMember->moveOrderDown()
-                    : $staffMember->moveOrderUp();
-
-                return response()->noContent();
-            }
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
+        return response()->noContent();
+    }
 
     /**
-     * Delete the specified Staff Member.
+     * Delete the specified staff member.
      *
      * @param int $id
      * @return Response
@@ -378,22 +141,7 @@ class StaffMembersController extends Controller
     public function destroy($id)
     {
         staffMember::query()
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                ->withDrafts()
-            
-        
-            
-        
-
+            ->withDrafts()
             ->findOrFail($id)
             ->delete();
 
@@ -408,233 +156,34 @@ class StaffMembersController extends Controller
      */
     protected function validateStaffMember(Request $request)
     {
-        
-            
-
-            
-                $request->validate([
-            
-        
-            
-
-            
-                $request->validate([
-            
-        
-            
-                $request->validate(array_merge([
-            
-
-            
-        
-            
-
-            
-                $request->validate([
-            
-        
-            
-
-            
-                $request->validate([
-            
-        
-            
-
-            
-                $request->validate([
-            
-        
-
-        
-            
-                
-                    '' => '
-                        
-                        required|
-                        string|max:255
-                    ',
-                
-
-                
-
-                
-
-                
-
-                
-
-                
-            
-        
-            
-                
-                    '' => '
-                        nullable|
-                        
-                        string|max:255
-                    ',
-                
-
-                
-
-                
-
-                
-
-                
-
-                
-            
-        
-            
-        
-            
-                
-
-                
-
-                
-
-                
-
-                
-
-                
-                    '' => '
-                        
-                        required|
-                        exists:media,id
-                    ',
-                
-            
-        
-            
-                
-
-                
-
-                
-                    '' => '
-                        nullable|
-                        required|
-                        date
-                    ',
-                
-
-                
-
-                
-
-                
-            
-        
-            
-        
-
-        
-            
-
-            
-                ]);
-            
-        
-            
-
-            
-                ]);
-            
-        
-            
-                ], Meta::rules()));
-            
-
-            
-        
-            
-
-            
-                ]);
-            
-        
-            
-
-            
-                ]);
-            
-        
-            
-
-            
-                ]);
-            
-        
+        $request->validate(
+            array_merge(
+                [
+                    'name' => 'required|string:max:255',
+                    'slug' => 'nullable|string:max:255',
+                    'image' => 'required|exists:media,id',
+                    'published_at' => 'nullable|required|date',
+                ],
+                Meta::rules()
+            )
+        );
     }
 
     protected function populateStaffMember(
         StaffMember $staffMember,
         Request $request
     ) {
-        return tap ($staffMember, function (StaffMember $staffMember) use (
+        return tap($staffMember, function (StaffMember $staffMember) use (
             $request
         ) {
-            
-                
-                    $staffMember->name = $request->input('name');
-                
-            
-                
-                    $staffMember->slug = $request->input('slug');
-                
-            
-                
-                    $staffMember->description = $request->input('description');
-                
-            
-                
-            
-                
-            
-                
-            
+            $staffMember->name = $request->input('name');
+            $staffMember->slug = $request->input('slug');
+            $staffMember->description = $request->input('description');
         });
     }
 
-    
-        
-    
-        
-    
-        
-    
-        
-            protected function attachMedia (
-                StaffMember $staffMember, 
-                Request $request
-            ) {
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                        $staffMember->attachMedia(
-                                $request->input('image_id'),
-                                'image'
-                            );
-                    
-                
-                    
-                
-                    
-                
-            }
-        
-    
-        
-    
-        
-    
+    protected function attachMedia(StaffMember $staffMember, Request $request)
+    {
+        $staffMember->attachMedia($request->input('image_id'), 'image');
+    }
 }
