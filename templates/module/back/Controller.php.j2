@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Back\Api;
 
 use App\Http\Controllers\Back\Controller;
-use App\Http\Resources\{{identifiers.pascal_singular}}Resource;
+use App\Http\Resources\{{ identifiers.pascal_singular }}Resource;
 use App\Models\Meta;
-use App\Models\{{identifiers.pascal_singular}};
+use App\Models\{{ identifiers.pascal_singular }};
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -27,7 +27,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
         {% for feature in features %}
             {% if 'Draftable' in feature.type %}
                 ->withDrafts()
-            {% endif $}
+            {% endif %}
 
             {% if 'Sortable' in feature.type %}
                 ->ordered()
@@ -38,11 +38,11 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
             {% for feature in features %}
                 {% if 'HasMedia' in feature.type %}
                     'media',
-                {% endif $}
+                {% endif %}
 
                 {% if 'HasSeoFields' in feature.type %}
                     'meta',
-                {% endif $
+                {% endif %}
             {% endfor %}
             ])
 
@@ -70,12 +70,12 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
 
         {% for feature in features %}
             {% if 'HasMedia' in feature.type %}
-                $this->attachMedia(${{identifiers.camel_singular}}, $request);
+                $this->attachMedia(${{ identifiers.camel_singular }}, $request);
             {% endif %}
 
             {% if 'HasSeoFields' in feature.type %}
                 // Save meta...
-                ${{identifiers.camel_singular}}->saveMeta(
+                ${{ identifiers.camel_singular }}->saveMeta(
                     $request->input('meta', [])
                 );
             {% endif %}
@@ -104,18 +104,18 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
         {% for feature in features %}
             {% if 'Draftable' in feature.type %}
                 ->withDrafts()
-            {% endif $}
+            {% endif %}
         {% endfor %}
 
             ->with([
             {% for feature in features %}
                 {% if 'HasMedia' in feature.type %}
                     'media',
-                {% endif $}
+                {% endif %}
 
                 {% if 'HasSeoFields' in feature.type %}
                     'meta',
-                {% endif $
+                {% endif %}
             {% endfor %}
             ])
 
@@ -138,7 +138,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
         {% for feature in features %}
             {% if 'Draftable' in feature.type %}
                 ->withDrafts()
-            {% endif $}
+            {% endif %}
         {% endfor %}
 
             ->findOrFail($id);
@@ -155,12 +155,12 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
             {% if 'HasMedia' in feature.type %}
                 $this->detatchMedia();
 
-                $this->attachMedia(${{identifiers.camel_singular}}, $request);
+                $this->attachMedia(${{ identifiers.camel_singular }}, $request);
             {% endif %}
 
             {% if 'HasSeoFields' in feature.type %}
                 // Save meta...
-                ${{identifiers.camel_singular}}->saveMeta(
+                ${{ identifiers.camel_singular }}->saveMeta(
                     $request->input('meta', [])
                 );
             {% endif %}
@@ -179,7 +179,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
     {% for feature in features %}
         {% if 'Sortable' in feature.type %}
             /**
-            * Move the specified {{identifiers.label_singular}}.
+            * Move the specified {{ identifiers.label_singular }}.
             *
             * @param Request $request
             * @param int $id
@@ -191,7 +191,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
                 {% for feature in features %}
                     {% if 'Draftable' in feature.type %}
                         ->withDrafts()
-                    {% endif $}
+                    {% endif %}
                 {% endfor %}
 
                     ->findOrFail($id);
@@ -201,12 +201,12 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
                 ]);
 
                 $request->input('direction') === 'down'
-                    ? ${{identifiers.camel_singular}}->moveOrderDown()
-                    : ${{identifiers.camel_singular}}->moveOrderUp();
+                    ? ${{ identifiers.camel_singular }}->moveOrderDown()
+                    : ${{ identifiers.camel_singular }}->moveOrderUp();
 
                 return response()->noContent();
             }
-        {% endif $}
+        {% endif %}
     {% endfor %}
 
     /**
@@ -221,7 +221,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
         {% for feature in features %}
             {% if 'Draftable' in feature.type %}
                 ->withDrafts()
-            {% endif $}
+            {% endif %}
         {% endfor %}
 
             ->findOrFail($id)
@@ -241,17 +241,17 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
         {% for feature in features %}
             {% if 'HasSeoFields' in feature.type %}
                 $request->validate(array_merge([
-            {% endif $}
+            {% endif %}
 
             {% if not 'HasSeoFields' in feature.type %}
                 $request->validate([
-            {% endif $}
+            {% endif %}
         {% endfor %}
 
         {% for field in fields %}
             {% if field.validate_in_controller %}
                 {% if 'string' in field.type %}
-                    '{{identifiers.snake}}' => '
+                    '{{ identifiers.snake }}' => '
                         {% if field.nullable %}nullable|{% endif %}
                         {% if field.required %}required|{% endif %}
                         string|max:255
@@ -259,7 +259,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
                 {% endif %}
 
                 {% if 'text' in field.type %}
-                    '{{identifiers.snake}}' => '
+                    '{{ identifiers.snake }}' => '
                         {% if field.nullable %}nullable|{% endif %}
                         {% if field.required %}required|{% endif %}
                         string
@@ -267,7 +267,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
                 {% endif %}
 
                 {% if 'date' in field.type %}
-                    '{{identifiers.snake}}' => '
+                    '{{ identifiers.snake }}' => '
                         {% if field.nullable %}nullable|{% endif %}
                         {% if field.required %}required|{% endif %}
                         date
@@ -275,7 +275,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
                 {% endif %}
 
                 {% if 'integer' in field.type %}
-                    '{{identifiers.snake}}' => '
+                    '{{ identifiers.snake }}' => '
                         {% if field.nullable %}nullable|{% endif %}
                         {% if field.required %}required|{% endif %}
                         number
@@ -283,7 +283,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
                 {% endif %}
 
                 {% if 'boolean' in field.type %}
-                    '{{identifiers.snake}}' => '
+                    '{{ identifiers.snake }}' => '
                         {% if field.nullable %}nullable|{% endif %}
                         {% if field.required %}present|{% endif %}
                         boolean
@@ -291,7 +291,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
                 {% endif %}
 
                 {% if 'image' in field.type %}
-                    '{{identifiers.snake}}' => '
+                    '{{ identifiers.snake }}' => '
                         {% if field.nullable %}nullable|{% endif %}
                         {% if field.required %}required|{% endif %}
                         exists:media,id
@@ -303,16 +303,16 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
         {% for feature in features %}
             {% if 'HasSeoFields' in feature.type %}
                 ], Meta::rules()));
-            {% endif $}
+            {% endif %}
 
             {% if not 'HasSeoFields' in feature.type %}
                 ]);
-            {% endif $}
+            {% endif %}
         {% endfor %}
     }
 
     protected function populate{{ identifiers.pascal_singular }}(
-        {{identifiers.pascal_singular }} ${{ identifiers.camel_singular }},
+        {{ identifiers.pascal_singular }} ${{ identifiers.camel_singular }},
         Request $request
     ) {
         return tap (${{ identifiers.camel_singular }}, function ({{ identifiers.pascal_singular }} ${{ identifiers.camel_singular }}) use (
@@ -329,7 +329,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
     {% for feature in features %}
         {% if 'HasMedia' in feature.type %}
             protected function attachMedia (
-                {{ identifiers.pascal_singular }} ${{identifiers.camel_singular}}, 
+                {{ identifiers.pascal_singular }} ${{ identifiers.camel_singular }}, 
                 Request $request
             ) {
                 {% for field in fields %}

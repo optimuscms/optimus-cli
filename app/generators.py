@@ -14,7 +14,8 @@ class Generator(object):
     def build(self):
         """Builds new and existing project files from the provided templates and partials"""
         if self.__generate_templates() and self.__generate_partials():
-            print('Successfully generated files for %s, formatting...' % self.__template_path)
+            print('Successfully generated files for %s, formatting...' %
+                  self.__template_path)
 
         # Run php-cs-fixer and eslint
         os.system('php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
@@ -52,9 +53,9 @@ class Generator(object):
                 os.makedirs(destination_directory)
 
             # Abort if the destination file already exists to prevent overwriting
-            if os.path.isfile(destination_path):
-                 print('File %s already exists, aborting...' % destination_path)
-                 return
+            # if os.path.isfile(destination_path):
+            #      print('File %s already exists, aborting...' % destination_path)
+            #      return
 
             # Render and write the template to the destination file
             with open(destination_path, 'w') as destination_file:
@@ -92,8 +93,10 @@ class Generator(object):
             with open(destination_path, 'r') as destination_file:
                 destination_contents = destination_file.read()
 
-                code_tags = re.findall(r'\/\*--OPTIMUS-CLI:([\w-]*)--\*\/', destination_contents)
-                view_tags = re.findall(r'<\!--OPTIMUS-CLI:([\w-]*)-->', destination_contents)
+                code_tags = re.findall(
+                    r'\/\*--OPTIMUS-CLI:([\w-]*)--\*\/', destination_contents)
+                view_tags = re.findall(
+                    r'<\!--OPTIMUS-CLI:([\w-]*)-->', destination_contents)
 
                 destination_tags = code_tags + view_tags
 
@@ -147,7 +150,7 @@ class ModuleGenerator(Generator):
                 'back/Controller.php.j2',
                 'app/Http/Controllers/Back/Api/{{identifiers.pascal_plural}}Controller.php'
             ],
-            
+
             # [
             #     'back/Model.php.hbs',
             #     'app/Models/{{identifiers.pascal_singular}}.php'
