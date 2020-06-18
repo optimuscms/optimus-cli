@@ -164,68 +164,68 @@ class ModuleGenerator(Generator):
             ],
             [
                 'back/Migration.php.j2',
-                'database/migrations/%s_create_{{identifiers.snake_plural}}_table.php' % self.__get_datetime()
+                'database/migrations/%s_create_{{ identifiers.snake_plural }}_table.php' % self.__get_datetime()
             ],
             [
-                'front/api.js.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/api.js'
+                'front/api.js.j2',
+                'resources/js/back/modules/{{ identifiers.kebab_plural }}/routes/api.js'
             ],
             [
-                'front/app.js.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/app.js'
+                'front/app.js.j2',
+                'resources/js/back/modules/{{ identifiers.kebab_plural }}/routes/app.js'
             ],
             [
-                'front/Create.vue.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Create.vue'
+                'front/Create.vue.j2',
+                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Create.vue'
             ],
             [
-                'front/Edit.vue.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Edit.vue'
-            ],
-            [
-                'front/Index.vue.hbs',
-                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Index.vue'
+                'front/Edit.vue.j2',
+                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Edit.vue'
             ],
             # [
-            #     'front/Form.vue.hbs',
-            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/views/partials/Form.vue'
-            # ]
+            #     'front/Index.vue.j2',
+            #     'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Index.vue'
+            # ],
+            [
+                'front/Form.vue.j2',
+                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/partials/Form.vue'
+            ]
         ]
 
     def _get_partial_files(self):
         return [
             # [
-            #     'back/appends/Routes.php.hbs',
+            #     'back/appends/Routes.php.j2',
             #     'routes',
             #     'routes/admin.php'
             # ],
             # [
-            #     'back/appends/OptimusImports.php.hbs',
+            #     'back/appends/OptimusImports.php.j2',
             #     'imports',
             #     'app/Providers/OptimusServiceProvider.php'
             # ],
             # [
-            #     'back/appends/OptimusLinkableTypes.php.hbs',
+            #     'back/appends/OptimusLinkableTypes.php.j2',
             #     'linkable-types',
             #     'app/Providers/OptimusServiceProvider.php'
             # ],
             # [
-            #     'back/appends/OptimusMediaConversions.php.hbs',
+            #     'back/appends/OptimusMediaConversions.php.j2',
             #     'media-conversions',
             #     'app/Providers/OptimusServiceProvider.php'
             # ],
             # [
-            #     'front/appends/Dashboard.vue.hbs',
+            #     'front/appends/Dashboard.vue.j2',
             #     'navigation',
             #     'resources/js/back/components/ui/Dashboard.vue'
             # ],
             # [
-            #     'front/appends/RouterImports.js.hbs',
+            #     'front/appends/RouterImports.js.j2',
             #     'imports',
             #     'resources/js/back/router/index.js'
             # ],
             # [
-            #     'front/appends/RouterRoutes.js.hbs',
+            #     'front/appends/RouterRoutes.js.j2',
             #     'routes',
             #     'resources/js/back/router/index.js'
             # ],
