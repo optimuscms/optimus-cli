@@ -118,7 +118,7 @@ class Generator(object):
                       (tag, destination_path))
                 return False
 
-            # Render and the partial and replace the tag contents
+            # Render and write the partial and replace the tag contents
             with open(destination_path, 'w') as destination_file:
                 rendered_partial = self.__parser.render_file(
                     '%s/%s/%s' % (config.TEMPLATE_DIR,
@@ -134,6 +134,10 @@ class Generator(object):
                 )
 
                 destination_file.write(updated_contents)
+
+            # Run prettier if destination file is PHP
+            if destination_path.endswith('.php'):
+                os.system('prettier %s --write &>/dev/null' % destination_path)
 
         return True
 
