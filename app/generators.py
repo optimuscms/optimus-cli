@@ -182,10 +182,10 @@ class ModuleGenerator(Generator):
                 'front/Edit.vue.j2',
                 'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Edit.vue'
             ],
-            # [
-            #     'front/Index.vue.j2',
-            #     'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Index.vue'
-            # ],
+            [
+                'front/Index.vue.j2',
+                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Index.vue'
+            ],
             [
                 'front/Form.vue.j2',
                 'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/partials/Form.vue'
