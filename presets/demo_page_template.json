@@ -1,8 +1,8 @@
 {
     "identifiers": {
-        "template_id": "home",
-        "template_name": "Home",
-        "file_name": "Home"
+        "template_id": "demo",
+        "template_name": "Demo",
+        "file_name": "Demo"
     },
 
     "fields": [
