@@ -238,29 +238,24 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
 
         {% for field in fields %}
             {% if field.validate_in_controller %}
-                {% if 'string' in field.type %}
+                {% if field.type == 'string' %}
                     {{ validation_rule(field.identifiers.snake, 'string:max:255', field.required, field.nullable) }}
-                {% endif -%}
-
-                {% if 'text' in field.type %}
+                
+                {%- elif field.type == 'text' %}
                     {{ validation_rule(field.identifiers.snake, 'string', field.required, field.nullable) }}
-                {% endif -%}
-
-                {% if 'date' in field.type %}
+                
+                {%- elif field.type == 'date' %}
                     {{ validation_rule(field.identifiers.snake, 'date', field.required, field.nullable) }}
-                {% endif -%}
 
-                {% if 'integer' in field.type %}
+                {%- elif field.type == 'integer' %}
                     {{ validation_rule(field.identifiers.snake, 'number', field.required, field.nullable) }}
-                {% endif -%}
 
-                {% if 'boolean' in field.type %}
+                {%- elif field.type == 'boolean' %}
                     {{ validation_rule(field.identifiers.snake, 'boolean', field.required, field.nullable) }}
-                {% endif -%}
 
-                {% if 'image' in field.type %}
+                {%- elif field.type == 'image' %}
                     {{ validation_rule(field.identifiers.snake, 'exists:media,id', field.required, field.nullable) }}
-                {% endif -%}
+                {% endif %}
             {% endif %}
         {% endfor -%}
 
@@ -279,7 +274,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
             $request
         ) {
             {% for field in fields %}
-                {% if field.update_in_controller and not 'image' in field.type %}
+                {% if field.update_in_controller and not field.type == 'image' %}
                     ${{ identifiers.camel_singular }}->{{ field.identifiers.snake }} = $request->input('{{ field.identifiers.snake }}');
                 {% endif %}
             {% endfor %}
@@ -292,11 +287,11 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
             Request $request
         ) {
             {% for field in fields %}
-                {% if field.update_in_controller and 'image' in field.type %}
+                {% if field.update_in_controller and field.type == 'image'  %}
                     ${{ identifiers.camel_singular }}->attachMedia(
-                            $request->input('{{ field.identifiers.snake }}_id'),
-                            '{{ field.identifiers.snake }}'
-                        );
+                        $request->input('{{ field.identifiers.snake }}_id'),
+                        '{{ field.identifiers.snake }}'
+                    );
                 {% endif %}
             {% endfor %}
         }

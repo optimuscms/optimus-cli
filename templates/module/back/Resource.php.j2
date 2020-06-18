@@ -21,7 +21,7 @@ class {{ identifiers.pascal_singular }}Resource extends JsonResource
             'created_at' => (string) $this->created_at,
 
             {%- for field in fields %}
-                {% if not 'image' in field.type %}
+                {% if not field.type == 'image' %}
                     '{{ field.identifiers.snake }}' => $this->{{ field.identifiers.snake }},
                 {% endif %}
             {% endfor -%}
@@ -40,7 +40,7 @@ class {{ identifiers.pascal_singular }}Resource extends JsonResource
                 $this->mergeWhen($this->resource->relationLoaded('media'), function () {
                     return [
                         {% for field in fields %}
-                            {% if 'image' in field.type %}
+                            {% if field.type == 'image' %}
                                 '{{ field.identifiers.snake }}' => new MediaResource($this->getFirstMedia('{{ field.identifiers.snake }}'))
                             {% endif %}
                         {% endfor %}

@@ -16,23 +16,27 @@ class Create{{ identifiers.pascal_plural }}Table extends Migration
         Schema::create('{{ identifiers.snake_plural }}', function (Blueprint $table) {
             $table->bigIncrements('id');
             {% for field in fields %}
-                {% if field.type is 'string' %}
+                {% if field.type == 'string' %}
                     $table->string('{{ field.identifiers.snake }}')
                     {% if field.nullable %}->nullable(){% endif %}
                     {% if field.default %}->default(){% endif %};
-                {% elif field.type is 'text' %}
+
+                {% elif field.type == 'text' %}
                     $table->text('{{ field.identifiers.snake }}')
                     {% if field.nullable %}->nullable(){% endif %}
                     {% if field.default %}->default(){% endif %};
-                {% elif field.type is 'date' %}
+
+                {% elif field.type == 'date' %}
                     $table->timestamp('{{ field.identifiers.snake }}')
                     {% if field.nullable %}->nullable(){% endif %}
                     {% if field.default %}->default(){% endif %};
-                {% elif field.type is 'boolean' %}
+
+                {% elif field.type == 'boolean' %}
                     $table->boolean('{{ field.identifiers.snake }}')
                     {% if field.nullable %}->nullable(){% endif %}
                     {% if field.default %}->default(){% endif %};
-                {% elif field.type is 'integer' %}
+                    
+                {% elif field.type == 'integer' %}
                     $table->integer('{{ field.identifiers.snake }}')
                     {% if field.nullable %}->nullable(){% endif %}
                     {% if field.default %}->default(){% endif %};
