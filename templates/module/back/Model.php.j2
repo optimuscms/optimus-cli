@@ -33,24 +33,30 @@ use Illuminate\Database\Eloquent\Model;
     use Spatie\EloquentSortable\SortableTrait;
 {% endif %}
 
-class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-comma}}{{#each features}}{{#if-type-is "Linkable"}}Linkable,{{#if options.synchronises_menu_item_urls}}SynchronisesMenuItemUrls,{{/if}}{{/if-type-is}}{{#if-type-is "Sortable"}}Sortable,{{/if-type-is}}{{/each}}{{/no-trailing-comma}}
+class {{ identifiers.pascal_singular }} extends Model implements 
+{%- for feature in features %}
+    {% if feature.type == 'Linkable' %}
+        Linkable,
+
+        {%- if feature.options.synchronises_menu_item_urls %}
+            SynchronisesMenuItemUrls,
+        {%- endif -%}
+    {%- endif -%}
+
+    {%- if feature.type == 'Sortable' -%}
+        Sortable,
+    {%- endif -%}
+{%- endfor %}
 {
-    use {{#no-trailing-comma}}{{#no-break}}{{#lstrip}}
-        {{#if-has-feature "Draftable"}}Draftable,{{/if-has-feature}}
-
-        {{#if-has-feature "HasSlug"}}HasSlug,{{/if-has-feature}}
-
-        {{#if-has-feature "HasMedia"}}HasMedia,{{/if-has-feature}}
-
-        {{#if-has-feature "HasSeoFields"}}HasSeoFields,{{/if-has-feature}}
-
-        {{#if-has-feature "Linkable"}}LinkableTrait,{{/if-has-feature}}
-
-        {{#if-has-feature "Sortable"}}SortableTrait,{{/if-has-feature}}
-    {{/lstrip}}{{/no-break}}{{/no-trailing-comma}};
+    use {% if has_feature('Draftable') %}Draftable,{%- endif -%}
+        {%- if has_feature('HasSlug') %}HasSlug,{%- endif -%}
+        {%- if has_feature('HasMedia') %}HasMedia,{%- endif -%}
+        {%- if has_feature('HasSeoFields') %}HasSeoFields,{%- endif -%}
+        {%- if has_feature('Linkable') %}LinkableTrait,{%- endif -%}
+        {%- if has_feature('Sortable') %}SortableTrait,{%- endif -%};
     
-    {{#each features}}
-        {{#if-type-is "Draftable"}}
+    {% for feature in features %}
+        {% if feature.type == 'Draftable' %}
             /**
             * The attributes that should be cast to native types.
             *
@@ -68,9 +74,9 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
             protected $dates = [
                 'published_at',
             ];
-        {{/if-type-is}}
+        {% endif %}
 
-        {{#if-type-is "HasSlug"}}
+        {% if feature.type == 'HasSlug' %}
             /**
             * Get the model's slug options.
             *
@@ -79,12 +85,12 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
             public function getSlugOptions(): SlugOptions
             {
                 return SlugOptions::create()
-                    ->generateSlugsFrom('{{this.options.generate_from}}')
-                    ->saveSlugsTo('{{this.options.save_to}}');
+                    ->generateSlugsFrom('{{ feature.options.generate_from }}')
+                    ->saveSlugsTo('{{ feature.options.save_to }}');
             }
 
             /**
-            * Find a {{@root.identifiers.label_singular}} with the given slug or fail.
+            * Find a {{ identifiers.label_singular }} with the given slug or fail.
             *
             * @param string $slug
             * @return mixed
@@ -95,26 +101,26 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
                     ->where('slug', $slug)
                     ->firstOrFail();
             }
-        {{/if-type-is}}
+        {% endif %}
         
-        {{#if-type-is "HasMedia"}}
+        {% if feature.type == 'HasMedia' %}
             /**
-            * Register the {{@root.identifiers.label_singular}} media groups.
+            * Register the {{ identifiers.label_singular }} media groups.
             *
             * @return void
             */
             public function registerMediaGroups()
             {
-                {{#each options.groups}}
-                $this->addMediaGroup('{{this.name}}')
-                    ->performConversions(
-                        '{{this.conversion}}'
-                    );
-                {{/each}}
+                {% for group in feature.options.groups %}
+                    $this->addMediaGroup('{{ group.name }}')
+                        ->performConversions(
+                            '{{ group.conversion }}'
+                        );
+                {% endfor %}
             }
-        {{/if-type-is}}
+        {% endif %}
 
-        {{#if-type-is "Linkable"}}
+        {% if feature.type == 'Linkable' %}
             /**
             * Returns the linkable type identifier for this model instance.
             *
@@ -122,7 +128,7 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
             */
             public static function getLinkableTypeIdentifier(): string
             {
-                return '{{@root.identifiers.kebab_plural}}';
+                return '{{ identifiers.kebab_plural }}';
             }
 
             /**
@@ -132,7 +138,7 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
             */
             public static function getLinkableTypeName(): string
             {
-                return '{{@root.identifiers.label_plural}}';
+                return '{{ identifiers.label_plural }}';
             }
 
             /**
@@ -142,7 +148,7 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
             */
             public function getLabel(): string
             {
-                return $this->{{options.label_field}};
+                return $this->{{ feature.options.label_field }};
             }
 
             /**
@@ -162,11 +168,11 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
             */
             public function urlHasChanged(): bool
             {
-                return $this->isDirty('{{options.url_field}}');
+                return $this->isDirty('{{ feature.options.url_field }}');
             }
 
             /**
-            * Builds the query used to retrieve linkable {{@root.identifiers.label_plural}}.
+            * Builds the query used to retrieve linkable {{ identifiers.label_plural }}.
             *
             * @return Builder
             */
@@ -176,7 +182,7 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
             }
 
             /**
-            * Builds the search query used to find linkable {{@root.identifiers.label_singular}} items matching the provided query.
+            * Builds the search query used to find linkable {{ identifiers.label_singular }} items matching the provided query.
             *
             * @param string $input
             * @return Builder
@@ -184,12 +190,12 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
             public static function buildLinkableSearchQuery(string $input): Builder
             {
                 return self::buildLinkableQuery()->where(
-                    '{{options.search_query_field}}', 'like', '%'.$input.'%'
+                    '{{ feature.options.search_query_field }}', 'like', '%'.$input.'%'
                 );
             }
-        {{/if-type-is}}
+        {% endif %}
 
-        {{#if-type-is "Sortable"}}
+        {% if feature.type == 'Sortable' %}
             /**
             * The model's sortable options.
             *
@@ -198,8 +204,8 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
             protected $sortable = [
                 'order_column_name' => 'order',
             ];
-        {{/if-type-is}}
-    {{/each}}
+        {% endif %}
+    {% endfor %}
 
     /**
      * Apply filters to the query.
@@ -210,7 +216,7 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
      */
     public function scopeApplyFilters(Builder $query, array $filters)
     {
-        {{#if-has-feature "Sortable"}}
+        {% if has_feature('Sortable') %}
             // Sort
             if ($sort = $filters['sort'] ?? false) {
                 if (in_array($sort, [
@@ -222,6 +228,6 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
                     $query->orderBy($column, $direction);
                 }
             }
-        {{/if-has-feature}}
+        {% endif %}
     }
 }

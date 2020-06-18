@@ -154,10 +154,10 @@ class ModuleGenerator(Generator):
                 'back/Controller.php.j2',
                 'app/Http/Controllers/Back/Api/{{ identifiers.pascal_plural }}Controller.php'
             ],
-            # [
-            #     'back/Model.php.j2',
-            #     'app/Models/{{ identifiers.pascal_singular }}.php'
-            # ],
+            [
+                'back/Model.php.j2',
+                'app/Models/{{ identifiers.pascal_singular }}.php'
+            ],
             [
                 'back/Resource.php.j2',
                 'app/Http/Resources/{{ identifiers.pascal_singular }}Resource.php'
