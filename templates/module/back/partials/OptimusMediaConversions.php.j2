@@ -1,0 +1,14 @@
+{% for feature in features %}
+    {% if feature.type == 'HasMedia' %}
+        {% for conversion in feature.options.conversions %}
+            Conversion::register(
+                '{{ conversion.name }}',
+                function (Image $image) {
+                    return $image->fit({{ conversion.width }}, {{ conversion.height }});
+                }
+            );
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
+/*--OPTIMUS-CLI:media-conversions--*/
