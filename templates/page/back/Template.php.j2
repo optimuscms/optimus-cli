@@ -47,9 +47,9 @@ class {{ identifiers.file_name }}Template implements PageTemplate
         
         {% for field in fields %}
             {% if field.type == 'image' %}
-                $page->attachMedia($data['{{ field.identifiers.snake }}_id'], '{{ options.group }}', [
-                    {% for conversion in options.conversions %}
-                        {{ conversion }}
+                $page->attachMedia($data['{{ field.identifiers.snake }}_id'], '{{ field.options.group }}', [
+                    {% for conversion in field.options.conversions %}
+                        '{{ conversion }}',
                     {% endfor %}
                 ]);
             {% endif %}
@@ -67,9 +67,9 @@ class {{ identifiers.file_name }}Template implements PageTemplate
         return [
             {% for field in fields %}
                 {% if field.type != 'image' %}
-                    '{{ identifiers.snake }}' => $page->getContent('{{ field.identifiers.snake }}'),
+                    '{{ field.identifiers.snake }}' => $page->getContent('{{ field.identifiers.snake }}'),
                 {% else %}
-                    '{{ identifiers.snake }}' => new MediaResource($page->getFirstMedia('{{ field.options.group }}')),
+                    '{{ field.identifiers.snake }}' => new MediaResource($page->getFirstMedia('{{ field.options.group }}')),
                 {% endif %}
             {% endfor %}
         ];
