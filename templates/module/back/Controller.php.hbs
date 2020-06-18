@@ -33,7 +33,7 @@ class {{identifiers.pascal_plural}}Controller extends Controller
                     {{#if-has-feature "HasMedia"}}
                         'media',
                     {{/if-has-feature}}
-                    
+
                     {{#if-has-feature "HasSeoFields"}}
                         'meta',
                     {{/if-has-feature}}
@@ -100,13 +100,13 @@ class {{identifiers.pascal_plural}}Controller extends Controller
             {{#if-has-feature "Draftable"}}
                 ->withDrafts()
             {{/if-has-feature}}
-            
+
             ->with(
                 {{#no-trailing-comma}}
                     {{#if-has-feature "HasMedia"}}
                         'media',
                     {{/if-has-feature}}
-                    
+
                     {{#if-has-feature "HasSeoFields"}}
                         'meta',
                     {{/if-has-feature}}
@@ -139,9 +139,9 @@ class {{identifiers.pascal_plural}}Controller extends Controller
         ${{identifiers.camel_singular}} = $this->populate{{identifiers.pascal_singular}}(
             ${{identifiers.camel_singular}}, $request
         );
-        
+
         ${{identifiers.camel_singular}}->save();
-        
+
         {{#if-has-feature "HasMedia"}}
             $this->attachMedia(${{identifiers.camel_singular}}, $request);
         {{/if-has-feature}}
@@ -235,77 +235,77 @@ class {{identifiers.pascal_plural}}Controller extends Controller
                             {{#if this.nullable}}
                                 nullable|
                             {{/if}}
-                            
-                            {{#if required}
-                                }required|
+
+                            {{#if required}}
+                                required|
                             {{/if}}
-                            
+
                             string|max:255
                         ',
                     {{/if-type-is}}
-                    
+
                     {{#if-type-is "text"}}
                         '{{identifiers.snake}}' => '
                             {{#if this.nullable}}
                                 nullable|
                             {{/if}}
-                            
+
                             {{#if required}}
                                 required|
                             {{/if}}
-                            
+
                             string
                         ',
                     {{/if-type-is}}
-                    
+
                     {{#if-type-is "date"}}
                         '{{identifiers.snake}}' => '
                             {{#if this.nullable}}
                                 nullable|
                             {{/if}}
-                            
+
                             {{#if required}}
                                 required|
                             {{/if}}
-                            
+
                             date
                         ',
                     {{/if-type-is}}
-                    
+
                     {{#if-type-is "integer"}}
                         '{{identifiers.snake}}' => '
                             {{#if this.nullable}}
                                 nullable|
                             {{/if}}
-                            
+
                             {{#if required}}
                                 required|
                             {{/if}}
-                            
+
                             number
                         ',
                     {{/if-type-is}}
-                    
+
                     {{#if-type-is "boolean"}}
                         '{{identifiers.snake}}' => '
                             {{#if this.nullable}}
                                 nullable|
                             {{/if}}
-                            
+
                             {{#if required}}
                                 present|
                             {{/if}}
-                            
+
                             boolean
                         ',
                     {{/if-type-is}}
-                    
+
                     {{#if-type-is "image"}}
                         '{{identifiers.snake}}_id' => '
                             {{#if this.nullable}}
                                 nullable|
                             {{/if}}
-                            
+
                             {{#if required}}
                                 required|
                             {{/if}}
