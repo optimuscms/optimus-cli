@@ -8,84 +8,87 @@
                     <o-tabs>
                         <o-tab name="Content">
                             {{#each fields}}
-                            {{#if show_in_admin_form}}
-                            
-                            <!-- {{identifiers.label}} -->
-                            <o-form-field
-                                input="{{identifiers.snake}}"
-                                label="{{identifiers.label}}"
-                                {{#if required}}required{{/if}}
-                            >
-                                {{#if-type-is "string"}}
-                                <o-input
-                                    id="{{identifiers.snake}}"
-                                    v-model="form.{{identifiers.snake}}"
-                                    {{#if required}}required{{/if}}
-                                />
-                                {{/if-type-is}}
-                                {{#if-type-is "text"}}
-                                <editor
-                                    id="{{identifiers.snake}}"
-                                    v-model="form.{{identifiers.snake}}"
-                                />
-                                {{/if-type-is}}
-                                {{#if-type-is "date"}}
-                                <div class="field addons">
-                                    <div class="control">
-                                        <div class="button static">
-                                            <icon icon="calendar-alt" />
-                                        </div>
-                                    </div>
+                                {{#if show_in_admin_form}}
+                                    <!-- {{identifiers.label}} -->
+                                    <o-form-field
+                                        input="{{identifiers.snake}}"
+                                        label="{{identifiers.label}}"
+                                        {{#if required}}required{{/if}}
+                                    >
+                                        {{#if-type-is "string"}}
+                                            <o-input
+                                                id="{{identifiers.snake}}"
+                                                v-model="form.{{identifiers.snake}}"
+                                                {{#if required}}required{{/if}}
+                                            />
+                                        {{/if-type-is}}
 
-                                    <div class="control">
-                                        <o-input
-                                            id="{{identifiers.snake}}"
-                                            v-model="form.{{identifiers.snake}}"
-                                            type="datetime-local"
-                                            {{#if required}}required{{/if}}
-                                        />
-                                    </div>
-                                </div>
-                                {{/if-type-is}}
-                                {{#if-type-is "boolean"}}
-                                <o-checkbox
-                                    id="{{identifiers.snake}}"
-                                    v-model="form.{{identifiers.snake}}"
-                                    label="Yes"
-                                    {{#if required}}required{{/if}}
-                                />
-                                {{/if-type-is}}
-                                {{#if-type-is "image"}}
-                                <media-picker
-                                    id="{{identifiers.snake}}_id"
-                                    v-model="form.{{identifiers.snake}}_id"
-                                    :media="getItemAttribute('{{identifiers.snake}}')"
-                                    show-preview
-                                    accepted-extensions="image"
-                                />
+                                        {{#if-type-is "text"}}
+                                            <editor
+                                                id="{{identifiers.snake}}"
+                                                v-model="form.{{identifiers.snake}}"
+                                            />
+                                        {{/if-type-is}}
 
-                                <template slot="help">
-                                    This image will be resized to TODOpx.
-                                </template>
-                                {{/if-type-is}}
-                            </o-form-field>
-                            {{/if}}
+                                        {{#if-type-is "date"}}
+                                            <div class="field addons">
+                                                <div class="control">
+                                                    <div class="button static">
+                                                        <icon icon="calendar-alt" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="control">
+                                                    <o-input
+                                                        id="{{identifiers.snake}}"
+                                                        v-model="form.{{identifiers.snake}}"
+                                                        type="datetime-local"
+                                                        {{#if required}}required{{/if}}
+                                                    />
+                                                </div>
+                                            </div>
+                                        {{/if-type-is}}
+
+                                        {{#if-type-is "boolean"}}
+                                            <o-checkbox
+                                                id="{{identifiers.snake}}"
+                                                v-model="form.{{identifiers.snake}}"
+                                                label="Yes"
+                                                {{#if required}}required{{/if}}
+                                            />
+                                        {{/if-type-is}}
+
+                                        {{#if-type-is "image"}}
+                                            <media-picker
+                                                id="{{identifiers.snake}}_id"
+                                                v-model="form.{{identifiers.snake}}_id"
+                                                :media="getItemAttribute('{{identifiers.snake}}')"
+                                                show-preview
+                                                accepted-extensions="image"
+                                            />
+
+                                            <template slot="help">
+                                                This image will be resized to TODOpx.
+                                            </template>
+                                        {{/if-type-is}}
+                                    </o-form-field>
+                                {{/if}}
                             {{/each}}
                         </o-tab>
 
                         <o-tab name="Meta">
                             {{#if-has-feature "HasSlug"}}
-                            <!-- Slug -->
-                            <o-form-field
-                                input="slug"
-                                label="Slug"
-                            >
-                                <o-input
-                                    id="slug"
-                                    v-model="form.slug"
-                                    :disabled="getItemAttribute('has_fixed_path', false)"
-                                />
-                            </o-form-field>
+                                <!-- Slug -->
+                                <o-form-field
+                                    input="slug"
+                                    label="Slug"
+                                >
+                                    <o-input
+                                        id="slug"
+                                        v-model="form.slug"
+                                        :disabled="getItemAttribute('has_fixed_path', false)"
+                                    />
+                                </o-form-field>
                             {{/if-has-feature}}
 
                             {{#if-has-feature "HasSeoFields"}}
@@ -133,36 +136,33 @@ export default {
         return {
             form: {
                 {{#no-break}}
+                    {{#if-has-feature "HasSlug"}}
+                        slug: '',
+                    {{/if-has-feature}}
 
-                {{#if-has-feature "HasSlug"}}
-                slug: '',
-                {{/if-has-feature}}
+                    {{#each fields}}
+                        {{#if show_in_admin_form}}
+                            {{#if-type-is "string"}}
+                                {{identifiers.snake}}: '',
+                            {{/if-type-is}}
 
-                {{#each fields}}
-                {{#if show_in_admin_form}}
+                            {{#if-type-is "text"}}
+                                {{identifiers.snake}}: '',
+                            {{/if-type-is}}
 
-                {{#if-type-is "string"}}
-                {{identifiers.snake}}: '',
-                {{/if-type-is}}
+                            {{#if-type-is "date"}}
+                                {{identifiers.snake}}: moment().format('YYYY-MM-DDTHH:mm'),
+                            {{/if-type-is}}
 
-                {{#if-type-is "text"}}
-                {{identifiers.snake}}: '',
-                {{/if-type-is}}
+                            {{#if-type-is "boolean"}}
+                                {{identifiers.snake}}: {{identifiers.default}},
+                            {{/if-type-is}}
 
-                {{#if-type-is "date"}}
-                {{identifiers.snake}}: moment().format('YYYY-MM-DDTHH:mm'),
-                {{/if-type-is}}
-
-                {{#if-type-is "boolean"}}
-                {{identifiers.snake}}: {{identifiers.default}},
-                {{/if-type-is}}
-
-                {{#if-type-is "image"}}
-                {{identifiers.snake}}_id: null,
-                {{/if-type-is}}
-
-                {{/if}}
-                {{/each}}
+                            {{#if-type-is "image"}}
+                                {{identifiers.snake}}_id: null,
+                            {{/if-type-is}}
+                        {{/if}}
+                    {{/each}}
                 {{/no-break}}
             },
         };
@@ -174,46 +174,44 @@ export default {
 
             this.form = {
                 {{#if-has-feature "HasSlug"}}
-                slug: item.slug,
+                    slug: item.slug,
                 {{/if-has-feature}}
 
                 {{#no-break}}
-                {{#each fields }}
-                {{#if show_in_admin_form}}
+                    {{#each fields }}
+                        {{#if show_in_admin_form}}
+                            {{#if-type-is "string"}}
+                                {{identifiers.snake}}: item.{{identifiers.snake}},
+                            {{/if-type-is}}
 
-                {{#if-type-is "string"}}
-                {{identifiers.snake}}: item.{{identifiers.snake}},
-                {{/if-type-is}}
+                            {{#if-type-is "text"}}
+                                {{identifiers.snake}}: item.{{identifiers.snake}},
+                            {{/if-type-is}}
 
-                {{#if-type-is "text"}}
-                {{identifiers.snake}}: item.{{identifiers.snake}},
-                {{/if-type-is}}
+                            {{#if-type-is "date"}}
+                                {{identifiers.snake}}: moment(item.{{identifiers.snake}}).format('YYYY-MM-DDTHH:mm'),
+                            {{/if-type-is}}
 
-                {{#if-type-is "date"}}
-                {{identifiers.snake}}: moment(item.{{identifiers.snake}}).format('YYYY-MM-DDTHH:mm'),
-                {{/if-type-is}}
+                            {{#if-type-is "boolean"}}
+                                {{identifiers.snake}}: false,
+                            {{/if-type-is}}
 
-                {{#if-type-is "boolean"}}
-                {{identifiers.snake}}: false,
-                {{/if-type-is}}
-
-                {{#if-type-is "image"}}
-                {{identifiers.snake}}_id: item.{{identifiers.snake}} ? item.{{identifiers.snake}}.id : null,
-                {{/if-type-is}}
-
-                {{/if}}
-                {{/each}}
+                            {{#if-type-is "image"}}
+                                {{identifiers.snake}}_id: item.{{identifiers.snake}} ? item.{{identifiers.snake}}.id : null,
+                            {{/if-type-is}}
+                        {{/if}}
+                    {{/each}}
                 {{/no-break}}
 
                 {{#if-has-feature "HasMeta"}}
-                meta: {
-                    title: meta.title,
-                    description: meta.description,
-                    og_title: meta.og_title,
-                    og_description: meta.og_description,
-                    og_image_id: meta.og_image ? meta.og_image.id : null,
-                    additional_tags: meta.additional_tags,
-                },
+                    meta: {
+                        title: meta.title,
+                        description: meta.description,
+                        og_title: meta.og_title,
+                        og_description: meta.og_description,
+                        og_image_id: meta.og_image ? meta.og_image.id : null,
+                        additional_tags: meta.additional_tags,
+                    },
                 {{/if-has-feature}}
             };
         },
