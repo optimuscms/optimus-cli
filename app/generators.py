@@ -17,8 +17,6 @@ class Generator(object):
             print('Successfully generated files for %s, formatting...' %
                   self.__template_path)
 
-        os.system('prettier --write "**/*.php" "!vendor/" &>/dev/null')
-
         # Run php-cs-fixer and eslint
         os.system('php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
 
