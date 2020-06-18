@@ -148,16 +148,15 @@ class ModuleGenerator(Generator):
         return [
             [
                 'back/Controller.php.j2',
-                'app/Http/Controllers/Back/Api/{{identifiers.pascal_plural}}Controller.php'
+                'app/Http/Controllers/Back/Api/{{ identifiers.pascal_plural }}Controller.php'
             ],
-
             # [
-            #     'back/Model.php.hbs',
-            #     'app/Models/{{identifiers.pascal_singular}}.php'
+            #     'back/Model.php.j2',
+            #     'app/Models/{{ identifiers.pascal_singular }}.php'
             # ],
             [
                 'back/Resource.php.j2',
-                'app/Http/Resources/{{identifiers.pascal_singular}}Resource.php'
+                'app/Http/Resources/{{ identifiers.pascal_singular }}Resource.php'
             ],
             # [
             #     'back/Migration.php.hbs',

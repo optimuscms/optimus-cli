@@ -2,39 +2,36 @@
 
 namespace App\Models;
 
-{{#no-break}}
-    use Illuminate\Database\Eloquent\Builder;
-    use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-    {{#if-has-feature "Draftable"}}
-        use Optix\Draftable\Draftable;
-    {{/if-has-feature}}
+{%- if has_feature('Draftable') %}
+    use Optix\Draftable\Draftable;
+{% endif -%}
 
-    {{#if-has-feature "HasSlug"}}
-        use Spatie\Sluggable\HasSlug;
-        use Spatie\Sluggable\SlugOptions;
-    {{/if-has-feature}}
+{% if has_feature('HasSlug') %}
+    use Spatie\Sluggable\HasSlug;
+    use Spatie\Sluggable\SlugOptions;
+{% endif -%}
 
-    {{#if-has-feature "HasMedia"}}
-        use Optix\Media\HasMedia;
-    {{/if-has-feature}}
+{% if has_feature('HasMedia') %}
+    use Optix\Media\HasMedia;
+{% endif -%}
 
-    {{#if-has-feature "HasSeoFields"}}
-        use App\Traits\HasSeoFields;
-    {{/if-has-feature}}
+{% if has_feature('HasSeoFields') %}
+    use App\Traits\HasSeoFields;
+{% endif -%}
 
-    {{#if-has-feature "Linkable"}}
-        use App\Contracts\Linkable;
-        use App\Traits\LinkableTrait;
-        use App\Contracts\SynchronisesMenuItemUrls;
-    {{/if-has-feature}}
+{% if has_feature('Linkable') %}
+    use App\Contracts\Linkable;
+    use App\Traits\LinkableTrait;
+    use App\Contracts\SynchronisesMenuItemUrls;
+{% endif -%}
 
-    {{#if-has-feature "Sortable"}}
-        use Spatie\EloquentSortable\Sortable;
-        use Spatie\EloquentSortable\SortableTrait;
-    {{/if-has-feature}}
-{{/no-break}}
-
+{% if has_feature('Sortable') %}
+    use Spatie\EloquentSortable\Sortable;
+    use Spatie\EloquentSortable\SortableTrait;
+{% endif %}
 
 class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-comma}}{{#each features}}{{#if-type-is "Linkable"}}Linkable,{{#if options.synchronises_menu_item_urls}}SynchronisesMenuItemUrls,{{/if}}{{/if-type-is}}{{#if-type-is "Sortable"}}Sortable,{{/if-type-is}}{{/each}}{{/no-trailing-comma}}
 {
