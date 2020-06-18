@@ -17,10 +17,11 @@ class Generator(object):
             print('Successfully generated files for %s, formatting...' %
                   self.__template_path)
 
+        # Run prettier
+        os.system('prettier --write "**/*.js" &>/dev/null')
+
         # Run php-cs-fixer and eslint
         os.system('php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
-
-        # Todo - run prettier
 
         print('New files formatted successfully.')
 
@@ -54,12 +55,10 @@ class Generator(object):
             if not os.path.exists(destination_directory):
                 os.makedirs(destination_directory)
 
-            # todo - allow overwrites if desired?
-
-            # Abort if the destination file already exists to prevent overwriting
-            # if os.path.isfile(destination_path):
-            #      print('File %s already exists, aborting...' % destination_path)
-            #      return
+            #Abort if the destination file already exists to prevent overwriting
+            if os.path.isfile(destination_path):
+                 print('File %s already exists, aborting...' % destination_path)
+                 return
 
             # Render and write the template to the destination file
             with open(destination_path, 'w') as destination_file:
@@ -194,41 +193,41 @@ class ModuleGenerator(Generator):
 
     def _get_partial_files(self):
         return [
-            # [
-            #     'back/appends/Routes.php.j2',
-            #     'routes',
-            #     'routes/admin.php'
-            # ],
-            # [
-            #     'back/appends/OptimusImports.php.j2',
-            #     'imports',
-            #     'app/Providers/OptimusServiceProvider.php'
-            # ],
-            # [
-            #     'back/appends/OptimusLinkableTypes.php.j2',
-            #     'linkable-types',
-            #     'app/Providers/OptimusServiceProvider.php'
-            # ],
-            # [
-            #     'back/appends/OptimusMediaConversions.php.j2',
-            #     'media-conversions',
-            #     'app/Providers/OptimusServiceProvider.php'
-            # ],
-            # [
-            #     'front/appends/Dashboard.vue.j2',
-            #     'navigation',
-            #     'resources/js/back/components/ui/Dashboard.vue'
-            # ],
-            # [
-            #     'front/appends/RouterImports.js.j2',
-            #     'imports',
-            #     'resources/js/back/router/index.js'
-            # ],
-            # [
-            #     'front/appends/RouterRoutes.js.j2',
-            #     'routes',
-            #     'resources/js/back/router/index.js'
-            # ],
+            [
+                'back/appends/Routes.php.j2',
+                'routes',
+                'routes/admin.php'
+            ],
+            [
+                'back/appends/OptimusImports.php.j2',
+                'imports',
+                'app/Providers/OptimusServiceProvider.php'
+            ],
+            [
+                'back/appends/OptimusLinkableTypes.php.j2',
+                'linkable-types',
+                'app/Providers/OptimusServiceProvider.php'
+            ],
+            [
+                'back/appends/OptimusMediaConversions.php.j2',
+                'media-conversions',
+                'app/Providers/OptimusServiceProvider.php'
+            ],
+            [
+                'front/appends/Dashboard.vue.j2',
+                'navigation',
+                'resources/js/back/components/ui/Dashboard.vue'
+            ],
+            [
+                'front/appends/RouterImports.js.j2',
+                'imports',
+                'resources/js/back/router/index.js'
+            ],
+            [
+                'front/appends/RouterRoutes.js.j2',
+                'routes',
+                'resources/js/back/router/index.js'
+            ],
         ]
 
     def __get_datetime(self):
