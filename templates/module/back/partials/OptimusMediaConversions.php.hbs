@@ -1,15 +1,14 @@
 {{#each features}}
-{{#if-type-is "HasMedia"}}
-    {{#each options.conversions}}
-        Conversion::register(
-            '{{name}}',
-            function (Image $image) {
-                return $image->fit({{width}}, {{height}});
-            }
-        );
-
-    {{/each}}
-{{/if-type-is}}
+    {{#if-type-is "HasMedia"}}
+        {{#each options.conversions}}
+            Conversion::register(
+                '{{name}}',
+                function (Image $image) {
+                    return $image->fit({{width}}, {{height}});
+                }
+            );
+        {{/each}}
+    {{/if-type-is}}
 {{/each}}
 
-        /*--OPTIMUS-CLI:media-conversions--*/
+/*--OPTIMUS-CLI:media-conversions--*/

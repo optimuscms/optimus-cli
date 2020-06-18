@@ -1,14 +1,14 @@
 // {{identifiers.label_plural}}
 Route::prefix('{{identifiers.kebab_plural}}')->group(function () {
-Route::get('/', '{{identifiers.pascal_plural}}Controller@index');
-Route::post('/', '{{identifiers.pascal_plural}}Controller@store');
-Route::get('{id}', '{{identifiers.pascal_plural}}Controller@show');
-Route::patch('{id}', '{{identifiers.pascal_plural}}Controller@update');
-Route::delete('{id}', '{{identifiers.pascal_plural}}Controller@destroy');
+    Route::get('/', '{{identifiers.pascal_plural}}Controller@index');
+    Route::post('/', '{{identifiers.pascal_plural}}Controller@store');
+    Route::get('{id}', '{{identifiers.pascal_plural}}Controller@show');
+    Route::patch('{id}', '{{identifiers.pascal_plural}}Controller@update');
+    Route::delete('{id}', '{{identifiers.pascal_plural}}Controller@destroy');
 
-{{#if-has-feature "Sortable"}}
-Route::put('{id}/move', '{{identifiers.pascal_plural}}Controller@move');
-{{/if-has-feature}}
+    {{#if-has-feature "Sortable"}}
+        Route::put('{id}/move', '{{identifiers.pascal_plural}}Controller@move');
+    {{/if-has-feature}}
 });
     
-    /*--OPTIMUS-CLI:routes--*/
+/*--OPTIMUS-CLI:routes--*/

@@ -3,36 +3,36 @@
 namespace App\Models;
 
 {{#no-break}}
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Builder;
+    use Illuminate\Database\Eloquent\Model;
 
-{{#if-has-feature "Draftable"}}
-use Optix\Draftable\Draftable;
-{{/if-has-feature}}
+    {{#if-has-feature "Draftable"}}
+        use Optix\Draftable\Draftable;
+    {{/if-has-feature}}
 
-{{#if-has-feature "HasSlug"}}
-use Spatie\Sluggable\HasSlug;
-use Spatie\Sluggable\SlugOptions;
-{{/if-has-feature}}
+    {{#if-has-feature "HasSlug"}}
+        use Spatie\Sluggable\HasSlug;
+        use Spatie\Sluggable\SlugOptions;
+    {{/if-has-feature}}
 
-{{#if-has-feature "HasMedia"}}
-use Optix\Media\HasMedia;
-{{/if-has-feature}}
+    {{#if-has-feature "HasMedia"}}
+        use Optix\Media\HasMedia;
+    {{/if-has-feature}}
 
-{{#if-has-feature "HasSeoFields"}}
-use App\Traits\HasSeoFields;
-{{/if-has-feature}}
+    {{#if-has-feature "HasSeoFields"}}
+        use App\Traits\HasSeoFields;
+    {{/if-has-feature}}
 
-{{#if-has-feature "Linkable"}}
-use App\Contracts\Linkable;
-use App\Traits\LinkableTrait;
-use App\Contracts\SynchronisesMenuItemUrls;
-{{/if-has-feature}}
+    {{#if-has-feature "Linkable"}}
+        use App\Contracts\Linkable;
+        use App\Traits\LinkableTrait;
+        use App\Contracts\SynchronisesMenuItemUrls;
+    {{/if-has-feature}}
 
-{{#if-has-feature "Sortable"}}
-use Spatie\EloquentSortable\Sortable;
-use Spatie\EloquentSortable\SortableTrait;
-{{/if-has-feature}}
+    {{#if-has-feature "Sortable"}}
+        use Spatie\EloquentSortable\Sortable;
+        use Spatie\EloquentSortable\SortableTrait;
+    {{/if-has-feature}}
 {{/no-break}}
 
 
@@ -51,157 +51,157 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
 
         {{#if-has-feature "Sortable"}}SortableTrait,{{/if-has-feature}}
     {{/lstrip}}{{/no-break}}{{/no-trailing-comma}};
+    
     {{#each features}}
-    {{#if-type-is "Draftable"}}
+        {{#if-type-is "Draftable"}}
+            /**
+            * The attributes that should be cast to native types.
+            *
+            * @var array
+            */
+            protected $casts = [
+                'is_published' => 'bool',
+            ];
 
-    /**
-    * The attributes that should be cast to native types.
-    *
-    * @var array
-    */
-    protected $casts = [
-        'is_published' => 'bool',
-    ];
+            /**
+            * The attributes that should be mutated to dates.
+            *
+            * @var array
+            */
+            protected $dates = [
+                'published_at',
+            ];
+        {{/if-type-is}}
 
-    /**
-    * The attributes that should be mutated to dates.
-    *
-    * @var array
-    */
-    protected $dates = [
-        'published_at',
-    ];
-    {{/if-type-is}}
-    {{#if-type-is "HasSlug"}}
+        {{#if-type-is "HasSlug"}}
+            /**
+            * Get the model's slug options.
+            *
+            * @return SlugOptions
+            */
+            public function getSlugOptions(): SlugOptions
+            {
+                return SlugOptions::create()
+                    ->generateSlugsFrom('{{this.options.generate_from}}')
+                    ->saveSlugsTo('{{this.options.save_to}}');
+            }
 
-    /**
-    * Get the model's slug options.
-    *
-    * @return SlugOptions
-    */
-    public function getSlugOptions(): SlugOptions
-    {
-        return SlugOptions::create()
-            ->generateSlugsFrom('{{this.options.generate_from}}')
-            ->saveSlugsTo('{{this.options.save_to}}');
-    }
+            /**
+            * Find a {{@root.identifiers.label_singular}} with the given slug or fail.
+            *
+            * @param string $slug
+            * @return mixed
+            */
+            public static function findBySlugOrFail($slug)
+            {
+                return self::query()
+                    ->where('slug', $slug)
+                    ->firstOrFail();
+            }
+        {{/if-type-is}}
+        
+        {{#if-type-is "HasMedia"}}
+            /**
+            * Register the {{@root.identifiers.label_singular}} media groups.
+            *
+            * @return void
+            */
+            public function registerMediaGroups()
+            {
+                {{#each options.groups}}
+                $this->addMediaGroup('{{this.name}}')
+                    ->performConversions(
+                        '{{this.conversion}}'
+                    );
+                {{/each}}
+            }
+        {{/if-type-is}}
 
-    /**
-    * Find a {{@root.identifiers.label_singular}} with the given slug or fail.
-    *
-    * @param string $slug
-    * @return mixed
-    */
-    public static function findBySlugOrFail($slug)
-    {
-        return self::query()
-            ->where('slug', $slug)
-            ->firstOrFail();
-    }
-    {{/if-type-is}}
-    {{#if-type-is "HasMedia"}}
+        {{#if-type-is "Linkable"}}
+            /**
+            * Returns the linkable type identifier for this model instance.
+            *
+            * @return string
+            */
+            public static function getLinkableTypeIdentifier(): string
+            {
+                return '{{@root.identifiers.kebab_plural}}';
+            }
 
-    /**
-    * Register the {{@root.identifiers.label_singular}} media groups.
-    *
-    * @return void
-    */
-    public function registerMediaGroups()
-    {
-        {{#each options.groups}}
-        $this->addMediaGroup('{{this.name}}')
-            ->performConversions(
-                '{{this.conversion}}'
-            );
-        {{/each}}
-    }
-    {{/if-type-is}}
-    {{#if-type-is "Linkable"}}
+            /**
+            * Returns the linkable type name for this model instance.
+            *
+            * @return string
+            */
+            public static function getLinkableTypeName(): string
+            {
+                return '{{@root.identifiers.label_plural}}';
+            }
 
-    /**
-    * Returns the linkable type identifier for this model instance.
-    *
-    * @return string
-    */
-    public static function getLinkableTypeIdentifier(): string
-    {
-        return '{{@root.identifiers.kebab_plural}}';
-    }
+            /**
+            * Returns the menu label for this model instance.
+            *
+            * @return string
+            */
+            public function getLabel(): string
+            {
+                return $this->{{options.label_field}};
+            }
 
-    /**
-    * Returns the linkable type name for this model instance.
-    *
-    * @return string
-    */
-    public static function getLinkableTypeName(): string
-    {
-        return '{{@root.identifiers.label_plural}}';
-    }
+            /**
+            * Builds the post URL for this model instance.
+            *
+            * @return string
+            */
+            public function getUrl(): string
+            {
+                return ''; //todo
+            }
 
-    /**
-    * Returns the menu label for this model instance.
-    *
-    * @return string
-    */
-    public function getLabel(): string
-    {
-        return $this->{{options.label_field}};
-    }
+            /**
+            * Determines if the URL for this instance has changed since the last save.
+            *
+            * @return bool
+            */
+            public function urlHasChanged(): bool
+            {
+                return $this->isDirty('{{options.url_field}}');
+            }
 
-    /**
-    * Builds the post URL for this model instance.
-    *
-    * @return string
-    */
-    public function getUrl(): string
-    {
-        return ''; //todo
-    }
+            /**
+            * Builds the query used to retrieve linkable {{@root.identifiers.label_plural}}.
+            *
+            * @return Builder
+            */
+            public static function buildLinkableQuery(): Builder
+            {
+                return self::query();
+            }
 
-    /**
-    * Determines if the URL for this instance has changed since the last save.
-    *
-    * @return bool
-    */
-    public function urlHasChanged(): bool
-    {
-        return $this->isDirty('{{options.url_field}}');
-    }
+            /**
+            * Builds the search query used to find linkable {{@root.identifiers.label_singular}} items matching the provided query.
+            *
+            * @param string $input
+            * @return Builder
+            */
+            public static function buildLinkableSearchQuery(string $input): Builder
+            {
+                return self::buildLinkableQuery()->where(
+                    '{{options.search_query_field}}', 'like', '%'.$input.'%'
+                );
+            }
+        {{/if-type-is}}
 
-    /**
-    * Builds the query used to retrieve linkable {{@root.identifiers.label_plural}}.
-    *
-    * @return Builder
-    */
-    public static function buildLinkableQuery(): Builder
-    {
-        return self::query();
-    }
-
-    /**
-    * Builds the search query used to find linkable {{@root.identifiers.label_singular}} items matching the provided query.
-    *
-    * @param string $input
-    * @return Builder
-    */
-    public static function buildLinkableSearchQuery(string $input): Builder
-    {
-        return self::buildLinkableQuery()->where(
-            '{{options.search_query_field}}', 'like', '%'.$input.'%'
-        );
-    }
-    {{/if-type-is}}
-    {{#if-type-is "Sortable"}}
-
-    /**
-    * The model's sortable options.
-    *
-    * @var array
-    */
-    protected $sortable = [
-        'order_column_name' => 'order',
-    ];
-    {{/if-type-is}}
+        {{#if-type-is "Sortable"}}
+            /**
+            * The model's sortable options.
+            *
+            * @var array
+            */
+            protected $sortable = [
+                'order_column_name' => 'order',
+            ];
+        {{/if-type-is}}
     {{/each}}
 
     /**
@@ -213,18 +213,18 @@ class {{identifiers.pascal_singular}} extends Model implements {{#no-trailing-co
      */
     public function scopeApplyFilters(Builder $query, array $filters)
     {
-    {{#if-has-feature "Sortable"}}
-        // Sort
-        if ($sort = $filters['sort'] ?? false) {
-            if (in_array($sort, [
-                'title', '-title', 'published_at', '-published_at',
-            ])) {
-                $column = ltrim($sort, '-');
-                $direction = Str::startsWith($sort, '-') ? 'desc' : 'asc';
+        {{#if-has-feature "Sortable"}}
+            // Sort
+            if ($sort = $filters['sort'] ?? false) {
+                if (in_array($sort, [
+                    'title', '-title', 'published_at', '-published_at',
+                ])) {
+                    $column = ltrim($sort, '-');
+                    $direction = Str::startsWith($sort, '-') ? 'desc' : 'asc';
 
-                $query->orderBy($column, $direction);
+                    $query->orderBy($column, $direction);
+                }
             }
-        }
-    {{/if-has-feature}}
+        {{/if-has-feature}}
     }
 }
