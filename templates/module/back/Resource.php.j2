@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class {{ identifiers.pascal_singular }}Resource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'updated_at' => (string) $this->updated_at,
+            'created_at' => (string) $this->created_at,
+
+            {%- for field in fields %}
+                {% if not 'image' in field.type %}
+                    '{{ field.identifiers.snake }}' => $this->{{ field.identifiers.snake }},
+                {% endif %}
+            {% endfor -%}
+
+            {% if has_feature('Draftable') %}
+                'is_published' => $this->isPublished(),
+            {% endif -%}
+
+            {% if has_feature('HasSeoFields') %}
+                'meta' => $this->whenLoaded('meta', function () {
+                    return new MetaResource($this->meta);
+                }),
+            {% endif -%}
+
+            {% if has_feature('HasMedia') %}
+                $this->mergeWhen($this->resource->relationLoaded('media'), function () {
+                    return [
+                        {% for field in fields %}
+                            {% if 'image' in field.type %}
+                                '{{ field.identifiers.snake }}' => new MediaResource($this->getFirstMedia('{{ field.identifiers.snake }}'))
+                            {% endif %}
+                        {% endfor %}
+                    ];
+                }),
+            {% endif %}
+        ];
+    }
+}

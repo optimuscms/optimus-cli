@@ -155,10 +155,10 @@ class ModuleGenerator(Generator):
             #     'back/Model.php.hbs',
             #     'app/Models/{{identifiers.pascal_singular}}.php'
             # ],
-            # [
-            #     'back/Resource.php.hbs',
-            #     'app/Http/Resources/{{identifiers.pascal_singular}}Resource.php'
-            # ],
+            [
+                'back/Resource.php.j2',
+                'app/Http/Resources/{{identifiers.pascal_singular}}Resource.php'
+            ],
             # [
             #     'back/Migration.php.hbs',
             #     'database/migrations/%s_create_{{identifiers.snake_plural}}_table.php' % self.__get_datetime()
