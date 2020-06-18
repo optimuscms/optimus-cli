@@ -4,8 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-
-{%- if has_feature('Draftable') %}
+{% if has_feature('Draftable') %}
     use Optix\Draftable\Draftable;
 {% endif -%}
 
@@ -33,27 +32,28 @@ use Illuminate\Database\Eloquent\Model;
     use Spatie\EloquentSortable\SortableTrait;
 {% endif %}
 
-class {{ identifiers.pascal_singular }} extends Model implements 
-{%- for feature in features %}
-    {% if feature.type == 'Linkable' %}
-        Linkable,
-
-        {%- if feature.options.synchronises_menu_item_urls %}
-            SynchronisesMenuItemUrls,
-        {%- endif -%}
+class {{ identifiers.pascal_singular }} extends Model implements
+{% for feature in features %}
+    {%- if feature.type == 'Linkable' -%}
+        Linkable, SynchronisesMenuItemUrls{% if not loop.last %},{% endif -%}
     {%- endif -%}
 
     {%- if feature.type == 'Sortable' -%}
-        Sortable,
+        Sortable{% if not loop.last %},{% endif -%}
     {%- endif -%}
 {%- endfor %}
+
 {
-    use {% if has_feature('Draftable') %}Draftable,{%- endif -%}
-        {%- if has_feature('HasSlug') %}HasSlug,{%- endif -%}
-        {%- if has_feature('HasMedia') %}HasMedia,{%- endif -%}
-        {%- if has_feature('HasSeoFields') %}HasSeoFields,{%- endif -%}
-        {%- if has_feature('Linkable') %}LinkableTrait,{%- endif -%}
-        {%- if has_feature('Sortable') %}SortableTrait,{%- endif -%};
+    use 
+    {% for feature in features %}
+        {%- if feature.type == 'Draftable' %}Draftable{%- endif -%}
+        {%- if feature.type == 'HasSlug' %}HasSlug{%- endif -%}
+        {%- if feature.type == 'HasMedia' %}HasMedia{%- endif -%}
+        {%- if feature.type == 'HasSeoFields' %}HasSeoFields{%- endif -%}
+        {%- if feature.type == 'Linkable' %}LinkableTrait{%- endif -%}
+        {%- if feature.type == 'Sortable' %}SortableTrait{%- endif -%}
+        {% if not loop.last %},{% endif %}
+    {% endfor %};
     
     {% for feature in features %}
         {% if feature.type == 'Draftable' %}

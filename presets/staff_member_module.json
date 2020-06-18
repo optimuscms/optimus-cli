@@ -163,8 +163,7 @@
           "options": {
             "label_field": "title",
             "url_field": "slug",
-            "search_query_field": "title",
-            "synchronises_menu_item_urls": true
+            "search_query_field": "title"
           }
         }
       ]
