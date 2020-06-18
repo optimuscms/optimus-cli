@@ -18,28 +18,24 @@ class Create{{ identifiers.pascal_plural }}Table extends Migration
             {% for field in fields %}
                 {% if field.type == 'string' %}
                     $table->string('{{ field.identifiers.snake }}')
-                    {% if field.nullable %}->nullable(){% endif %}
-                    {% if field.default %}->default(){% endif %};
-
+                    {%- if field.nullable %}->nullable(){% endif %}
+                    {%- if field.default %}->default(){% endif %};
                 {% elif field.type == 'text' %}
                     $table->text('{{ field.identifiers.snake }}')
-                    {% if field.nullable %}->nullable(){% endif %}
-                    {% if field.default %}->default(){% endif %};
-
+                    {%- if field.nullable %}->nullable(){% endif %}
+                    {%- if field.default %}->default(){% endif %};
                 {% elif field.type == 'date' %}
                     $table->timestamp('{{ field.identifiers.snake }}')
-                    {% if field.nullable %}->nullable(){% endif %}
-                    {% if field.default %}->default(){% endif %};
-
+                    {%- if field.nullable %}->nullable(){% endif %}
+                    {%- if field.default %}->default(){% endif %};
                 {% elif field.type == 'boolean' %}
                     $table->boolean('{{ field.identifiers.snake }}')
-                    {% if field.nullable %}->nullable(){% endif %}
-                    {% if field.default %}->default(){% endif %};
-                    
+                    {%- if field.nullable %}->nullable(){% endif %}
+                    {%- if field.default %}->default(){% endif %}; 
                 {% elif field.type == 'integer' %}
                     $table->integer('{{ field.identifiers.snake }}')
-                    {% if field.nullable %}->nullable(){% endif %}
-                    {% if field.default %}->default(){% endif %};
+                    {%- if field.nullable %}->nullable(){% endif %}
+                    {%- if field.default %}->default(){% endif %};
                 {% endif %}
             {% endfor %}
             $table->timestamps();

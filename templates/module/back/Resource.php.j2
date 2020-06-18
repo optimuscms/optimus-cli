@@ -19,8 +19,7 @@ class {{ identifiers.pascal_singular }}Resource extends JsonResource
             'id' => $this->id,
             'updated_at' => (string) $this->updated_at,
             'created_at' => (string) $this->created_at,
-
-            {%- for field in fields %}
+            {% for field in fields %}
                 {% if not field.type == 'image' %}
                     '{{ field.identifiers.snake }}' => $this->{{ field.identifiers.snake }},
                 {% endif %}

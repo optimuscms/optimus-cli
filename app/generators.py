@@ -13,12 +13,14 @@ class Generator(object):
 
     def build(self):
         """Builds new and existing project files from the provided templates and partials"""
-        if self.__generate_templates() and self.__generate_partials():
+        if self.__generate_templates() and self.__generate_appends():
             print('Successfully generated files for %s, formatting...' %
                   self.__template_path)
 
         # Run php-cs-fixer and eslint
         os.system('php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
+
+        # Todo - run prettier
 
         print('New files formatted successfully.')
 
@@ -52,6 +54,8 @@ class Generator(object):
             if not os.path.exists(destination_directory):
                 os.makedirs(destination_directory)
 
+            # todo - allow overwrites if desired?
+
             # Abort if the destination file already exists to prevent overwriting
             # if os.path.isfile(destination_path):
             #      print('File %s already exists, aborting...' % destination_path)
@@ -68,8 +72,8 @@ class Generator(object):
 
         return True
 
-    def __generate_partials(self):
-        """Updates existing project files defined by _get_partial_files
+    def __generate_appends(self):
+        """Updates existing project files defined by _get_appended_files
 
         :return: if the operation completed successfully
         """
@@ -191,46 +195,44 @@ class ModuleGenerator(Generator):
     def _get_partial_files(self):
         return [
             # [
-            #     'back/partials/Routes.php.hbs',
+            #     'back/appends/Routes.php.hbs',
             #     'routes',
             #     'routes/admin.php'
             # ],
             # [
-            #     'back/partials/OptimusImports.php.hbs',
+            #     'back/appends/OptimusImports.php.hbs',
             #     'imports',
             #     'app/Providers/OptimusServiceProvider.php'
             # ],
             # [
-            #     'back/partials/OptimusLinkableTypes.php.hbs',
+            #     'back/appends/OptimusLinkableTypes.php.hbs',
             #     'linkable-types',
             #     'app/Providers/OptimusServiceProvider.php'
             # ],
             # [
-            #     'back/partials/OptimusMediaConversions.php.hbs',
+            #     'back/appends/OptimusMediaConversions.php.hbs',
             #     'media-conversions',
             #     'app/Providers/OptimusServiceProvider.php'
             # ],
             # [
-            #     'front/partials/Dashboard.vue.hbs',
+            #     'front/appends/Dashboard.vue.hbs',
             #     'navigation',
             #     'resources/js/back/components/ui/Dashboard.vue'
             # ],
             # [
-            #     'front/partials/RouterImports.js.hbs',
+            #     'front/appends/RouterImports.js.hbs',
             #     'imports',
             #     'resources/js/back/router/index.js'
             # ],
             # [
-            #     'front/partials/RouterRoutes.js.hbs',
+            #     'front/appends/RouterRoutes.js.hbs',
             #     'routes',
             #     'resources/js/back/router/index.js'
             # ],
         ]
 
     def __get_datetime(self):
-        now = datetime.utcnow()
-
-        return '%s_0%s' % (now.strftime('%Y_%m_%d'), (now.hour * 3600) + (now.minute * 60) + now.second)
+        return datetime.utcnow().strftime('%Y_%m_%d_%H%M%S')
 
 
 class PageGenerator(Generator):
@@ -249,15 +251,16 @@ class PageGenerator(Generator):
             ]
         ]
 
-    def _get_partial_files(self):
+    # todo - better name
+    def _get_appended_files(self):
         return [
             [
-                'back/partials/OptimusImports.php.hbs',
+                'back/appends/OptimusImports.php.hbs',
                 'imports',
                 'app/Providers/OptimusServiceProvider.php'
             ],
             [
-                'back/partials/OptimusPageTemplates.php.hbs',
+                'back/appends/OptimusPageTemplates.php.hbs',
                 'page-templates',
                 'app/Providers/OptimusServiceProvider.php'
             ]

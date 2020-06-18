@@ -6,24 +6,24 @@ import Edit from '../views/Edit';
 
 let routes = [
     {
-        path: '/{{identifiers.kebab_plural}}',
+        path: '/{{ identifiers.kebab_plural }}',
         component: Dashboard,
-        meta: { section: '{{identifiers.kebab_plural}}' },
+        meta: { section: '{{ identifiers.kebab_plural }}' },
 
         children: [
             {
                 path: '',
-                name: '{{identifiers.kebab_plural}}.index',
+                name: '{{ identifiers.kebab_plural }}.index',
                 component: Index,
             },
             {
                 path: 'create',
-                name: '{{identifiers.kebab_plural}}.create',
+                name: '{{ identifiers.kebab_plural }}.create',
                 component: Create,
             },
             {
                 path: ':id/edit',
-                name: '{{identifiers.kebab_plural}}.edit',
+                name: '{{ identifiers.kebab_plural }}.edit',
                 component: Edit,
             },
         ],

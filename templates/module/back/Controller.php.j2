@@ -1,10 +1,10 @@
-{% macro validation_rule(field_name, field_validation, is_required, is_nullable) -%}
+{% macro validation_rule(field_name, field_validation, is_required, is_nullable) %}
     '{{ field_name }}' => '
-        {%- if is_nullable %}nullable|{% endif -%}
-        {%- if is_required %}required|{% endif -%}
-        {{ field_validation -}}
+        {%- if is_nullable %}nullable|{% endif %}
+        {%- if is_required %}required|{% endif %}
+        {{- field_validation -}}
     ',
-{%- endmacro %}
+{% endmacro %}
 
 <?php
 
@@ -44,7 +44,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
 
                     {% if has_feature('HasSeoFields') %}
                         'meta',
-                    {% endif -%}
+                    {% endif %}
                 ])
             {% endif -%}
 
@@ -117,10 +117,9 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
 
                     {% if has_feature('HasSeoFields') %}
                         'meta',
-                    {% endif -%}
+                    {% endif %}
                 ])
-            {% endif -%}
-
+            {% endif %}
             ->findOrFail($id);
 
         return new {{ identifiers.pascal_singular }}Resource(${{ identifiers.camel_singular }});
@@ -140,7 +139,6 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
             {% if has_feature('Draftable') %}
                 ->withDrafts()
             {% endif %}
-
             ->findOrFail($id);
 
         $this->validate{{ identifiers.pascal_singular }}($request);
@@ -187,8 +185,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
             ${{ identifiers.camel_singular }} = {{ identifiers.pascal_singular }}::query()
                 {% if has_feature('Draftable') %}
                     ->withDrafts()
-                {% endif -%}
-
+                {% endif %}
                 ->findOrFail($id);
 
             $request->validate([
@@ -238,7 +235,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
 
         {% for field in fields %}
             {% if field.validate_in_controller %}
-                {% if field.type == 'string' %}
+                {%- if field.type == 'string' %}
                     {{ validation_rule(field.identifiers.snake, 'string:max:255', field.required, field.nullable) }}
                 
                 {%- elif field.type == 'text' %}
@@ -255,7 +252,7 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
 
                 {%- elif field.type == 'image' %}
                     {{ validation_rule(field.identifiers.snake, 'exists:media,id', field.required, field.nullable) }}
-                {% endif %}
+                {%- endif %}
             {% endif %}
         {% endfor -%}
 
