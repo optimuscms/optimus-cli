@@ -159,10 +159,10 @@ class ModuleGenerator(Generator):
                 'back/Resource.php.j2',
                 'app/Http/Resources/{{identifiers.pascal_singular}}Resource.php'
             ],
-            # [
-            #     'back/Migration.php.hbs',
-            #     'database/migrations/%s_create_{{identifiers.snake_plural}}_table.php' % self.__get_datetime()
-            # ],
+            [
+                'back/Migration.php.j2',
+                'database/migrations/%s_create_{{identifiers.snake_plural}}_table.php' % self.__get_datetime()
+            ],
             # [
             #     'front/api.js.hbs',
             #     'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/api.js'
