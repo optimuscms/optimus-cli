@@ -1,0 +1,223 @@
+<template>
+    <o-loader :loading="isLoading('primary.*')">
+        <form @submit.prevent="submit">
+            <o-errors v-if="anyErrors" :errors="errors" />
+
+            <div class="p-8 border-b border-grey-400">
+                <div class="max-w-3xl">
+                    <o-tabs>
+                        <o-tab name="Content">
+                            {% for field in fields %}
+                                {% if field.show_in_admin_form %}
+
+                                    <!-- {{ identifiers.label }} -->
+                                    <o-form-field
+                                        input="{{ identifiers.snake }}"
+                                        label="{{ identifiers.label }}"
+                                        {% if field.required %}required{% endif %}
+                                    >
+                                        {% if field.type == 'string' %}
+                                            <o-input
+                                                id="{{ identifiers.snake }}"
+                                                v-model="form.{{ identifiers.snake }}"
+                                                {% if field.required %}required{% endif %}
+                                            />
+                                        {% endif %}
+
+                                        {% if field.type == 'text' %}
+                                            <editor
+                                                id="{{ identifiers.snake }}"
+                                                v-model="form.{{ identifiers.snake }}"
+                                            />
+                                        {% endif %}
+
+                                        {% if field.type == 'date' %}
+                                            <div class="field addons">
+                                                <div class="control">
+                                                    <div class="button static">
+                                                        <icon icon="calendar-alt" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="control">
+                                                    <o-input
+                                                        id="{{ identifiers.snake }}"
+                                                        v-model="form.{{ identifiers.snake }}"
+                                                        type="datetime-local"
+                                                        {% if field.required %}required{% endif %}
+                                                    />
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if field.type == 'boolean' %}
+                                            <o-checkbox
+                                                id="{{ identifiers.snake }}"
+                                                v-model="form.{{ identifiers.snake }}"
+                                                label="Yes"
+                                                {% if field.required %}required{% endif %}
+                                            />
+                                        {% endif %}
+
+                                        {% if field.type == 'image' %}
+                                            <media-picker
+                                                id="{{ identifiers.snake }}_id"
+                                                v-model="form.{{ identifiers.snake }}_id"
+                                                :media="getItemAttribute('{{ identifiers.snake }}')"
+                                                show-preview
+                                                accepted-extensions="image"
+                                            />
+
+                                            <template slot="help">
+                                                This image will be resized to TODOpx.
+                                            </template>
+                                        {% endif %}
+                                    </o-form-field>
+                                {% endif %}
+                            {% endfor %}
+                        </o-tab>
+
+                        <o-tab name="Meta">
+                            {% if has_feature('HasSlug') %}
+                                <!-- Slug -->
+                                <o-form-field
+                                    input="slug"
+                                    label="Slug"
+                                >
+                                    <o-input
+                                        id="slug"
+                                        v-model="form.slug"
+                                        :disabled="getItemAttribute('has_fixed_path', false)"
+                                    />
+                                </o-form-field>
+                            {{/if-has-feature}}
+
+                            {% if has_feature('HasSeoFields') %}
+                                <o-meta-fields
+                                    v-model="form.meta"
+                                    :item="getItemAttribute('meta')"
+                                />
+                            {{/if-has-feature}}
+                        </o-tab>
+                    </o-tabs>  
+                </div>
+            </div>
+
+            <div class="p-8">
+                <div class="field flex items-center">
+                    <div class="control">
+                        <button
+                            class="button green"
+                            :class="{ 'loading': isProcessing }"
+                            :disabled="isProcessing"
+                        >
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </o-loader>
+</template>
+
+<script>
+import { formMixin } from '@optimuscms/theme';
+
+import {
+    create{{ identifiers.pascal_singular }},
+    update{{ identifiers.pascal_singular }},
+} from '../../routes/api';
+
+import moment from 'moment';
+
+export default {
+    mixins: [ formMixin ],
+
+    data() {
+        return {
+            form: {
+                {% if has_feature('HasSlug') %}
+                    slug: '',
+                {% endif %}
+
+                {% for field in fields %}
+                    {% if field.show_in_admin_form %}
+                        {% if field.type == 'string' %}
+                            {{ identifiers.snake }}: '',
+
+                        {% elif field.type == 'text' %}
+                            {{ identifiers.snake }}: '',
+
+                        {% elif field.type == 'date' %}
+                            {{ identifiers.snake }}: moment().format('YYYY-MM-DDTHH:mm'),
+
+                        {% elif field.type == 'boolean' %}
+                            {{ identifiers.snake }}: {{ identifiers.default }},
+
+                        {% elif field.type == 'image' %}
+                            {{ identifiers.snake }}_id: null,
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            },
+        };
+    },
+
+    watch: {
+        item(item) {
+            {% if has_feature('HasSeoFields') %}const meta = item.meta;{% endif %}
+
+            this.form = {
+                {% if has_feature('HasSlug') %}slug: item.slug,{% endif %}
+                
+                {% for field in fields %}
+                    {% if field.show_in_admin_form %}
+                        {% if field.type == 'string' %}
+                            {{ identifiers.snake }}: item.{{ identifiers.snake }},
+
+                        {% elif field.type == 'text' %}
+                            {{ identifiers.snake }}: item.{{ identifiers.snake }},
+
+                        {% elif field.type == 'date' %}
+                            {{ identifiers.snake }}: moment(item.{{ identifiers.snake }}).format('YYYY-MM-DDTHH:mm'),
+
+                        {% elif field.type == 'boolean' %}
+                            {{ identifiers.snake }}: false,
+
+                        {% elif field.type == 'image' %}
+                            {{ identifiers.snake }}_id: item.{{ identifiers.snake }} ? item.{{ identifiers.snake }}.id : null,
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if has_feature('HasMeta') %}
+                    meta: {
+                        title: meta.title,
+                        description: meta.description,
+                        og_title: meta.og_title,
+                        og_description: meta.og_description,
+                        og_image_id: meta.og_image ? meta.og_image.id : null,
+                        additional_tags: meta.additional_tags,
+                    },
+                {% endif %}
+            };
+        },
+    },
+
+    methods: {
+        save() {
+            if (this.isEditing) {
+                return update{{ identifiers.pascal_singular }}(this.item.id, this.form);
+            }
+
+            return create{{ identifiers.pascal_singular }}(this.form);
+        },
+
+        onSuccess() {
+            this.$router.push({
+                name: '{{ identifiers.kebab_plural }}.index',
+            });
+        },
+    },
+};
+</script>

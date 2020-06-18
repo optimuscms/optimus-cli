@@ -166,26 +166,26 @@ class ModuleGenerator(Generator):
                 'back/Migration.php.j2',
                 'database/migrations/%s_create_{{identifiers.snake_plural}}_table.php' % self.__get_datetime()
             ],
-            # [
-            #     'front/api.js.hbs',
-            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/api.js'
-            # ],
-            # [
-            #     'front/app.js.hbs',
-            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/app.js'
-            # ],
-            # [
-            #     'front/Create.vue.hbs',
-            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Create.vue'
-            # ],
-            # [
-            #     'front/Edit.vue.hbs',
-            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Edit.vue'
-            # ],
-            # [
-            #     'front/Index.vue.hbs',
-            #     'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Index.vue'
-            # ],
+            [
+                'front/api.js.hbs',
+                'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/api.js'
+            ],
+            [
+                'front/app.js.hbs',
+                'resources/js/back/modules/{{identifiers.kebab_plural}}/routes/app.js'
+            ],
+            [
+                'front/Create.vue.hbs',
+                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Create.vue'
+            ],
+            [
+                'front/Edit.vue.hbs',
+                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Edit.vue'
+            ],
+            [
+                'front/Index.vue.hbs',
+                'resources/js/back/modules/{{identifiers.kebab_plural}}/views/Index.vue'
+            ],
             # [
             #     'front/Form.vue.hbs',
             #     'resources/js/back/modules/{{identifiers.kebab_plural}}/views/partials/Form.vue'
