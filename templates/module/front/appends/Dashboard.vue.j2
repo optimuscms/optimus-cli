@@ -1,0 +1,19 @@
+<o-side-nav-item
+    :to="{ name: '{{ identifiers.kebab_plural }}.index' }"
+    label="{{ identifiers.label_plural }}"
+    section="{{ identifiers.kebab_plural }}"
+>
+    <o-side-sub-nav-item
+        :to="{ name: '{{ identifiers.kebab_plural }}.index' }"
+    >
+        Manage {{ identifiers.label_plural }}
+    </o-side-sub-nav-item>
+
+    <o-side-sub-nav-item
+        :to="{ name: '{{ identifiers.kebab_plural }}.create' }"
+    >
+        Add {{ identifiers.label_singular }}
+    </o-side-sub-nav-item>
+</o-side-nav-item>
+
+<!--OPTIMUS-CLI:navigation-->
