@@ -144,16 +144,12 @@ export default {
                     {% if field.show_in_admin_form %}
                         {% if field.type == 'string' %}
                             {{ field.identifiers.snake }}: '',
-
                         {% elif field.type == 'text' %}
                             {{ field.identifiers.snake }}: '',
-
                         {% elif field.type == 'date' %}
                             {{ field.identifiers.snake }}: moment().format('YYYY-MM-DDTHH:mm'),
-
                         {% elif field.type == 'boolean' %}
                             {{ field.identifiers.snake }}: {{ field.identifiers.default }},
-
                         {% elif field.type == 'image' %}
                             {{ field.identifiers.snake }}_id: null,
                         {% endif %}
@@ -178,23 +174,19 @@ export default {
                     {% if field.show_in_admin_form %}
                         {% if field.type == 'string' %}
                             {{ field.identifiers.snake }}: item.{{ field.identifiers.snake }},
-
                         {% elif field.type == 'text' %}
                             {{ field.identifiers.snake }}: item.{{ field.identifiers.snake }},
-
                         {% elif field.type == 'date' %}
                             {{ field.identifiers.snake }}: moment(item.{{ field.identifiers.snake }}).format('YYYY-MM-DDTHH:mm'),
-
                         {% elif field.type == 'boolean' %}
                             {{ field.identifiers.snake }}: false,
-
                         {% elif field.type == 'image' %}
                             {{ field.identifiers.snake }}_id: item.{{ field.identifiers.snake }} ? item.{{ field.identifiers.snake }}.id : null,
                         {% endif %}
                     {% endif %}
                 {% endfor %}
 
-                {% if has_feature('HasMeta') %}
+                {% if has_feature('HasSeoFields') %}
                     meta: {
                         title: meta.title,
                         description: meta.description,
