@@ -39,12 +39,12 @@ class {{ identifiers.file_name }}Template implements PageTemplate
     {
         $page->addContents([
             {% for field in fields %}
-                {% if field.type in ['string', 'text', 'url'] %}
+                {% if field.type != 'image' %}
                     '{{ field.identifiers.snake }}' => $data['{{ field.identifiers.snake }}'],
                 {% endif %}
             {% endfor %}
         ]);
-        
+
         {% for field in fields %}
             {% if field.type == 'image' %}
                 $page->attachMedia($data['{{ field.identifiers.snake }}_id'], '{{ field.options.group }}', [
