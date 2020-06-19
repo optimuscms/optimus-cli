@@ -12,8 +12,8 @@ class Generator(object):
         self.__identifiers = self.__parser.get_template_data()['identifiers']
 
     def build(self):
-        """Builds new and existing project files from the provided templates and partials"""
-        if self.__generate_templates() and self.__generate_appends():
+        """Builds new and existing project files from the provided templates and dynamic files"""
+        if self.__generate_templates() and self.__update_dynamic_files():
             print('Successfully generated files for %s, formatting...' %
                   self.__template_path)
 
@@ -22,10 +22,10 @@ class Generator(object):
 
         print('New files formatted successfully.')
 
-    def _get_partial_files(self):
-        """Returns a list of partials used to update existing files in the project
+    def _get_dynamic_files(self):
+        """Returns a list of dynamic files which are updated when the generator is run
 
-        :return: a nested array containing the source path, destination tag and destination path of the partial
+        :return: a nested array containing the source path, destination tag and destination path of the dynamic file
         """
         return []
 
@@ -72,12 +72,12 @@ class Generator(object):
 
         return True
 
-    def __generate_appends(self):
-        """Updates existing project files defined by _get_appended_files
+    def __update_dynamic_files(self):
+        """Updates existing project files defined by _get_dynamic_files
 
         :return: if the operation completed successfully
         """
-        for (source_path, tag, destination_path) in self._get_partial_files():
+        for (source_path, tag, destination_path) in self._get_dynamic_files():
             destination_path = self.__parse_file_path(destination_path)
             destination_directory = os.path.dirname(destination_path)
 
@@ -116,19 +116,19 @@ class Generator(object):
                       (tag, destination_path))
                 return False
 
-            # Render and write the partial and replace the tag contents
+            # Render and write the dynamic content and place it in the destination file
             with open(destination_path, 'w') as destination_file:
-                rendered_partial = self.__parser.render_file(
+                rendered_content = self.__parser.render_file(
                     '%s/%s/%s' % (config.TEMPLATE_DIR,
                                   self._get_template_subdirectory(), source_path)
                 )
 
                 updated_contents = destination_contents.replace(
-                    '/*--OPTIMUS-CLI:%s--*/' % tag, rendered_partial
+                    '/*--OPTIMUS-CLI:%s--*/' % tag, rendered_content
                 )
 
                 updated_contents = updated_contents.replace(
-                    '<!--OPTIMUS-CLI:%s-->' % tag, rendered_partial
+                    '<!--OPTIMUS-CLI:%s-->' % tag, rendered_content
                 )
 
                 destination_file.write(updated_contents)
@@ -196,40 +196,40 @@ class ModuleGenerator(Generator):
             ]
         ]
 
-    def _get_partial_files(self):
+    def _get_dynamic_files(self):
         return [
             [
-                'back/appends/Routes.php.j2',
+                'back/dynamic/Routes.php.j2',
                 'routes',
                 'routes/admin.php'
             ],
             [
-                'back/appends/OptimusImports.php.j2',
+                'back/dynamic/OptimusImports.php.j2',
                 'imports',
                 'app/Providers/OptimusServiceProvider.php'
             ],
             [
-                'back/appends/OptimusLinkableTypes.php.j2',
+                'back/dynamic/OptimusLinkableTypes.php.j2',
                 'linkable-types',
                 'app/Providers/OptimusServiceProvider.php'
             ],
             [
-                'back/appends/OptimusMediaConversions.php.j2',
+                'back/dynamic/OptimusMediaConversions.php.j2',
                 'media-conversions',
                 'app/Providers/OptimusServiceProvider.php'
             ],
             [
-                'front/appends/Dashboard.vue.j2',
+                'front/dynamic/Dashboard.vue.j2',
                 'navigation',
                 'resources/js/back/components/ui/Dashboard.vue'
             ],
             [
-                'front/appends/RouterImports.js.j2',
+                'front/dynamic/RouterImports.js.j2',
                 'imports',
                 'resources/js/back/router/index.js'
             ],
             [
-                'front/appends/RouterRoutes.js.j2',
+                'front/dynamic/RouterRoutes.js.j2',
                 'routes',
                 'resources/js/back/router/index.js'
             ],
@@ -255,16 +255,15 @@ class PageGenerator(Generator):
             ]
         ]
 
-    # todo - better name
-    def _get_partial_files(self):
+    def _get_dynamic_files(self):
         return [
             [
-                'back/appends/OptimusImports.php.j2',
+                'back/dynamic/OptimusImports.php.j2',
                 'imports',
                 'app/Providers/OptimusServiceProvider.php'
             ],
             [
-                'back/appends/OptimusPageTemplates.php.j2',
+                'back/dynamic/OptimusPageTemplates.php.j2',
                 'page-templates',
                 'app/Providers/OptimusServiceProvider.php'
             ]
