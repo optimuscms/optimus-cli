@@ -7,6 +7,72 @@ from jinja2 import nodes
 from jinja2.ext import Extension
 
 
+class JsonConfigParser(object):
+    def __init__(self, file_path: str):
+        pass
+
+    def parse(self):
+        schema = self._get_structure()
+
+    def _get_structure(self):
+        return {
+            "text": {
+                "name": [],
+                "rules": {
+                    "required": {
+                        "accepted": [True, False],
+                        "default": False
+                    },
+                },
+            "textarea": {
+
+            },
+            "editor": {
+
+            },
+            "media": {
+
+            },
+            "date": {
+
+            }
+        }
+
+
+class ModuleJsonConfigParser(object):
+    def _get_structure(self):
+        return {}  # return module json strucutre
+
+class PageTemplateJsonConfigParser(object):
+    def _get_structure(self):
+        return {}  # return page template json strucutre
+
+class ModuleGeneratorConfig(object):
+    def __init__(self, config):
+        # read
+        self.__parse_config(config)
+
+        # apply default values
+
+    # Convert to dictionary
+    def __dict__(self):
+        pass
+
+    def __parse_config(config):
+        # Looping over known config keys
+        # Verifying key / values
+        # save the config to the instance
+
+    @ staticmethod
+    def parse_json_config(self, file_path):
+        # open the file, read contents into mem
+
+    @ staticmethod
+    def parse_request(self, request):
+        pass
+
+
+
 class TemplateParser(object):
     def __init__(self, file_path: str):
 

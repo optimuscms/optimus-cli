@@ -1,85 +1,114 @@
 {
-    "identifiers": {
-        "template_id": "demo",
-        "template_name": "Demo",
-        "file_name": "Demo"
+  "id": "sub-services", // kebab
+  "name": "Sub Services", // Inferred by default title of id
+
+  "fields": [
+    {
+      "type": "string",
+      "name": "banner_heading",
+      "label": "Banner Heading",
+
+      "options": {},
+
+      "rules": {
+        "required": true, // Inferred as false
+        "nullable": false, // Inferred as false
+        "url": false, // Inferred as false
+        "max": 255 // Inferred as null
+      }
     },
 
-    "fields": [
-        {
-            "type": "string",
-            "required": true,
-            "options": {},
-            "identifiers": {
-                "label": "Banner Heading",
-                "snake": "banner_heading"
-            }
-        },
+    {
+      "type": "string",
+      "name": "banner_subheading",
+      "label": "Banner Subeading",
 
-        {
-            "type": "string",
-            "required": true,
-            "options": {},
-            "identifiers": {
-                "label": "Banner Subheading",
-                "snake": "banner_subheading"
-            }
-        },
+      "options": {},
 
-        {
-            "type": "image",
-            "required": true,
-            "options": {
-                "group": "banner_image",
-                "conversions": [
-                    "1200x630"
-                ]
+      "rules": {
+        "required": true, // Inferred as false
+        "nullable": false, // Inferred as false
+        "url": false, // Inferred as false
+        "max": 255 // Inferred as null
+      }
+    },
 
-            },            
-            "identifiers": {
-                "label": "Banner Image",
-                "snake": "banner_image"
-            }
-        },
+    {
+      "type": "string",
+      "name": "introduction_subheading",
+      "label": "Introduction Subeading",
 
-        {
-            "type": "string",
-            "required": true,
-            "options": {},            
-            "identifiers": {
-                "label": "Introduction Heading",
-                "snake": "introduction_heading"
-            }
-        },
+      "options": {},
 
-        {
-            "type": "string",
-            "required": true,
-            "options": {},            
-            "identifiers": {
-                "label": "Introduction Subheading",
-                "snake": "introduction_subheading"
-            }
-        },
+      "rules": {
+        "required": true, // Inferred as false
+        "nullable": false, // Inferred as false
+        "url": false, // Inferred as false
+        "max": 255 // Inferred as null
+      }
+    },
 
-        {
-            "type": "text",
-            "required": true,
-            "options": {},            
-            "identifiers": {
-                "label": "Introduction Content",
-                "snake": "introduction_content"
-            }
-        },
+    {
+      "type": "string",
+      "name": "introduction_subheading",
+      "label": "Introduction Subeading",
 
-        {
-            "type": "url",
-            "required": true,
-            "options": {},            
-            "identifiers": {
-                "label": "Introduction Video URL",
-                "snake": "introduction_video_url"
-            }
-        }
-    ]
+      "options": {},
+
+      "rules": {
+        "required": true, // Inferred as false
+        "nullable": false, // Inferred as false
+        "url": false, // Inferred as false
+        "max": 255 // Inferred as null
+      }
+    },
+
+    {
+      "type": "string",
+      "name": "introduction_subheading",
+      "label": "Introduction Subeading",
+
+      "options": {},
+
+      "rules": {
+        "required": true, // Inferred as false
+        "nullable": false, // Inferred as false
+        "url": false, // Inferred as false
+        "max": 255 // Inferred as null
+      }
+    },
+
+    {
+      "type": "string",
+      "name": "introduction_content",
+      "label": "Introduction Content",
+
+      "options": {},
+
+      "rules": {
+        "required": true, // Inferred as false
+        "nullable": false, // Inferred as false
+        "url": false, // Inferred as false
+        "max": 255 // Inferred as null
+      }
+    },
+
+    {
+      "type": "image",
+      "name": "banner_image",
+      "label": "Banner Image",
+
+      "rules": {
+        "required": true, // false by default
+        "nullable": false, // false by default
+        "url": false
+      },
+
+      "options": {
+        "accepted_extensions": "image", // any by default
+        "group": "image",
+        "conversions": ["1400x600"]
+      }
+    }
+  ]
 }

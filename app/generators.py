@@ -12,6 +12,16 @@ class Generator(object):
         self.__identifiers = self.__parser.get_template_data()['identifiers']
 
     def build(self):
+        # 1) Build
+        # Read the config
+        # depends on entrypoint (web request, interactive console, config file)
+        # Verify the config, merge defaults where necessary
+        # Give back good errors
+        # Pass data to templates
+        # Get the rendered template, save to file
+
+        # 2) Format
+        # Run linters on generated files
         """Builds new and existing project files from the provided templates and dynamic files"""
         if self.__generate_templates() and self.__update_dynamic_files():
             print('Successfully generated files for %s, formatting...' %
@@ -52,10 +62,10 @@ class Generator(object):
             if not os.path.exists(destination_directory):
                 os.makedirs(destination_directory)
 
-            #Abort if the destination file already exists to prevent overwriting
+            # Abort if the destination file already exists to prevent overwriting
             if os.path.isfile(destination_path):
-                 print('File %s already exists, aborting...' % destination_path)
-                 return
+                print('File %s already exists, aborting...' % destination_path)
+                return
 
             # Render and write the template to the destination file
             with open(destination_path, 'w') as destination_file:

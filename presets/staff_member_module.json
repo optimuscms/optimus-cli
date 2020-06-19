@@ -1,170 +1,159 @@
 {
-      "identifiers": {
-        "camel_singular": "staffMember",
-        "camel_plural": "staffMembers",
-        "label_singular": "Staff Member",
-        "label_plural": "Staff Members",
-        "kebab_singular": "staff-member",
-        "kebab_plural": "staff-members",
-        "pascal_singular": "StaffMember",
-        "pascal_plural": "StaffMembers",
-        "snake_singular": "staff_member",
-        "snake_plural": "staff_members"
+  "name": "Post Categories",
+
+  // text
+  // textarea
+  // checkbox
+  // editor
+  // media
+  // date
+
+  "fields": [
+    {
+      "type": "text",
+      "name": "name",
+      "label": "Name",
+
+      "show_on_index": true,
+
+      "rules": {
+        "required": true,
+        "nullable": false,
+        "url": false,
+        "max": 255
       },
 
-      "fields": [
-        {
-          "type": "string",
-          "required": true,
-          "default": null,
-          "nullable": false,
-          "update_in_controller": true,
-          "validate_in_controller": true,
-          "show_in_admin_index": true,
-          "show_in_admin_form": true,
+      "options": {}
+    },
 
-          "identifiers": {
-            "label": "Name",
-            "snake": "name",
-            "camel": "name"
-          }
-        },
+    {
+      "type": "text",
+      "name": "slug",
+      "label": "Slug",
 
-        {
-          "type": "string",
-          "required": false,
-          "default": null,
-          "nullable": true,
-          "update_in_controller": true,
-          "validate_in_controller": true,          
-          "show_in_admin_index": false,
-          "show_in_admin_form": false,
-          "identifiers": {
-            "label": "Slug",
-            "snake": "slug",
-            "camel": "slug"
-          }
-        },
+      "show_on_index": false,
 
-        {
-          "type": "text",
-          "required": true,
-          "default": null,
-          "nullable": false,
-          "update_in_controller": true,
-          "show_in_admin_index": false,
-          "show_in_admin_form": true,
+      "rules": {
+        "required": true,
+        "nullable": false,
+        "url": false,
+        "max": 255
+      },
 
-          "identifiers": {
-            "label": "Description",
-            "snake": "description",
-            "camel": "description"
-          }
-        },
+      "options": {}
+    },
 
-        {
-          "type": "image",
-          "required": true,
-          "default": null,
-          "nullable": false,
-          "update_in_controller": true,
-          "validate_in_controller": true,
-          "show_in_admin_index": false,
-          "show_in_admin_form": true,
+    {
+      "type": "text",
+      "name": "description",
+      "label": "Description",
 
-          "identifiers": {
-            "label": "Image",
-            "snake": "image",
-            "camel": "image"
-          }
-        },
+      "show_on_index": false,
 
-        {
-          "type": "date",
-          "required": true,
-          "default": null,
-          "nullable": true,
-          "update_in_controller": false,
-          "validate_in_controller": true,
-          "show_in_admin_index": false,
-          "show_in_admin_form": true,
+      "rules": {
+        "required": true,
+        "nullable": false,
+        "url": false
+      },
 
-          "identifiers": {
-            "label": "Published At",
-            "snake": "published_at",
-            "camel": "publishedAt"
-          }
-        },
+      "options": {}
+    },
 
-        {
-          "type": "integer",
-          "required": true,
-          "default": null,
-          "nullable": false,
-          "update_in_controller": false,
-          "validate_in_controller": false,
-          "show_in_admin_index": false,
-          "show_in_admin_form": false,
+    {
+      "type": "text",
+      "name": "url",
+      "label": "Website URL",
 
-          "identifiers": {
-            "label": "order",
-            "snake": "order",
-            "camel": "order"
-          }
-        }
-      ],
+      "show_on_index": false,
 
-      "features": [
-        {
-          "type": "Sortable",
-          "options": {}
-        },
+      "rules": {
+        "required": false,
+        "nullable": true,
+        "url": true,
+        "max": 255
+      },
 
-        {
-          "type": "HasSlug",
-          "options": {
-            "generate_from": "name",
-            "save_to": "slug"
-          }
-        },
+      "options": {}
+    },
 
-        {
-          "type": "HasSeoFields",
-          "options": {}
-        },
+    {
+      "type": "image",
+      "name": "banner_image",
+      "label": "Banner Image",
 
-        {
-          "type": "HasMedia",
-          "options": {
-            "groups": [
-              {
-                "name": "image",
-                "conversion": "1400x600"
-              }
-            ],
+      "show_on_index": false,
 
-            "conversions": [
-              {
-                "name": "1400x600",
-                "width": "1400",
-                "height": "600"
-              }
-            ]
-          }
-        },
+      "rules": {
+        "required": true, // false by default
+        "nullable": false, // false by default
+        "url": false
+      },
 
-        {
-          "type": "Draftable",
-          "options": {}
-        },
-
-        {
-          "type": "Linkable",
-          "options": {
-            "label_field": "title",
-            "url_field": "slug",
-            "search_query_field": "title"
-          }
-        }
-      ]
+      "options": {
+        "accepted_extensions": "image", // any by default
+        "group": "image",
+        "conversions": ["1400x600"]
+      }
     }
+  ],
+
+  "features": [
+    {
+      "type": "order",
+      "options": {
+        // inferred by default
+        "order_column_name": "order"
+      }
+    },
+
+    {
+      "type": "slug",
+      "options": {
+        "generate_from_field": "name",
+        "save_to_field": "slug"
+      }
+    },
+
+    {
+      "type": "seo", //
+      "options": {}
+    },
+
+    {
+      "type": "media",
+      "options": {
+        "groups": [
+          {
+            "name": "image",
+            "conversion": "1400x600"
+          }
+        ],
+
+        "conversions": [
+          {
+            "name": "1400x600",
+            "width": 1400,
+            "height": 600
+          }
+        ]
+      }
+    },
+
+    {
+      "type": "draftable",
+      "options": {
+        // inferred by default [published_at]
+        "published_at_field": "published_at"
+      }
+    },
+
+    {
+      "type": "linkable",
+      "options": {
+        "url_field": "slug",
+        "label_field": "title",
+        "search_query_field": "title"
+      }
+    }
+  ]
+}
