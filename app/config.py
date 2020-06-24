@@ -9,7 +9,7 @@ COMMANDS = [
     {
         'name': 'generate:page',
         'callback': lambda args: PageGenerator(args[1]).build()
-    },
+    }
 ]
 
 # Directory to load templates from (no trailing slash)

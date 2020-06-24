@@ -1,7 +1,12 @@
 import json
 import os
 import re
+import inflection
 
+from functools import reduce
+
+from jinja2 import BaseLoader
+from jinja2 import Environment
 from jinja2 import Template
 from jinja2 import nodes
 from jinja2.ext import Extension
@@ -13,82 +18,26 @@ from jinja2.ext import Extension
 # Merge
 
 
-class PageTemplateConfig(object):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_json_config(file_path: str):
-        json.
-
-class JsonConfigParser(object):
-    def __init__(self, file_path: str):
-        pass
-
-    def parse(self):
-        schema = self._get_structure()
-
-    def _get_structure(self):
-        return {
-            "text": {
-                "name": [],
-                "rules": {
-                    "required": {
-                        "accepted": [True, False],
-                        "default": False
-                    },
-                },
-            "textarea": {
-
-            },
-            "editor": {
-
-            },
-            "media": {
-
-            },
-            "date": {
-
-            }
-        }
-
-
-class ModuleJsonConfigParser(object):
-    def _get_structure(self):
-        return {}  # return module json strucutre
-
-class PageTemplateJsonConfigParser(object):
-    def _get_structure(self):
-        return {}  # return page template json strucutre
-
-class ModuleGeneratorConfig(object):
-    def __init__(self, config):
-        # read
-        self.__parse_config(config)
-
-        # apply default values
-
-    # Convert to dictionary
-    def __dict__(self):
-        pass
-
-    def __parse_config(config):
-        # Looping over known config keys
-        # Verifying key / values
-        # save the config to the instance
-
-    @ staticmethod
-    def parse_json_config(self, file_path):
-        # open the file, read contents into mem
-
-    @ staticmethod
-    def parse_request(self, request):
-        pass
-
-
-
 class TemplateParser(object):
     def __init__(self, file_path: str):
+        self.__environment = Environment(
+            trim_blocks=True,
+            lstrip_blocks=True,
+            loader=BaseLoader
+        )
+
+        self.__filters = TemplateFilters()
+
+        self.__environment.filters = {
+            **self.__environment.filters,
+
+            'camel': self.__filters.camel,
+            'kebab': self.__filters.kebab,
+            'snake': self.__filters.snake,
+            'pascal': self.__filters.pascal,
+            'plural': self.__filters.plural,
+            'singular': self.__filters.singular
+        }
 
         with open(file_path, 'r') as template_file:
             self.__data = json.loads(template_file.read())
@@ -102,11 +51,7 @@ class TemplateParser(object):
         with open(file_path, 'r') as template_file:
             template_contents = template_file.read()
 
-        compiled_template = Template(
-            template_contents,
-            trim_blocks=True,
-            lstrip_blocks=True
-        )
+        compiled_template = self.__environment.from_string(template_contents)
 
         return compiled_template.render(
             self.__data,
@@ -137,3 +82,77 @@ class TemplateParser(object):
         )
 
         return len(matching_features) != 0
+
+
+class TemplateFilters(object):
+    def __init__(self):
+        self.__camel_cache = {}
+        self.__kebab_cache = {}
+        self.__snake_cache = {}
+        self.__pascal_cache = {}
+        self.__plural_cache = {}
+        self.__singular_cache = {}
+
+    def plural(self, text):
+        if text in self.__plural_cache:
+            return self.__plural_cache[text]
+
+        plural_text = inflection.pluralize(text)
+
+        self.__plural_cache[text] = plural_text
+
+        return plural_text
+
+    def singular(self, text):
+        if text in self.__singular_cache:
+            return self.__singular_cache[text]
+
+        singular_text = inflection.singularize(text)
+
+        self.__singular_cache[text] = singular_text
+
+        return singular_text
+
+    def camel(self, text):
+        if text in self.__camel_cache:
+            return self.__camel_cache[text]
+
+        words = text.lower().split(' ')
+
+        camel_text = words[0] + ''.join(
+            word.capitalize() for word in words[1:]
+        )
+
+        self.__camel_cache[text] = camel_text
+
+        return camel_text
+
+    def kebab(self, text):
+        if text in self.__kebab_cache:
+            return self.__kebab_cache[text]
+
+        kebab_text = text.lower().replace(' ', '-')
+
+        self.__kebab_cache[text] = kebab_text
+
+        return kebab_text
+
+    def pascal(self, text):
+        if text in self.__pascal_cache:
+            return self.__pascal_cache[text]
+
+        pascal_text = text.replace(' ', '')
+
+        self.__pascal_cache[text] = pascal_text
+
+        return pascal_text
+
+    def snake(self, text):
+        if text in self.__snake_cache:
+            return self.__snake_cache[text]
+
+        snake_text = text.lower().replace(' ', '_')
+
+        self.__snake_cache[text] = snake_text
+
+        return snake_text

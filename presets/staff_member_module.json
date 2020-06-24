@@ -1,102 +1,82 @@
 {
-  "name": "Post Categories",
-
+  "name": "Post Category",
   // text
   // textarea
   // checkbox
   // editor
   // media
   // date
-
   "fields": [
     {
       "type": "text",
       "name": "name",
       "label": "Name",
-
       "show_on_index": true,
-
       "rules": {
         "required": true,
         "nullable": false,
         "url": false,
         "max": 255
       },
-
       "options": {}
     },
-
     {
       "type": "text",
       "name": "slug",
       "label": "Slug",
-
       "show_on_index": false,
-
       "rules": {
         "required": true,
         "nullable": false,
         "url": false,
         "max": 255
       },
-
       "options": {}
     },
-
     {
       "type": "text",
       "name": "description",
       "label": "Description",
-
       "show_on_index": false,
-
       "rules": {
         "required": true,
         "nullable": false,
         "url": false
       },
-
       "options": {}
     },
-
     {
       "type": "text",
       "name": "url",
       "label": "Website URL",
-
       "show_on_index": false,
-
       "rules": {
         "required": false,
         "nullable": true,
         "url": true,
         "max": 255
       },
-
       "options": {}
     },
-
     {
       "type": "image",
       "name": "banner_image",
       "label": "Banner Image",
-
       "show_on_index": false,
-
       "rules": {
         "required": true, // false by default
         "nullable": false, // false by default
         "url": false
       },
-
       "options": {
         "accepted_extensions": "image", // any by default
         "group": "image",
-        "conversions": ["1400x600"]
+        "conversions": [
+          "1400x600"
+        ]
       }
     }
   ],
-
   "features": [
     {
       "type": "order",
@@ -105,7 +85,6 @@
         "order_field": "order"
       }
     },
-
     {
       "type": "slug",
       "options": {
@@ -113,12 +92,10 @@
         "save_to_field": "slug"
       }
     },
-
     {
       "type": "seo", //
       "options": {}
     },
-
     {
       "type": "media",
       "options": {
@@ -128,7 +105,6 @@
             "conversion": "1400x600"
           }
         ],
-
         "conversions": [
           {
             "name": "1400x600",
@@ -138,7 +114,6 @@
         ]
       }
     },
-
     {
       "type": "draftable",
       "options": {
@@ -146,7 +121,6 @@
         "published_at_field": "published_at"
       }
     },
-
     {
       "type": "linkable",
       "options": {
