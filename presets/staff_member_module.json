@@ -102,7 +102,7 @@
       "type": "order",
       "options": {
         // inferred by default
-        "order_column_name": "order"
+        "order_field": "order"
       }
     },
 

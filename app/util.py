@@ -6,6 +6,20 @@ from jinja2 import Template
 from jinja2 import nodes
 from jinja2.ext import Extension
 
+# Strategy
+# ========
+# Read file
+# Validate contents against schema
+# Merge
+
+
+class PageTemplateConfig(object):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_json_config(file_path: str):
+        json.
 
 class JsonConfigParser(object):
     def __init__(self, file_path: str):
