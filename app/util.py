@@ -11,12 +11,169 @@ from jinja2 import Template
 from jinja2 import nodes
 from jinja2.ext import Extension
 
-# Strategy
-# ========
-# Read file
-# Validate contents against schema
-# Merge
+class PageTemplateConfigParser():
 
+    def parse_dict(self, config: dict):
+        self.__validate(config)
+
+        return self.__merge_defaults(config)
+
+    def parse_json_file(self, file_path: str):
+        with open(file_path, 'r') as config_file:
+            return self.parse_dict(
+                json.loads(config_file.read())
+            )
+
+    def __validate(self, config: dict):
+        schema = {
+            'type': 'object',
+            'properties': {
+                'id': { 'type': 'string' },
+                'name': { 'type': 'string' },
+                'fields': {
+                    'type': 'array',
+                    'items': {
+                        'oneOf': [
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': { 'const': 'text' },
+                                    'name': { 'type': 'string' },
+                                    'label': { 'type': 'string' },
+                                    'rules': {
+                                        'type': 'object',
+                                        'properties': {
+                                            'required': { 'type': 'boolean' },
+                                            'nullable': { 'type': 'boolean' },
+                                        },
+                                    },
+                                },
+                                'required': ['name'],
+                            },
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': { 'const': 'textarea' },
+                                    'name': { 'type': 'string' },
+                                    'label': { 'type': 'string' },
+                                    'rules': {
+                                        'type': 'object',
+                                        'properties': {
+                                            'required': { 'type': 'boolean' },
+                                            'nullable': { 'type': 'boolean' },
+                                        },
+                                    },
+                                },
+                                'required': ['name'],
+                            },
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': { 'const': 'editor' },
+                                    'name': { 'type': 'string' },
+                                    'label': { 'type': 'string' },
+                                    'rules': {
+                                        'type': 'object',
+                                        'properties': {
+                                            'required': { 'type': 'boolean' },
+                                            'nullable': { 'type': 'boolean' },
+                                        },
+                                    },
+                                },
+                                'required': ['name'],
+                            },
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': { 'const': 'date' },
+                                    'name': { 'type': 'string' },
+                                    'label': { 'type': 'string' },
+                                    'rules': {
+                                        'type': 'object',
+                                        'properties': {
+                                            'required': { 'type': 'boolean' },
+                                            'nullable': { 'type': 'boolean' },
+                                        },
+                                    },
+                                },
+                                'required': ['name'],
+                            },
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': { 'const': 'media' },
+                                    'name': { 'type': 'string' },
+                                    'label': { 'type': 'string' },
+                                    'rules': {
+                                        'type': 'object',
+                                        'properties': {
+                                            'required': { 'type': 'boolean' },
+                                            'nullable': { 'type': 'boolean' },
+                                        },
+                                    },
+                                    'options': {
+                                        'type': 'object',
+                                        'properties': {
+                                            'media_group': { 'type': 'string' },
+                                            'conversions': {
+                                                'type': 'array',
+                                                'items': {
+                                                    'type': 'string',
+                                                },
+                                            },
+                                        },
+                                        'required': ['media_group'],
+                                    },
+                                },
+                                'required': ['name', 'options'],
+                            },
+                        ],
+                    },
+                },
+            },
+            'required': ['id'],
+        }
+
+        jsonschema.validate(config, schema)
+
+    def __merge_defaults(self, config: dict):
+        if 'name' not in config:
+            config['name'] = self.__convert_to_title(config['id'])
+
+        if 'fields' not in config:
+            config['fields'] = []
+
+        for i, field in enumerate(config['fields']):
+            if 'label' not in field:
+                config['label'] = self.__convert_to_title(field['name'])
+            
+            default_rules = {
+                'required': False,
+                'nullable': False,
+            }
+
+            if 'rules' not in field:
+                field['rules'] = default_rules
+            else:
+                for rule_key in default_rules:
+                    if rule_key not in field['rules']:
+                        field['rules'][rule_key] = default_rules[rule_key]
+
+            # Type specific defaults
+
+            if field['type'] == 'media':
+                if 'conversions' not in field['options']:
+                    field['options']['conversions'] = []
+
+            config['fields'][i] = field
+
+        return config
+
+    def __convert_to_title(self, string: str):
+        for separator in ['-', '_']:
+            string = string.replace(separator, ' ')
+
+        return string.title()
 
 class TemplateParser(object):
     def __init__(self, file_path: str):
