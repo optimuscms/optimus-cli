@@ -55,6 +55,7 @@ class TemplateParser(object):
 
         return compiled_template.render(
             self.__data,
+            in_array=self.__in_array_helper,
             has_feature=self.__has_feature_helper
         )
 
@@ -82,6 +83,9 @@ class TemplateParser(object):
         )
 
         return len(matching_features) != 0
+
+    def __in_array_helper(self, text, array):
+        return text in array
 
 
 class TemplateFilters(object):

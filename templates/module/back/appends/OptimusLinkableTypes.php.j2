@@ -1,5 +1,5 @@
-{% if has_feature('Linkable') %}
-    {{ identifiers.pascal_singular }}::class,
+{% if has_feature('linkable') %}
+    {{ name | singular | pascal }}::class,
 {% endif %}
 
 /*--OPTIMUS-CLI:linkable-types--*/

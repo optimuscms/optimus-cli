@@ -1,5 +1,5 @@
 {% for feature in features %}
-    {% if feature.type == 'HasMedia' %}
+    {% if feature.type == 'media' %}
         {% for conversion in feature.options.conversions %}
             Conversion::register(
                 '{{ conversion.name }}',

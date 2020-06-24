@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class {{ identifiers.pascal_singular }}Resource extends JsonResource
+class {{ name | singular | pascal }}Resource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,26 +21,26 @@ class {{ identifiers.pascal_singular }}Resource extends JsonResource
             'created_at' => (string) $this->created_at,
             {% for field in fields %}
                 {% if not field.type == 'image' %}
-                    '{{ field.identifiers.snake }}' => $this->{{ field.identifiers.snake }},
+                    '{{ field.name }}' => $this->{{ field.name }},
                 {% endif %}
             {% endfor -%}
 
-            {% if has_feature('Draftable') %}
+            {% if has_feature('draftable') %}
                 'is_published' => $this->isPublished(),
             {% endif -%}
 
-            {% if has_feature('HasSeoFields') %}
+            {% if has_feature('seo') %}
                 'meta' => $this->whenLoaded('meta', function () {
                     return new MetaResource($this->meta);
                 }),
             {% endif -%}
 
-            {% if has_feature('HasMedia') %}
+            {% if has_feature('media') %}
                 $this->mergeWhen($this->resource->relationLoaded('media'), function () {
                     return [
                         {% for field in fields %}
                             {% if field.type == 'image' %}
-                                '{{ field.identifiers.snake }}' => new MediaResource($this->getFirstMedia('{{ field.identifiers.snake }}'))
+                                '{{ field.name }}' => new MediaResource($this->getFirstMedia('{{ field.name }}'))
                             {% endif %}
                         {% endfor %}
                     ];

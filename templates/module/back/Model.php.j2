@@ -4,41 +4,41 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-{% if has_feature('Draftable') %}
+{% if has_feature('draftable') %}
     use Optix\Draftable\Draftable;
 {% endif -%}
 
-{% if has_feature('HasSlug') %}
+{% if has_feature('slug') %}
     use Spatie\Sluggable\HasSlug;
     use Spatie\Sluggable\SlugOptions;
 {% endif -%}
 
-{% if has_feature('HasMedia') %}
+{% if has_feature('media') %}
     use Optix\Media\HasMedia;
 {% endif -%}
 
-{% if has_feature('HasSeoFields') %}
+{% if has_feature('seo') %}
     use App\Traits\HasSeoFields;
 {% endif -%}
 
-{% if has_feature('Linkable') %}
+{% if has_feature('linkable') %}
     use App\Contracts\Linkable;
     use App\Traits\LinkableTrait;
     use App\Contracts\SynchronisesMenuItemUrls;
 {% endif -%}
 
-{% if has_feature('Sortable') %}
+{% if has_feature('order') %}
     use Spatie\EloquentSortable\Sortable;
     use Spatie\EloquentSortable\SortableTrait;
 {% endif %}
 
-class {{ identifiers.pascal_singular }} extends Model implements
+class {{ name | singular | pascal }} extends Model implements
 {% for feature in features %}
-    {%- if feature.type == 'Linkable' -%}
+    {%- if feature.type == 'linkable' -%}
         Linkable, SynchronisesMenuItemUrls{% if not loop.last %},{% endif -%}
     {%- endif -%}
 
-    {%- if feature.type == 'Sortable' -%}
+    {%- if feature.type == 'order' -%}
         Sortable{% if not loop.last %},{% endif -%}
     {%- endif -%}
 {%- endfor %}
@@ -46,17 +46,17 @@ class {{ identifiers.pascal_singular }} extends Model implements
 {
     use 
     {% for feature in features %}
-        {%- if feature.type == 'Draftable' %}Draftable{%- endif -%}
-        {%- if feature.type == 'HasSlug' %}HasSlug{%- endif -%}
-        {%- if feature.type == 'HasMedia' %}HasMedia{%- endif -%}
-        {%- if feature.type == 'HasSeoFields' %}HasSeoFields{%- endif -%}
-        {%- if feature.type == 'Linkable' %}LinkableTrait{%- endif -%}
-        {%- if feature.type == 'Sortable' %}SortableTrait{%- endif -%}
+        {%- if feature.type == 'draftable' %}Draftable{%- endif -%}
+        {%- if feature.type == 'slug' %}HasSlug{%- endif -%}
+        {%- if feature.type == 'media' %}HasMedia{%- endif -%}
+        {%- if feature.type == 'seo' %}HasSeoFields{%- endif -%}
+        {%- if feature.type == 'linkable' %}LinkableTrait{%- endif -%}
+        {%- if feature.type == 'order' %}SortableTrait{%- endif -%}
         {% if not loop.last %},{% endif %}
     {% endfor %};
     
     {% for feature in features %}
-        {% if feature.type == 'Draftable' %}
+        {% if feature.type == 'draftable' %}
             /**
             * The attributes that should be cast to native types.
             *
@@ -72,11 +72,11 @@ class {{ identifiers.pascal_singular }} extends Model implements
             * @var array
             */
             protected $dates = [
-                'published_at',
+                '{{ feature.options.published_at_field }}',
             ];
         {% endif %}
 
-        {% if feature.type == 'HasSlug' %}
+        {% if feature.type == 'slug' %}
             /**
             * Get the model's slug options.
             *
@@ -90,7 +90,7 @@ class {{ identifiers.pascal_singular }} extends Model implements
             }
 
             /**
-            * Find a {{ identifiers.label_singular }} with the given slug or fail.
+            * Find a {{ name | singular }} with the given slug or fail.
             *
             * @param string $slug
             * @return mixed
@@ -103,9 +103,9 @@ class {{ identifiers.pascal_singular }} extends Model implements
             }
         {% endif %}
         
-        {% if feature.type == 'HasMedia' %}
+        {% if feature.type == 'media' %}
             /**
-            * Register the {{ identifiers.label_singular }} media groups.
+            * Register the {{ name | singular }} media groups.
             *
             * @return void
             */
@@ -120,15 +120,15 @@ class {{ identifiers.pascal_singular }} extends Model implements
             }
         {% endif %}
 
-        {% if feature.type == 'Linkable' %}
+        {% if feature.type == 'linkable' %}
             /**
             * Returns the linkable type identifier for this model instance.
             *
             * @return string
             */
-            public static function getLinkableTypeIdentifier(): string
+            public static function getlinkableTypeIdentifier(): string
             {
-                return '{{ identifiers.kebab_plural }}';
+                return '{{ name | plural | kebab }}';
             }
 
             /**
@@ -136,9 +136,9 @@ class {{ identifiers.pascal_singular }} extends Model implements
             *
             * @return string
             */
-            public static function getLinkableTypeName(): string
+            public static function getlinkableTypeName(): string
             {
-                return '{{ identifiers.label_plural }}';
+                return '{{ name | plural }}';
             }
 
             /**
@@ -172,37 +172,37 @@ class {{ identifiers.pascal_singular }} extends Model implements
             }
 
             /**
-            * Builds the query used to retrieve linkable {{ identifiers.label_plural }}.
+            * Builds the query used to retrieve linkable {{ name | plural }}.
             *
             * @return Builder
             */
-            public static function buildLinkableQuery(): Builder
+            public static function buildlinkableQuery(): Builder
             {
                 return self::query();
             }
 
             /**
-            * Builds the search query used to find linkable {{ identifiers.label_singular }} items matching the provided query.
+            * Builds the search query used to find linkable {{ name | singular }} items matching the provided query.
             *
             * @param string $input
             * @return Builder
             */
-            public static function buildLinkableSearchQuery(string $input): Builder
+            public static function buildlinkableSearchQuery(string $input): Builder
             {
-                return self::buildLinkableQuery()->where(
+                return self::buildlinkableQuery()->where(
                     '{{ feature.options.search_query_field }}', 'like', '%'.$input.'%'
                 );
             }
         {% endif %}
 
-        {% if feature.type == 'Sortable' %}
+        {% if feature.type == 'order' %}
             /**
-            * The model's sortable options.
+            * The model's order options.
             *
             * @var array
             */
-            protected $sortable = [
-                'order_column_name' => 'order',
+            protected $order = [
+                'order_column_name' => '{{ feature.options.order_field }}',
             ];
         {% endif %}
     {% endfor %}
@@ -216,7 +216,7 @@ class {{ identifiers.pascal_singular }} extends Model implements
      */
     public function scopeApplyFilters(Builder $query, array $filters)
     {
-        {% if has_feature('Sortable') %}
+        {% if has_feature('order') %}
             // Sort
             if ($sort = $filters['sort'] ?? false) {
                 if (in_array($sort, [

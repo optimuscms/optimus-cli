@@ -1,12 +1,12 @@
 import client from '../../../util/api-client';
 
-// {{ identifiers.label_plural }}
-export const get{{ identifiers.pascal_plural }} = params => client.fetch('{{ identifiers.kebab_plural }}', params);
-export const get{{ identifiers.pascal_singular }} = id => client.fetch(`{{ identifiers.kebab_plural }}/${id}`);
-export const create{{ identifiers.pascal_singular }} = params => client.create('{{ identifiers.kebab_plural }}', params);
-export const update{{ identifiers.pascal_singular }} = (id, params) => client.update(`{{ identifiers.kebab_plural }}/${id}`, params);
-export const delete{{ identifiers.pascal_singular }} = id => client.destroy(`{{ identifiers.kebab_plural }}/${id}`);
+// {{ name | plural }}
+export const get{{ name | plural | pascal }} = params => client.fetch('{{ name | plural | kebab }}', params);
+export const get{{ name | singular | pascal }} = id => client.fetch(`{{ name | plural | kebab }}/${id}`);
+export const create{{ name | singular | pascal }} = params => client.create('{{ name | plural | kebab }}', params);
+export const update{{ name | singular | pascal }} = (id, params) => client.update(`{{ name | plural | kebab }}/${id}`, params);
+export const delete{{ name | singular | pascal }} = id => client.destroy(`{{ name | plural | kebab }}/${id}`);
 
-{% if has_feature('Sortable') %}
-    export const move{{ identifiers.pascal_singular }} = (id, direction) => client.put(`{{identifiers.kebab_plural }}/${id}/move`, { direction });
+{% if has_feature('order') %}
+    export const move{{ name | singular | pascal }} = (id, direction) => client.put(`{{name | plural | kebab }}/${id}/move`, { direction });
 {% endif %}

@@ -1,37 +1,37 @@
 <template>
-    <{{ identifiers.kebab_singular }}-form :item="{{ identifiers.camel_singular }}" />
+    <{{ name | singular | kebab }}-form :item="{{ name | singular | camel }}" />
 </template>
 
 <script>
-import { get{{ identifiers.pascal_singular }} } from '../routes/api';
-import {{ identifiers.pascal_singular }}Form from './partials/Form';
+import { get{{ name | singular | pascal }} } from '../routes/api';
+import {{ name | singular | pascal }}Form from './partials/Form';
 
 export default {
-    components: { {{ identifiers.pascal_singular }}Form },
+    components: { {{ name | singular | pascal }}Form },
 
     data() {
         return {
-            {{ identifiers.camel_singular }}: null,
+            {{ name | singular | camel }}: null,
         };
     },
 
     created() {
-        this.setTitle('Edit {{ identifiers.label_singular }}');
+        this.setTitle('Edit {{ name | singular }}');
 
-        this.fetch{{ identifiers.pascal_singular }}();
+        this.fetch{{ name | singular | pascal }}();
     },
 
     methods: {
-        fetch{{identifiers.pascal_singular}}() {
-            this.startLoading('primary.{{ identifiers.kebab_singular }}');
+        fetch{{name | singular | pascal}}() {
+            this.startLoading('primary.{{ name | singular | kebab }}');
 
-            get{{identifiers.pascal_singular}}(this.$route.params.id).then(response => {
-                this.{{ identifiers.camel_singular }} = response.data.data;
+            get{{name | singular | pascal}}(this.$route.params.id).then(response => {
+                this.{{ name | singular | camel }} = response.data.data;
 
-                this.stopLoading('primary.{{ identifiers.kebab_singular }}');
+                this.stopLoading('primary.{{ name | singular | kebab }}');
             }).catch(() => {
                 this.$router.push({
-                    name: '{{ identifiers.kebab_plural }}.index',
+                    name: '{{ name | plural | kebab }}.index',
                 });
             });
         },

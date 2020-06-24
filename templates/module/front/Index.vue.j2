@@ -1,11 +1,11 @@
 <template>
     <o-loader :loading="isLoading('primary.*')">
-        <section v-if="{{ identifiers.camel_plural }}.length === 0" class="p-8">
+        <section v-if="{{ name | plural | camel }}.length === 0" class="p-8">
             <o-notification class="rounded">
-                You haven't added any {{ identifiers.label_plural | lower }} yet,
+                You haven't added any {{ name | plural | lower }} yet,
 
                 <router-link
-                    :to="{ name: '{{ identifiers.kebab_plural }}.create' }"
+                    :to="{ name: '{{ name | plural | kebab }}.create' }"
                     class="underline"
                 >
                     click here to add one
@@ -16,14 +16,14 @@
         <table v-else class="table">
             <thead>
                 <tr>
-                    {% if has_feature('Sortable') %}
+                    {% if has_feature('order') %}
                         <th class="narrow" />
                     {% endif %}
 
                     {% for field in fields %}
-                        {% if field.show_in_admin_index %}
+                        {% if field.show_on_index %}
                             <th>
-                                {{ identifiers.label }}
+                                {{ label }}
                             </th>
                         {% endif %}
                     {% endfor %}
@@ -36,20 +36,20 @@
 
             <transition-group name="flip-list" tag="tbody">
                 <tr
-                    v-for="{{ identifiers.camel_singular }} in {{ identifiers.camel_plural }}"
-                    :key="{{ identifiers.camel_singular }}.id"
-                    {% if has_feature('Draftable') %}
-                        :class="{ 'draft': ! {{ identifiers.camel_singular }}.is_published }"
+                    v-for="{{ name | singular | camel }} in {{ name | plural | camel }}"
+                    :key="{{ name | singular | camel }}.id"
+                    {% if has_feature('draftable') %}
+                        :class="{ 'draft': ! {{ name | singular | camel }}.is_published }"
                     {% endif %}
                 >
-                    {% if has_feature('Sortable') %}
+                    {% if has_feature('order') %}
                         <td class="actions">
                             <a
                                 class="icon"
                                 :class="{
-                                    'pointer-events-none opacity-50': ! canMoveItemUp({{ identifiers.camel_plural }}, {{ identifiers.camel_singular }}.id)
+                                    'pointer-events-none opacity-50': ! canMoveItemUp({{ name | plural | camel }}, {{ name | singular | camel }}.id)
                                 }"
-                                @click="moveItemUp({{ identifiers.camel_plural }}, {{ identifiers.camel_singular }}.id)"
+                                @click="moveItemUp({{ name | plural | camel }}, {{ name | singular | camel }}.id)"
                             >
                                 <icon icon="angle-up" />
                             </a>
@@ -57,9 +57,9 @@
                             <a
                                 class="icon"
                                 :class="{
-                                    'pointer-events-none opacity-50': ! canMoveItemDown({{ identifiers.camel_plural }}, {{ identifiers.camel_singular }}.id)
+                                    'pointer-events-none opacity-50': ! canMoveItemDown({{ name | plural | camel }}, {{ name | singular | camel }}.id)
                                 }"
-                                @click="moveItemDown({{ identifiers.camel_plural }}, {{ identifiers.camel_singular }}.id)"
+                                @click="moveItemDown({{ name | plural | camel }}, {{ name | singular | camel }}.id)"
                             >
                                 <icon icon="angle-down" />
                             </a>
@@ -67,9 +67,9 @@
                     {% endif %}
 
                     {% for field in fields %}
-                        {% if field.show_in_admin_index %}
+                        {% if field.show_on_index %}
                             <td>
-                                {{ '{{ ' + identifiers.camel_singular + '.' + field.identifiers.snake + ' }}' }}
+                                {{ '{{ ' + name | singular | camel + '.' + field.name + ' }}' }}
                             </td>
                         {% endif %}
                     {% endfor %}
@@ -77,8 +77,8 @@
                     <td class="actions">
                         <router-link
                             :to="{
-                                name: '{{ identifiers.kebab_plural }}.edit',
-                                params: { id: {{ identifiers.camel_singular }}.id },
+                                name: '{{ name | plural | kebab }}.edit',
+                                params: { id: {{ name | singular | camel }}.id },
                             }"
                             class="icon medium"
                         >
@@ -87,7 +87,7 @@
 
                         <a
                             class="icon medium"
-                            @click="openConfirmation({{ identifiers.camel_singular }})"
+                            @click="openConfirmation({{ name | singular | camel }})"
                         >
                             <icon icon="trash-alt" />
                         </a>
@@ -97,64 +97,64 @@
         </table>
 
         <o-confirmation
-            v-slot="{ item: {{ identifiers.camel_singular }} }"
+            v-slot="{ item: {{ name | singular | camel }} }"
             button-class="red"
             button-text="Delete"
-            @confirm="delete{{ identifiers.pascal_singular }}"
+            @confirm="delete{{ name | singular | pascal }}"
         >
-            Are you sure you want to delete this {{ identifiers.label_singular | lower }}?
+            Are you sure you want to delete this {{ name | singular | lower }}?
         </o-confirmation>
     </o-loader>
 </template>
 
 <script>
-import { sortableMixin } from '@optimuscms/theme';
+import { orderMixin } from '@optimuscms/theme';
 
 import {
-    get{{ identifiers.pascal_plural }},
-    delete{{ identifiers.pascal_singular }},
-    {% if has_feature('Sortable') %}move{{ identifiers.pascal_singular }}{% endif %}
+    get{{ name | plural | pascal }},
+    delete{{ name | singular | pascal }},
+    {% if has_feature('order') %}move{{ name | singular | pascal }}{% endif %}
 } from '../routes/api';
 
 export default {
-    mixins: [ sortableMixin ],
+    mixins: [ orderMixin ],
 
     data() {
         return {
-            {{ identifiers.camel_plural }}: [],
+            {{ name | plural | camel }}: [],
         };
     },
 
     created() {
-        this.setTitle('Manage {{ identifiers.label_plural }}');
+        this.setTitle('Manage {{ name | plural }}');
 
-        this.fetch{{ identifiers.pascal_plural }}();
+        this.fetch{{ name | plural | pascal }}();
     },
 
     methods: {
-        fetch{{ identifiers.pascal_plural }}() {
-            this.startLoading('primary.{{ identifiers.kebab_plural }}');
+        fetch{{ name | plural | pascal }}() {
+            this.startLoading('primary.{{ name | plural | kebab }}');
 
-            get{{ identifiers.pascal_plural }}().then(response => {
-                this.{{ identifiers.camel_plural }} = response.data.data;
+            get{{ name | plural | pascal }}().then(response => {
+                this.{{ name | plural | camel }} = response.data.data;
 
-                this.stopLoading('primary.{{ identifiers.kebab_plural }}');
+                this.stopLoading('primary.{{ name | plural | kebab }}');
             });
         },
 
-        {% if has_feature('Sortable') %}
+        {% if has_feature('order') %}
             move(id, from, to) {
-                move{{ identifiers.pascal_singular }}(id, this.getMoveDirection(from, to));
+                move{{ name | singular | pascal }}(id, this.getMoveDirection(from, to));
 
-                this.{{ identifiers.camel_plural }} = this.moveItem(this.{{ identifiers.camel_plural }}, from, to);
+                this.{{ name | plural | camel }} = this.moveItem(this.{{ name | plural | camel }}, from, to);
             },
         {% endif %}
 
-        delete{{ identifiers.pascal_singular }}({{ identifiers.camel_singular }}) {
-            delete{{ identifiers.pascal_singular }}({{ identifiers.camel_singular }}.id);
+        delete{{ name | singular | pascal }}({{ name | singular | camel }}) {
+            delete{{ name | singular | pascal }}({{ name | singular | camel }}.id);
 
-            this.{{ identifiers.camel_plural }} = this.{{ identifiers.camel_plural }}.filter(({ id }) => {
-                return id !== {{ identifiers.camel_singular }}.id;
+            this.{{ name | plural | camel }} = this.{{ name | plural | camel }}.filter(({ id }) => {
+                return id !== {{ name | singular | camel }}.id;
             });
         },
     },

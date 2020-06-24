@@ -166,43 +166,43 @@ class ModuleGenerator(Generator):
         return [
             [
                 'back/Controller.php.j2',
-                'app/Http/Controllers/Back/Api/{{ identifiers.pascal_plural }}Controller.php'
+                'app/Http/Controllers/Back/Api/{{ name | plural | pascal }}Controller.php'
             ],
             [
                 'back/Model.php.j2',
-                'app/Models/{{ identifiers.pascal_singular }}.php'
+                'app/Models/{{ name | singular | pascal }}.php'
             ],
             [
                 'back/Resource.php.j2',
-                'app/Http/Resources/{{ identifiers.pascal_singular }}Resource.php'
+                'app/Http/Resources/{{ name | singular | pascal }}Resource.php'
             ],
             [
                 'back/Migration.php.j2',
-                'database/migrations/%s_create_{{ identifiers.snake_plural }}_table.php' % self.__get_datetime()
+                'database/migrations/%s_create_{{ name | plural | snake }}_table.php' % self.__get_datetime()
             ],
             [
                 'front/api.js.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/routes/api.js'
+                'resources/js/back/modules/{{ name | plural | kebab }}/routes/api.js'
             ],
             [
                 'front/app.js.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/routes/app.js'
+                'resources/js/back/modules/{{ name | plural | kebab }}/routes/app.js'
             ],
             [
                 'front/Create.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Create.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/Create.vue'
             ],
             [
                 'front/Edit.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Edit.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/Edit.vue'
             ],
             [
                 'front/Index.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Index.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/Index.vue'
             ],
             [
                 'front/Form.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/partials/Form.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/partials/Form.vue'
             ]
         ]
 
