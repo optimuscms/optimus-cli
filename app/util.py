@@ -1,4 +1,5 @@
 import json
+import jsonschema
 import os
 import re
 import inflection
@@ -11,21 +12,40 @@ from jinja2 import Template
 from jinja2 import nodes
 from jinja2.ext import Extension
 
-class PageTemplateConfigParser():
+class ConfigParser():
 
-    def parse_dict(self, config: dict):
-        self.__validate(config)
-
-        return self.__merge_defaults(config)
-
-    def parse_json_file(self, file_path: str):
+    def parse_json_file(self, file_path: str) -> dict:
         with open(file_path, 'r') as config_file:
             return self.parse_dict(
                 json.loads(config_file.read())
             )
 
-    def __validate(self, config: dict):
-        schema = {
+    def parse_dict(self, config: dict) -> dict:
+        self.__validate(config)
+
+        return self.__merge_defaults(config)
+
+    def __validate(self, config: dict) -> None:
+        jsonschema.validate(config, self.__get_schema())
+
+    def __get_schema(self) -> dict:
+        return {}
+
+    def __merge_defaults(self, config: dict) -> dict:
+        return config
+
+class ModuleTemplateConfigParser(ConfigParser):
+
+    def __get_schema(self) -> dict:
+        return {}
+
+    def __merge_defaults(self, config: dict) -> dict:
+        return config
+
+class PageTemplateConfigParser(ConfigParser):
+
+    def __get_schema(self) -> dict:
+        return {
             'type': 'object',
             'properties': {
                 'id': { 'type': 'string' },
@@ -134,9 +154,7 @@ class PageTemplateConfigParser():
             'required': ['id'],
         }
 
-        jsonschema.validate(config, schema)
-
-    def __merge_defaults(self, config: dict):
+    def __merge_defaults(self, config: dict) -> dict:
         if 'name' not in config:
             config['name'] = self.__convert_to_title(config['id'])
 
