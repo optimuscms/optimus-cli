@@ -6,30 +6,30 @@ use App\Contracts\PageTemplate;
 use App\Http\Resources\MediaResource;
 use App\Models\Page;
 
-class {{ identifiers.file_name }}Template implements PageTemplate
+class {{ name | pascal }}Template implements PageTemplate
 {
     public static function getId(): string
     {
-        return '{{ identifiers.template_id }}';
+        return '{{ id}}';
     }
 
     public static function getName(): string
     {
-        return '{{ identifiers.template_name }}';
+        return '{{ name }}';
     }
 
     public static function validateData(array $data)
     {
         validator($data, [
             {% for field in fields %}
-                {% if field.type == 'string' %}
-                    '{{ field.identifiers.snake }}' => '{% if field.required %}required|{% endif %}string|max:255',
-                {% elif field.type == 'text' %}
-                    '{{ field.identifiers.snake }}' => '{% if field.required %}required|{% endif %}string',
-                {% elif field.type == 'url' %}
-                    '{{ field.identifiers.snake }}' => '{% if field.required %}required|{% endif %}url',
-                {% elif field.type == 'image' %}
-                    '{{ field.identifiers.snake }}_id' => '{% if field.required %}required|{% endif %}exists:media,id',
+                {% if field.type == 'text' %}
+                    '{{ field.name }}' => '{% if field.rules.required %}required|{% endif %}string|max:255',
+                {% elif in_array(field.type, ['textarea', 'editor']) %}
+                    '{{ field.name }}' => '{% if field.rules.required %}required|{% endif %}string',
+                {% elif field.type == 'date' %}
+                    '{{ field.name }}' => '{% if field.rules.required %}required|{% endif %}date',
+                {% elif field.type == 'media' %}
+                    '{{ field.name }}_id' => '{% if field.rules.required %}required|{% endif %}exists:media,id',
                 {% endif %}
             {% endfor %}
         ])->validate();
@@ -39,15 +39,15 @@ class {{ identifiers.file_name }}Template implements PageTemplate
     {
         $page->addContents([
             {% for field in fields %}
-                {% if field.type != 'image' %}
-                    '{{ field.identifiers.snake }}' => $data['{{ field.identifiers.snake }}'],
+                {% if field.type != 'media' %}
+                    '{{ field.name }}' => $data['{{ field.name }}'],
                 {% endif %}
             {% endfor %}
         ]);
 
         {% for field in fields %}
-            {% if field.type == 'image' %}
-                $page->attachMedia($data['{{ field.identifiers.snake }}_id'], '{{ field.options.group }}', [
+            {% if field.type == 'media' %}
+                $page->attachMedia($data['{{ field.name }}_id'], '{{ field.options.group }}', [
                     {% for conversion in field.options.conversions %}
                         '{{ conversion }}',
                     {% endfor %}
@@ -66,10 +66,10 @@ class {{ identifiers.file_name }}Template implements PageTemplate
     {
         return [
             {% for field in fields %}
-                {% if field.type != 'image' %}
-                    '{{ field.identifiers.snake }}' => $page->getContent('{{ field.identifiers.snake }}'),
+                {% if field.type != 'media' %}
+                    '{{ field.name }}' => $page->getContent('{{ field.name }}'),
                 {% else %}
-                    '{{ field.identifiers.snake }}_id' => new MediaResource($page->getFirstMedia('{{ field.options.group }}')),
+                    '{{ field.name }}_id' => new MediaResource($page->getFirstMedia('{{ field.options.group }}')),
                 {% endif %}
             {% endfor %}
         ];
@@ -77,6 +77,6 @@ class {{ identifiers.file_name }}Template implements PageTemplate
 
     public static function render(Page $page)
     {
-        return view('front.{{ identifiers.template_id }}', compact('page'));
+        return view('front.{{ id }}', compact('page'));
     }
 }

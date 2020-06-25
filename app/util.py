@@ -3,6 +3,7 @@ import jsonschema
 import os
 import re
 import inflection
+import jsonschema
 
 from functools import reduce
 
@@ -247,8 +248,8 @@ class PageTemplateConfigParser(ConfigParser):
         return {
             'type': 'object',
             'properties': {
-                'id': { 'type': 'string' },
-                'name': { 'type': 'string' },
+                'id': {'type': 'string'},
+                'name': {'type': 'string'},
                 'fields': {
                     'type': 'array',
                     'items': {
@@ -256,14 +257,14 @@ class PageTemplateConfigParser(ConfigParser):
                             {
                                 'type': 'object',
                                 'properties': {
-                                    'type': { 'const': 'text' },
-                                    'name': { 'type': 'string' },
-                                    'label': { 'type': 'string' },
+                                    'type': {'const': 'text'},
+                                    'name': {'type': 'string'},
+                                    'label': {'type': 'string'},
                                     'rules': {
                                         'type': 'object',
                                         'properties': {
-                                            'required': { 'type': 'boolean' },
-                                            'nullable': { 'type': 'boolean' },
+                                            'required': {'type': 'boolean'},
+                                            'nullable': {'type': 'boolean'},
                                         },
                                     },
                                 },
@@ -272,14 +273,14 @@ class PageTemplateConfigParser(ConfigParser):
                             {
                                 'type': 'object',
                                 'properties': {
-                                    'type': { 'const': 'textarea' },
-                                    'name': { 'type': 'string' },
-                                    'label': { 'type': 'string' },
+                                    'type': {'const': 'textarea'},
+                                    'name': {'type': 'string'},
+                                    'label': {'type': 'string'},
                                     'rules': {
                                         'type': 'object',
                                         'properties': {
-                                            'required': { 'type': 'boolean' },
-                                            'nullable': { 'type': 'boolean' },
+                                            'required': {'type': 'boolean'},
+                                            'nullable': {'type': 'boolean'},
                                         },
                                     },
                                 },
@@ -288,14 +289,14 @@ class PageTemplateConfigParser(ConfigParser):
                             {
                                 'type': 'object',
                                 'properties': {
-                                    'type': { 'const': 'editor' },
-                                    'name': { 'type': 'string' },
-                                    'label': { 'type': 'string' },
+                                    'type': {'const': 'editor'},
+                                    'name': {'type': 'string'},
+                                    'label': {'type': 'string'},
                                     'rules': {
                                         'type': 'object',
                                         'properties': {
-                                            'required': { 'type': 'boolean' },
-                                            'nullable': { 'type': 'boolean' },
+                                            'required': {'type': 'boolean'},
+                                            'nullable': {'type': 'boolean'},
                                         },
                                     },
                                 },
@@ -304,14 +305,14 @@ class PageTemplateConfigParser(ConfigParser):
                             {
                                 'type': 'object',
                                 'properties': {
-                                    'type': { 'const': 'date' },
-                                    'name': { 'type': 'string' },
-                                    'label': { 'type': 'string' },
+                                    'type': {'const': 'date'},
+                                    'name': {'type': 'string'},
+                                    'label': {'type': 'string'},
                                     'rules': {
                                         'type': 'object',
                                         'properties': {
-                                            'required': { 'type': 'boolean' },
-                                            'nullable': { 'type': 'boolean' },
+                                            'required': {'type': 'boolean'},
+                                            'nullable': {'type': 'boolean'},
                                         },
                                     },
                                 },
@@ -320,20 +321,20 @@ class PageTemplateConfigParser(ConfigParser):
                             {
                                 'type': 'object',
                                 'properties': {
-                                    'type': { 'const': 'media' },
-                                    'name': { 'type': 'string' },
-                                    'label': { 'type': 'string' },
+                                    'type': {'const': 'media'},
+                                    'name': {'type': 'string'},
+                                    'label': {'type': 'string'},
                                     'rules': {
                                         'type': 'object',
                                         'properties': {
-                                            'required': { 'type': 'boolean' },
-                                            'nullable': { 'type': 'boolean' },
+                                            'required': {'type': 'boolean'},
+                                            'nullable': {'type': 'boolean'},
                                         },
                                     },
                                     'options': {
                                         'type': 'object',
                                         'properties': {
-                                            'media_group': { 'type': 'string' },
+                                            'media_group': {'type': 'string'},
                                             'conversions': {
                                                 'type': 'array',
                                                 'items': {
@@ -363,10 +364,10 @@ class PageTemplateConfigParser(ConfigParser):
         for i, field in enumerate(config['fields']):
             if 'label' not in field:
                 config['label'] = self.__convert_to_title(field['name'])
-            
+
             default_rules = {
                 'required': False,
-                'nullable': False,
+                'nullable': False
             }
 
             if 'rules' not in field:
@@ -392,19 +393,19 @@ class PageTemplateConfigParser(ConfigParser):
 
         return string.title()
 
+
 class TemplateParser(object):
-    def __init__(self, file_path: str):
+    def __init__(self, config_path: str):
         self.__environment = Environment(
+            loader=BaseLoader,
             trim_blocks=True,
             lstrip_blocks=True,
-            loader=BaseLoader
         )
 
         self.__filters = TemplateFilters()
 
         self.__environment.filters = {
             **self.__environment.filters,
-
             'camel': self.__filters.camel,
             'kebab': self.__filters.kebab,
             'snake': self.__filters.snake,
@@ -413,8 +414,8 @@ class TemplateParser(object):
             'singular': self.__filters.singular
         }
 
-        with open(file_path, 'r') as template_file:
-            self.__data = json.loads(template_file.read())
+        with open(config_path, 'r') as config_file:
+            self.__config_data = json.loads(config_file.read())
 
     def render_file(self, file_path: str) -> str:
         """Renders the contents of the file at the provided file path
@@ -428,7 +429,8 @@ class TemplateParser(object):
         compiled_template = self.__environment.from_string(template_contents)
 
         return compiled_template.render(
-            self.__data,
+            self.__config_data,
+            in_array=self.__in_array_helper,
             has_feature=self.__has_feature_helper
         )
 
@@ -438,24 +440,27 @@ class TemplateParser(object):
         :param to_render: the string to render
         :return: the rendered string
         """
-        compiled_string = Template(to_render)
+        compiled_string = self.__environment.from_string(to_render)
 
-        return compiled_string.render(self.__data)
+        return compiled_string.render(self.__config_data)
 
     def get_template_data(self) -> dict:
         """Retrieves the template data (JSON) provided by the user
 
         :return: the compiled handlebars template
         """
-        return self.__data
+        return self.__config_data
 
     def __has_feature_helper(self, feature_type):
         matching_features = list(
             filter(lambda feature: feature['type'] ==
-                   feature_type, self.__data['features'])
+                   feature_type, self.__config_data['features'])
         )
 
         return len(matching_features) != 0
+
+    def __in_array_helper(self, text, array):
+        return text in array
 
 
 class TemplateFilters(object):

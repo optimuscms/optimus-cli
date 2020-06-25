@@ -1,11 +1,5 @@
 {
   "name": "Post Category",
-  // text
-  // textarea
-  // checkbox
-  // editor
-  // media
-  // date
   "fields": [
     {
       "type": "text",
@@ -34,7 +28,7 @@
       "options": {}
     },
     {
-      "type": "text",
+      "type": "editor",
       "name": "description",
       "label": "Description",
       "show_on_index": false,
@@ -64,12 +58,12 @@
       "label": "Banner Image",
       "show_on_index": false,
       "rules": {
-        "required": true, // false by default
-        "nullable": false, // false by default
+        "required": true,
+        "nullable": false,
         "url": false
       },
       "options": {
-        "accepted_extensions": "image", // any by default
+        "accepted_extensions": "image",
         "group": "image",
         "conversions": [
           "1400x600"
@@ -81,7 +75,6 @@
     {
       "type": "order",
       "options": {
-        // inferred by default
         "order_field": "order"
       }
     },
@@ -93,7 +86,7 @@
       }
     },
     {
-      "type": "seo", //
+      "type": "seo",
       "options": {}
     },
     {
@@ -117,7 +110,6 @@
     {
       "type": "draftable",
       "options": {
-        // inferred by default [published_at]
         "published_at_field": "published_at"
       }
     },

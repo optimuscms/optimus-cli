@@ -2,35 +2,36 @@ import os
 import re
 from app import config
 from app.util import TemplateParser
+from app.util import PageTemplateConfigParser
 from datetime import datetime
 
 
 class Generator(object):
-    def __init__(self, template_path):
-        self.__template_path = template_path
-        self.__parser = TemplateParser(template_path)
-        self.__identifiers = self.__parser.get_template_data()['identifiers']
+    def __init__(self, config_path):
+        self.__config_path = config_path
+        self.__parser = TemplateParser(config_path)
 
     def build(self):
-        # 1) Build
-        # Read the config
-        # depends on entrypoint (web request, interactive console, config file)
-        # Verify the config, merge defaults where necessary
-        # Give back good errors
-        # Pass data to templates
-        # Get the rendered template, save to file
-
-        # 2) Format
-        # Run linters on generated files
         """Builds new and existing project files from the provided templates and dynamic files"""
-        if self.__generate_templates() and self.__update_dynamic_files():
-            print('Successfully generated files for %s, formatting...' %
-                  self.__template_path)
+
+        # Parse JSON config
+        try:
+            self._get_config_parser().parse_json_file(
+                self.__config_path
+            )
+        except Exception as exception:
+            return print('The following error detected in was detected in your config file, please fix it and run the generator again:\n\n%s' % str(exception))
+
+        # Generate new files
+        self.__generate_templates()
+
+        # Update existing files
+        self.__update_dynamic_files()
 
         # Run php-cs-fixer and eslint
         os.system('php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
 
-        print('New files formatted successfully.')
+        print('New files generated successfully.')
 
     def _get_dynamic_files(self):
         """Returns a list of dynamic files which are updated when the generator is run
@@ -48,6 +49,9 @@ class Generator(object):
 
     def _get_template_subdirectory(self):
         return ''
+
+    def _get_config_parser(self):
+        return None
 
     def __generate_templates(self):
         """Generate new project files defined by _get_template_files
@@ -162,47 +166,50 @@ class ModuleGenerator(Generator):
     def _get_template_subdirectory(self):
         return 'module'
 
+    def _get_config_parser(self):
+        return PageTemplateConfigParser()  # todo
+
     def _get_template_files(self):
         return [
             [
                 'back/Controller.php.j2',
-                'app/Http/Controllers/Back/Api/{{ identifiers.pascal_plural }}Controller.php'
+                'app/Http/Controllers/Back/Api/{{ name | plural | pascal }}Controller.php'
             ],
             [
                 'back/Model.php.j2',
-                'app/Models/{{ identifiers.pascal_singular }}.php'
+                'app/Models/{{ name | singular | pascal }}.php'
             ],
             [
                 'back/Resource.php.j2',
-                'app/Http/Resources/{{ identifiers.pascal_singular }}Resource.php'
+                'app/Http/Resources/{{ name | singular | pascal }}Resource.php'
             ],
             [
                 'back/Migration.php.j2',
-                'database/migrations/%s_create_{{ identifiers.snake_plural }}_table.php' % self.__get_datetime()
+                'database/migrations/%s_create_{{ name | plural | snake }}_table.php' % self.__get_datetime()
             ],
             [
                 'front/api.js.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/routes/api.js'
+                'resources/js/back/modules/{{ name | plural | kebab }}/routes/api.js'
             ],
             [
                 'front/app.js.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/routes/app.js'
+                'resources/js/back/modules/{{ name | plural | kebab }}/routes/app.js'
             ],
             [
                 'front/Create.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Create.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/Create.vue'
             ],
             [
                 'front/Edit.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Edit.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/Edit.vue'
             ],
             [
                 'front/Index.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Index.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/Index.vue'
             ],
             [
                 'front/Form.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/partials/Form.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/partials/Form.vue'
             ]
         ]
 
@@ -253,15 +260,18 @@ class PageGenerator(Generator):
     def _get_template_subdirectory(self):
         return 'page'
 
+    def _get_config_parser(self):
+        return PageTemplateConfigParser()
+
     def _get_template_files(self):
         return [
             [
                 'back/Template.php.j2',
-                'app/PageTemplates/{{ identifiers.file_name }}Template.php'
+                'app/PageTemplates/{{ name | pascal }}Template.php'
             ],
             [
                 'front/Form.vue.j2',
-                'resources/js/back/modules/pages/views/templates/{{ identifiers.file_name }}.vue'
+                'resources/js/back/modules/pages/views/templates/{{ name | pascal }}.vue'
             ]
         ]
 

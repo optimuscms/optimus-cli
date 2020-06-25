@@ -1,165 +1,149 @@
 {
-    "identifiers": {
-      "camel_singular": "testimonial",
-      "camel_plural": "testimonials",
-      "label_singular": "Testimonial",
-      "label_plural": "Testimonials",
-      "kebab_singular": "testimonial",
-      "kebab_plural": "testimonials",
-      "pascal_singular": "Testimonial",
-      "pascal_plural": "Testimonials",
-      "snake_singular": "testimonial",
-      "snake_plural": "testimonials"
+  "identifiers": {
+    "camel_singular": "testimonial",
+    "camel_plural": "testimonials",
+    "label_singular": "Testimonial",
+    "label_plural": "Testimonials",
+    "kebab_singular": "testimonial",
+    "kebab_plural": "testimonials",
+    "pascal_singular": "Testimonial",
+    "pascal_plural": "Testimonials",
+    "snake_singular": "testimonial",
+    "snake_plural": "testimonials"
+  },
+  "fields": [
+    {
+      "type": "string",
+      "required": true,
+      "default": null,
+      "nullable": false,
+      "update_in_controller": true,
+      "validate_in_controller": true,
+      "show_in_admin_index": true,
+      "show_in_admin_form": true,
+      "identifiers": {
+        "label": "Client Name",
+        "snake": "client_name",
+        "camel": "clientName"
+      }
     },
-
-    "fields": [
-      {
-        "type": "string",
-        "required": true,
-        "default": null,
-        "nullable": false,
-        "update_in_controller": true,
-        "validate_in_controller": true,
-        "show_in_admin_index": true,
-        "show_in_admin_form": true,
-
-        "identifiers": {
-          "label": "Client Name",
-          "snake": "client_name",
-          "camel": "clientName"
-        }
-      },
-
-      {
-        "type": "string",
-        "required": false,
-        "default": null,
-        "nullable": true,
-        "update_in_controller": true,
-        "validate_in_controller": true,
-        "show_in_admin_index": false,
-        "show_in_admin_form": false,
-        "identifiers": {
-          "label": "Slug",
-          "snake": "slug",
-          "camel": "slug"
-        }
-      },
-      
-      {
-        "type": "string",
-        "required": true,
-        "default": null,
-        "nullable": false,
-        "update_in_controller": true,
-        "validate_in_controller": true,          
-        "show_in_admin_index": false,
-        "show_in_admin_form": true,
-
-        "identifiers": {
-          "label": "Client Strapline",
-          "snake": "client_strapline",
-          "camel": "clientStrapline"
-        }
-      },
-
-      {
-        "type": "text",
-        "required": true,
-        "default": null,
-        "nullable": false,
-        "update_in_controller": true,
-        "validate_in_controller": true,          
-        "show_in_admin_index": false,
-        "show_in_admin_form": true,
-
-        "identifiers": {
-          "label": "Body",
-          "snake": "body",
-          "camel": "body"
-        }
-      },
-
-    
-      {
-        "type": "date",
-        "required": true,
-        "default": null,
-        "nullable": true,
-        "update_in_controller": false,
-        "validate_in_controller": true,
-        "show_in_admin_index": false,
-        "show_in_admin_form": true,
-        "identifiers": {
-          "label": "Published At",
-          "snake": "published_at",
-          "camel": "publishedAt"
-        }
-      },
-
-      {
-        "type": "image",
-        "required": true,
-        "default": null,
-        "nullable": false,
-        "update_in_controller": true,
-        "validate_in_controller": true,          
-        "show_in_admin_index": false,
-        "show_in_admin_form": true,
-        "identifiers": {
-          "label": "Image",
-          "snake": "image",
-          "camel": "image"
-        }
-      },
-
-      {
-        "type": "integer",
-        "required": true,
-        "default": null,
-        "nullable": false,
-        "update_in_controller": false,
-        "validate_in_controller": false,  
-        "show_in_admin_index": false,
-        "show_in_admin_form": true,
-
-        "identifiers": {
-          "label": "order",
-          "snake": "order",
-          "camel": "order"
-        }
+    {
+      "type": "string",
+      "required": false,
+      "default": null,
+      "nullable": true,
+      "update_in_controller": true,
+      "validate_in_controller": true,
+      "show_in_admin_index": false,
+      "show_in_admin_form": false,
+      "identifiers": {
+        "label": "Slug",
+        "snake": "slug",
+        "camel": "slug"
       }
-    ],
-
-    "features": [
-      {
-        "type": "Sortable",
-        "options": {}
-      },
-
-      {
-        "type": "HasMedia",
-        "options": {
-          "groups": [
-            {
-              "name": "image",
-              "conversion": "1400x600"
-            }
-          ],
-
-          "conversions": [
-            {
-              "name": "1400x600",
-              "width": "1400",
-              "height": "600"
-            }
-          ]
-        }
-      },
-
-      {
-        "type": "Draftable",
-        "options": {}
+    },
+    {
+      "type": "string",
+      "required": true,
+      "default": null,
+      "nullable": false,
+      "update_in_controller": true,
+      "validate_in_controller": true,
+      "show_in_admin_index": false,
+      "show_in_admin_form": true,
+      "identifiers": {
+        "label": "Client Strapline",
+        "snake": "client_strapline",
+        "camel": "clientStrapline"
       }
-    ]
-  }
+    },
+    {
+      "type": "text",
+      "required": true,
+      "default": null,
+      "nullable": false,
+      "update_in_controller": true,
+      "validate_in_controller": true,
+      "show_in_admin_index": false,
+      "show_in_admin_form": true,
+      "identifiers": {
+        "label": "Body",
+        "snake": "body",
+        "camel": "body"
+      }
+    },
+    {
+      "type": "date",
+      "required": true,
+      "default": null,
+      "nullable": true,
+      "update_in_controller": false,
+      "validate_in_controller": true,
+      "show_in_admin_index": false,
+      "show_in_admin_form": true,
+      "identifiers": {
+        "label": "Published At",
+        "snake": "published_at",
+        "camel": "publishedAt"
+      }
+    },
+    {
+      "type": "image",
+      "required": true,
+      "default": null,
+      "nullable": false,
+      "update_in_controller": true,
+      "validate_in_controller": true,
+      "show_in_admin_index": false,
+      "show_in_admin_form": true,
+      "identifiers": {
+        "label": "Image",
+        "snake": "image",
+        "camel": "image"
+      }
+    },
+    {
+      "type": "integer",
+      "required": true,
+      "default": null,
+      "nullable": false,
+      "update_in_controller": false,
+      "validate_in_controller": false,
+      "show_in_admin_index": false,
+      "show_in_admin_form": true,
+      "identifiers": {
+        "label": "order",
+        "snake": "order",
+        "camel": "order"
+      }
+    }
+  ],
+  "features": [
+    {
+      "type": "order",
+      "options": {}
+    },
+    {
+      "type": "media",
+      "options": {
+        "groups": [
+          {
+            "name": "image",
+            "conversion": "1400x600"
+          }
+        ],
+        "conversions": [
+          {
+            "name": "1400x600",
+            "width": "1400",
+            "height": "600"
+          }
+        ]
+      }
+    },
+    {
+      "type": "draftable",
+      "options": {}
+    }
+  ]
+}

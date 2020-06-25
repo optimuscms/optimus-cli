@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Create{{ identifiers.pascal_plural }}Table extends Migration
+class Create{{ name | plural | pascal }}Table extends Migration
 {
     /**
      * Run the migrations.
@@ -13,27 +13,19 @@ class Create{{ identifiers.pascal_plural }}Table extends Migration
      */
     public function up()
     {
-        Schema::create('{{ identifiers.snake_plural }}', function (Blueprint $table) {
+        Schema::create('{{ name | plural | snake }}', function (Blueprint $table) {
             $table->bigIncrements('id');
             {% for field in fields %}
-                {% if field.type == 'string' %}
-                    $table->string('{{ field.identifiers.snake }}')
+                {% if field.type == 'text' %}
+                    $table->string('{{ field.name }}')
                     {%- if field.nullable %}->nullable(){% endif %}
                     {%- if field.default %}->default(){% endif %};
-                {% elif field.type == 'text' %}
-                    $table->text('{{ field.identifiers.snake }}')
+                {% elif field.type == 'textarea' or field.type == 'editor' %}
+                    $table->text('{{ field.name }}')
                     {%- if field.nullable %}->nullable(){% endif %}
                     {%- if field.default %}->default(){% endif %};
                 {% elif field.type == 'date' %}
-                    $table->timestamp('{{ field.identifiers.snake }}')
-                    {%- if field.nullable %}->nullable(){% endif %}
-                    {%- if field.default %}->default(){% endif %};
-                {% elif field.type == 'boolean' %}
-                    $table->boolean('{{ field.identifiers.snake }}')
-                    {%- if field.nullable %}->nullable(){% endif %}
-                    {%- if field.default %}->default(){% endif %}; 
-                {% elif field.type == 'integer' %}
-                    $table->integer('{{ field.identifiers.snake }}')
+                    $table->timestamp('{{ field.name }}')
                     {%- if field.nullable %}->nullable(){% endif %}
                     {%- if field.default %}->default(){% endif %};
                 {% endif %}
@@ -44,6 +36,6 @@ class Create{{ identifiers.pascal_plural }}Table extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('{{ identifiers.snake_plural }}');
+        Schema::dropIfExists('{{ name | plural | snake }}');
     }
 }

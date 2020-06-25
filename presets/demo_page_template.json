@@ -1,113 +1,82 @@
 {
-  "id": "sub-services", // kebab
-  "name": "Sub Services", // Inferred by default title of id
-
+  "id": "sub-services",
+  "name": "Sub Services",
   "fields": [
     {
-      "type": "string",
+      "type": "text",
       "name": "banner_heading",
       "label": "Banner Heading",
-
       "options": {},
-
       "rules": {
-        "required": true, // Inferred as false
-        "nullable": false, // Inferred as false
-        "url": false, // Inferred as false
-        "max": 255 // Inferred as null
+        "required": true,
+        "nullable": false,
+        "url": false,
+        "max": 255
       }
     },
-
     {
-      "type": "string",
+      "type": "text",
       "name": "banner_subheading",
       "label": "Banner Subeading",
-
       "options": {},
-
       "rules": {
-        "required": true, // Inferred as false
-        "nullable": false, // Inferred as false
-        "url": false, // Inferred as false
-        "max": 255 // Inferred as null
+        "required": true,
+        "nullable": false
       }
     },
-
     {
-      "type": "string",
+      "type": "text",
       "name": "introduction_subheading",
       "label": "Introduction Subeading",
-
       "options": {},
-
       "rules": {
-        "required": true, // Inferred as false
-        "nullable": false, // Inferred as false
-        "url": false, // Inferred as false
-        "max": 255 // Inferred as null
+        "required": true,
+        "nullable": false
       }
     },
-
     {
-      "type": "string",
+      "type": "text",
       "name": "introduction_subheading",
       "label": "Introduction Subeading",
-
       "options": {},
-
       "rules": {
-        "required": true, // Inferred as false
-        "nullable": false, // Inferred as false
-        "url": false, // Inferred as false
-        "max": 255 // Inferred as null
+        "required": true,
+        "nullable": false
       }
     },
-
     {
-      "type": "string",
+      "type": "text",
       "name": "introduction_subheading",
       "label": "Introduction Subeading",
-
       "options": {},
-
       "rules": {
-        "required": true, // Inferred as false
-        "nullable": false, // Inferred as false
-        "url": false, // Inferred as false
-        "max": 255 // Inferred as null
+        "required": true,
+        "nullable": false
       }
     },
-
     {
-      "type": "string",
+      "type": "editor",
       "name": "introduction_content",
       "label": "Introduction Content",
-
       "options": {},
-
       "rules": {
-        "required": true, // Inferred as false
-        "nullable": false, // Inferred as false
-        "url": false, // Inferred as false
-        "max": 255 // Inferred as null
+        "required": true,
+        "nullable": false
       }
     },
-
     {
-      "type": "image",
+      "type": "media",
       "name": "banner_image",
       "label": "Banner Image",
-
       "rules": {
-        "required": true, // false by default
-        "nullable": false, // false by default
-        "url": false
+        "required": true,
+        "nullable": false
       },
-
       "options": {
-        "accepted_extensions": "image", // any by default
-        "group": "image",
-        "conversions": ["1400x600"]
+        "media_group": "image",
+        "conversions": [
+          "1400x600"
+        ]
       }
     }
   ]
