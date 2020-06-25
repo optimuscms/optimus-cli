@@ -2,6 +2,7 @@ import json
 import os
 import re
 import inflection
+import jsonschema
 
 from functools import reduce
 
@@ -156,7 +157,9 @@ class PageTemplateConfigParser():
             if 'rules' not in field:
                 field['rules'] = default_rules
             else:
-                field['rules'] = {**default_rules, field['rules']}
+                for rule_key in default_rules:
+                    if rule_key not in field['rules']:
+                        field['rules'][rule_key] = default_rules[rule_key]
 
             # Type specific defaults
 
@@ -221,7 +224,7 @@ class TemplateParser(object):
         :param to_render: the string to render
         :return: the rendered string
         """
-        compiled_string = Template(to_render)
+        compiled_string = self.__environment.from_string(to_render)
 
         return compiled_string.render(self.__config_data)
 

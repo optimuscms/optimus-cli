@@ -15,12 +15,12 @@ class Generator(object):
         """Builds new and existing project files from the provided templates and dynamic files"""
 
         # Parse JSON config
-        try:
-            self._get_config_parser().parse_json_file(
-                self.__template_path
-            )
-        except Exception as exception:
-            return print('Error detected in config\n%s' % str(exception))
+        # try:
+        #     self._get_config_parser().parse_json_file(
+        #         self.__config_path
+        #     )
+        # except Exception as exception:
+        #     return print('The following error detected in was detected in your config file, please fix it and run the generator again:\n\n%s' % str(exception))
 
         # Generate new files
         self.__generate_templates()
@@ -67,9 +67,9 @@ class Generator(object):
                 os.makedirs(destination_directory)
 
             # Abort if the destination file already exists to prevent overwriting
-            if os.path.isfile(destination_path):
-                print('File %s already exists, aborting...' % destination_path)
-                return
+            # if os.path.isfile(destination_path):
+            #     print('File %s already exists, aborting...' % destination_path)
+            #     return
 
             # Render and write the template to the destination file
             with open(destination_path, 'w') as destination_file:
@@ -267,24 +267,24 @@ class PageGenerator(Generator):
         return [
             [
                 'back/Template.php.j2',
-                'app/PageTemplates/{{ identifiers.file_name }}Template.php'
+                'app/PageTemplates/{{ name | pascal }}Template.php'
             ],
             [
                 'front/Form.vue.j2',
-                'resources/js/back/modules/pages/views/templates/{{ identifiers.file_name }}.vue'
+                'resources/js/back/modules/pages/views/templates/{{ name | pascal }}.vue'
             ]
         ]
 
     def _get_dynamic_files(self):
         return [
-            [
-                'back/dynamic/OptimusImports.php.j2',
-                'imports',
-                'app/Providers/OptimusServiceProvider.php'
-            ],
-            [
-                'back/dynamic/OptimusPageTemplates.php.j2',
-                'page-templates',
-                'app/Providers/OptimusServiceProvider.php'
-            ]
+            # [
+            #     'back/dynamic/OptimusImports.php.j2',
+            #     'imports',
+            #     'app/Providers/OptimusServiceProvider.php'
+            # ],
+            # [
+            #     'back/dynamic/OptimusPageTemplates.php.j2',
+            #     'page-templates',
+            #     'app/Providers/OptimusServiceProvider.php'
+            # ]
         ]

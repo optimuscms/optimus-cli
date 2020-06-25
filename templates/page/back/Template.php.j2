@@ -6,7 +6,7 @@ use App\Contracts\PageTemplate;
 use App\Http\Resources\MediaResource;
 use App\Models\Page;
 
-class {{ name }}Template implements PageTemplate
+class {{ name | pascal }}Template implements PageTemplate
 {
     public static function getId(): string
     {
@@ -28,7 +28,7 @@ class {{ name }}Template implements PageTemplate
                     '{{ field.name }}' => '{% if field.rules.required %}required|{% endif %}string',
                 {% elif field.type == 'date' %}
                     '{{ field.name }}' => '{% if field.rules.required %}required|{% endif %}date',
-                {% elif field.type == 'image' %}
+                {% elif field.type == 'media' %}
                     '{{ field.name }}_id' => '{% if field.rules.required %}required|{% endif %}exists:media,id',
                 {% endif %}
             {% endfor %}
@@ -39,14 +39,14 @@ class {{ name }}Template implements PageTemplate
     {
         $page->addContents([
             {% for field in fields %}
-                {% if field.type != 'image' %}
+                {% if field.type != 'media' %}
                     '{{ field.name }}' => $data['{{ field.name }}'],
                 {% endif %}
             {% endfor %}
         ]);
 
         {% for field in fields %}
-            {% if field.type == 'image' %}
+            {% if field.type == 'media' %}
                 $page->attachMedia($data['{{ field.name }}_id'], '{{ field.options.group }}', [
                     {% for conversion in field.options.conversions %}
                         '{{ conversion }}',
@@ -66,7 +66,7 @@ class {{ name }}Template implements PageTemplate
     {
         return [
             {% for field in fields %}
-                {% if field.type != 'image' %}
+                {% if field.type != 'media' %}
                     '{{ field.name }}' => $page->getContent('{{ field.name }}'),
                 {% else %}
                     '{{ field.name }}_id' => new MediaResource($page->getFirstMedia('{{ field.options.group }}')),
@@ -77,6 +77,6 @@ class {{ name }}Template implements PageTemplate
 
     public static function render(Page $page)
     {
-        return view('front.{{ identifiers.template_id }}', compact('page'));
+        return view('front.{{ id }}', compact('page'));
     }
 }

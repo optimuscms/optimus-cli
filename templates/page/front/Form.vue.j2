@@ -5,20 +5,20 @@
             <o-form-field
                 input="{{ field.name }}"
                 label="{{ field.label }}"
-                {% if field.required %}required{% endif %}
+                {%+ if field.rules.required %}required{% endif %}
             >
                 {% if field.type == 'text' %}
                     <o-input
                         id="{{ field.name }}"
                         v-model="form.{{ field.name }}"
-                        {% if field.rules.required %}required{% endif %}
+                        {%+ if field.rules.required %}required{% endif %}
                     />
                 {% elif field.type == 'editor' %}
                     <editor
                         id="{{ field.name }}"
                         v-model="form.{{ field.name }}"
                     />
-                {% elif field.type == 'image' %}
+                {% elif field.type == 'media' %}
                     <media-picker
                         id="{{ field.name}}_id"
                         v-model="form.{{ field.name}}_id"
@@ -31,6 +31,7 @@
                     </template>
                 {% endif %}
             </o-form-field>
+
         {% endfor %}
     </div>
 </template>
@@ -45,7 +46,7 @@ export default {
         return {
             form: {
                 {% for field in fields %}
-                    {% if field.type != 'image' %}
+                    {% if field.type != 'media' %}
                         {{ field.name }}: '',
                     {% else %}
                         {{ field.name }}_id: null,
@@ -64,7 +65,7 @@ export default {
 
                 this.form = {
                     {% for field in fields %}
-                        {% if field.type != 'image' %}
+                        {% if field.type != 'media' %}
                             {{ field.name }}: item.{{ field.name }},
                         {% else %}
                             {{ field.name }}_id: item.{{ field.name }} ? item.{{ field.name }}.id : null,
