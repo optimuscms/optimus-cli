@@ -14,37 +14,236 @@ from jinja2.ext import Extension
 
 class ConfigParser():
 
-    def parse_json_file(self, file_path: str) -> dict:
-        with open(file_path, 'r') as config_file:
-            return self.parse_dict(
-                json.loads(config_file.read())
-            )
+    def parse(self, config: dict) -> dict:
+        self._validate_config(config)
 
-    def parse_dict(self, config: dict) -> dict:
-        self.__validate(config)
+        return self._merge_default_settings(config)
 
-        return self.__merge_defaults(config)
+    def _validate_config(self, config: dict) -> None:
+        jsonschema.validate(config, self._get_config_schema())
 
-    def __validate(self, config: dict) -> None:
-        jsonschema.validate(config, self.__get_schema())
+    def _get_config_schema(self) -> dict:
+        pass
 
-    def __get_schema(self) -> dict:
-        return {}
+    def _merge_default_settings(self, config: dict) -> dict:
+        pass
 
-    def __merge_defaults(self, config: dict) -> dict:
-        return config
+class ModuleConfigParser(ConfigParser):
 
-class ModuleTemplateConfigParser(ConfigParser):
+    def _get_config_schema(self) -> dict:
+        return {
+            'type': 'object',
+            'properties': {
+                'name': { 'type': 'string' },
+                'fields': {
+                    'type': 'array',
+                    'items': {
+                        'type': 'object',
+                        'properties': {
+                            'type': {
+                                'type': 'string',
+                                'enum': [
+                                    'text',
+                                    'textarea',
+                                    'editor',
+                                    'date',
+                                    'media',
+                                ],
+                            },
+                            'name': { 'type': 'string' },
+                            'rules': {
+                                'type': 'object',
+                                'properties': {
+                                    'required': { 'type': 'boolean' },
+                                    'nullable': { 'type': 'boolean' },
+                                },
+                            },
+                        },
+                        'required': ['name'],
+                        'if': {
+                            'properties': { 
+                                'type': { 'const': 'media' },
+                            },
+                        },
+                        'then': {
+                            'properties': {
+                                'options': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'media_group': { 'type': 'string' },
+                                        'conversions': {
+                                            'type': 'array',
+                                            'items': { 'type': 'string' },
+                                        },
+                                    },
+                                    'required': ['media_group'],
+                                },
+                            },
+                            'required': ['name', 'options'],
+                        }
+                    },
+                },
+                'features': {
+                    'type': 'array',
+                    'items': {
+                        'type': 'object',
+                        'properties': {
+                            'type': {
+                                'type': 'string',
+                                'enum': [
+                                    'sort',
+                                    'slug',
+                                    'seo',
+                                    'media',
+                                    'draft',
+                                    'menu',
+                                ],
+                            },
+                        },
+                        'required': ['type'],
+                        'allOf': [
+                            {
+                                'if': {
+                                    'properties': {
+                                        'type': { 'const': 'sort' },
+                                    },
+                                },
+                                'then': {
+                                    'properties': {
+                                        'options': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'order_column_name': { 'type': 'string' },
+                                            },
+                                        },
+                                    },
+                                    'required': ['options'],
+                                },
+                            },
+                            {
+                                'if': {
+                                    'properties': {
+                                        'type': { 'const': 'slug' },
+                                    },
+                                },
+                                'then': {
+                                    'properties': {
+                                        'options': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'generate_from_field': { 'type': 'string' },
+                                                'save_to_field': { 'type': 'string' },
+                                            },
+                                            'required': [
+                                                'generate_from_field',
+                                                'save_to_field',
+                                            ],
+                                        },
+                                    },
+                                    'required': ['options'],
+                                },
+                            },
+                            {
+                                'if': {
+                                    'properties': {
+                                        'type': { 'const': 'media' },
+                                    },
+                                },
+                                'then': {
+                                    'properties': {
+                                        'options': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'media_groups': {
+                                                    'type': 'array',
+                                                    'items': {
+                                                        'type': 'object',
+                                                        'properties': {
+                                                            'name': { 'type': 'string' },
+                                                            'conversions': {
+                                                                'type': 'array',
+                                                                'items': { 'type': 'string' },
+                                                            },
+                                                        },
+                                                        'required': ['name'],
+                                                    },
+                                                },
+                                                'conversions': {
+                                                    'type': 'array',
+                                                    'items': {
+                                                        'type': 'object',
+                                                        'properties': {
+                                                            'name': { 'type': 'string' },
+                                                            'width': { 'type': 'integer' },
+                                                            'height': { 'type': 'integer' },
+                                                        },
+                                                        'required': ['name', 'width', 'height'],
+                                                    },
+                                                },
+                                            },
+                                            'required': ['media_groups'],
+                                        },
+                                    },
+                                    'required': ['options'],
+                                },
+                            },
+                            {
+                                'if': {
+                                    'properties': {
+                                        'type': { 'const': 'draft' },
+                                    },
+                                },
+                                'then': {
+                                    'properties': {
+                                        'options': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'published_at_column_name': { 'type': 'string' },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                'if': {
+                                    'properties': {
+                                        'type': { 'const': 'menu' },
+                                    },
+                                },
+                                'then': {
+                                    'properties': {
+                                        'options': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'url_field': { 'type': 'string' },
+                                                'label_field': { 'type': 'string' },
+                                                'search_query_field': { 'type': 'string' },
+                                            },
+                                            'required': [
+                                                'url_field',
+                                                'label_field',
+                                                'search_query_field',
+                                            ],
+                                        },
+                                    },
+                                    'required': ['options'],
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            'required': ['name'],
+        }
 
-    def __get_schema(self) -> dict:
-        return {}
+    def _merge_default_settings(self, config: dict) -> dict:
+        # TODO: Merge the default settings into the config
 
-    def __merge_defaults(self, config: dict) -> dict:
         return config
 
 class PageTemplateConfigParser(ConfigParser):
 
-    def __get_schema(self) -> dict:
+    def _get_config_schema(self) -> dict:
         return {
             'type': 'object',
             'properties': {
@@ -154,7 +353,7 @@ class PageTemplateConfigParser(ConfigParser):
             'required': ['id'],
         }
 
-    def __merge_defaults(self, config: dict) -> dict:
+    def _merge_default_settings(self, config: dict) -> dict:
         if 'name' not in config:
             config['name'] = self.__convert_to_title(config['id'])
 
