@@ -1,8 +1,8 @@
-{% macro validation_rule(field_name, field_validation, is_required, is_nullable) %}
-    '{{ field_name }}' => '
-        {%- if is_nullable %}nullable|{% endif %}
-        {%- if is_required %}required|{% endif %}
-        {{- field_validation -}}
+{% macro validation_rule(name, type, rules) %}
+    '{{ name }}' => '
+        {%- if rules.nullable %}nullable|{% endif %}
+        {%- if rules.required %}required|{% endif %}
+        {{- type -}}
     ',
 {% endmacro -%}
 
@@ -235,16 +235,16 @@ class {{ name | plural | pascal }}Controller extends Controller
 
         {% for field in fields %}
             {%- if field.type == 'text' %}
-                {{ validation_rule(field.name, 'string:max:255', field.required, field.nullable) }}
+                {{ validation_rule(field.name, 'string|max:255', field.rules) }}
             
             {%- elif field.type == 'textarea' or field.type == 'editor' %}
-                {{ validation_rule(field.name, 'string', field.required, field.nullable) }}
+                {{ validation_rule(field.name, 'string', field.rules) }}
             
             {%- elif field.type == 'date' %}
-                {{ validation_rule(field.name, 'date', field.required, field.nullable) }}
+                {{ validation_rule(field.name, 'date', field.rules) }}
 
             {%- elif field.type == 'image' %}
-                {{ validation_rule(field.name ~ '_id', 'exists:media,id', field.required, field.nullable) }}
+                {{ validation_rule(field.name ~ '_id', 'exists:media,id', field.rules) }}
             {%- endif %}
         {% endfor -%}
 

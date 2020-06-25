@@ -90,7 +90,7 @@ class {{ name | singular | pascal }} extends Model implements
             }
 
             /**
-            * Find a {{ name | singular }} with the given slug or fail.
+            * Find a {{ name | singular | lower }} with the given slug or fail.
             *
             * @param string $slug
             * @return mixed
@@ -105,7 +105,7 @@ class {{ name | singular | pascal }} extends Model implements
         
         {% if feature.type == 'media' %}
             /**
-            * Register the {{ name | singular }} media groups.
+            * Register the {{ name | singular | lower }} media groups.
             *
             * @return void
             */
@@ -126,7 +126,7 @@ class {{ name | singular | pascal }} extends Model implements
             *
             * @return string
             */
-            public static function getlinkableTypeIdentifier(): string
+            public static function getLinkableTypeIdentifier(): string
             {
                 return '{{ name | plural | kebab }}';
             }
@@ -136,7 +136,7 @@ class {{ name | singular | pascal }} extends Model implements
             *
             * @return string
             */
-            public static function getlinkableTypeName(): string
+            public static function getLinkableTypeName(): string
             {
                 return '{{ name | plural }}';
             }
@@ -176,7 +176,7 @@ class {{ name | singular | pascal }} extends Model implements
             *
             * @return Builder
             */
-            public static function buildlinkableQuery(): Builder
+            public static function buildLinkableQuery(): Builder
             {
                 return self::query();
             }
@@ -187,9 +187,9 @@ class {{ name | singular | pascal }} extends Model implements
             * @param string $input
             * @return Builder
             */
-            public static function buildlinkableSearchQuery(string $input): Builder
+            public static function buildLinkableSearchQuery(string $input): Builder
             {
-                return self::buildlinkableQuery()->where(
+                return self::buildLinkableQuery()->where(
                     '{{ feature.options.search_query_field }}', 'like', '%'.$input.'%'
                 );
             }

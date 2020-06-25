@@ -8,7 +8,7 @@
                     <o-tabs>
                         <o-tab name="Content">
                             {% for field in fields %}
-                                <!-- {{ field.name | plural }} -->
+                                <!-- {{ field.name | plural | capitalize }} -->
                                 <o-form-field
                                     input="{{ field.name }}"
                                     label="{{ field.label }}"
@@ -20,14 +20,14 @@
                                             v-model="form.{{ field.name }}"
                                             {%+ if field.required %}required{% endif -%}
                                         />
-                                    {% endif %}
+                                    {% endif -%}
 
                                     {% if field.type == 'editor' %}
                                         <editor
                                             id="{{ field.name }}"
                                             v-model="form.{{ field.name }}"
                                         />
-                                    {% endif %}
+                                    {% endif -%}
 
                                     {% if field.type == 'date' %}
                                         <div class="field addons">
@@ -46,7 +46,7 @@
                                                 />
                                             </div>
                                         </div>
-                                    {% endif %}
+                                    {% endif -%}
 
                                     {% if field.type == 'image' %}
                                         <media-picker
@@ -60,8 +60,9 @@
                                         <template slot="help">
                                             This image will be resized to TODOpx.
                                         </template>
-                                    {% endif %}
+                                    {% endif -%}
                                 </o-form-field>
+
                             {% endfor %}
                         </o-tab>
 
