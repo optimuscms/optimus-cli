@@ -150,7 +150,7 @@ class {{ name | plural | pascal }}Controller extends Controller
         ${{ name | singular | camel }}->save();
 
         {% if has_feature('media') %}
-            $this->detatchMedia();
+            ${{ name | singular | camel }}->detachMedia();
 
             $this->attachMedia(${{ name | singular | camel }}, $request);
         {% endif %}
