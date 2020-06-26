@@ -277,7 +277,7 @@ class ModuleConfigParser(ConfigParser):
 
             config['fields'][i] = field
 
-        # Field defaults
+        # Feature defaults
 
         if 'features' not in config:
             config['features'] = []
