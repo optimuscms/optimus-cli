@@ -54,7 +54,7 @@ class Generator(object):
             except Exception as exception:
                 return print('The following error occured during updating dynamic files, aborting:\n\n%s' % str(exception))
 
-        print('Fixing cs..')
+        print('Fixing cs...')
 
         # Run php-cs-fixer and eslint
         if not "--skip-cs-fix" in args:
