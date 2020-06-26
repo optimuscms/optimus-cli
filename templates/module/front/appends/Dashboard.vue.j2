@@ -1,18 +1,18 @@
 <o-side-nav-item
-    :to="{ name: '{{ identifiers.kebab_plural }}.index' }"
-    label="{{ identifiers.label_plural }}"
-    section="{{ identifiers.kebab_plural }}"
+    :to="{ name: '{{ name | plural | kebab }}.index' }"
+    label="{{ name | plural }}"
+    section="{{ name | plural | kebab }}"
 >
     <o-side-sub-nav-item
-        :to="{ name: '{{ identifiers.kebab_plural }}.index' }"
+        :to="{ name: '{{ name | plural | kebab }}.index' }"
     >
-        Manage {{ identifiers.label_plural }}
+        Manage {{ name | plural }}
     </o-side-sub-nav-item>
 
     <o-side-sub-nav-item
-        :to="{ name: '{{ identifiers.kebab_plural }}.create' }"
+        :to="{ name: '{{ name | plural | kebab }}.create' }"
     >
-        Add {{ identifiers.label_singular }}
+        Add {{ name | singular }}
     </o-side-sub-nav-item>
 </o-side-nav-item>
 

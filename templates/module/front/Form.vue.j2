@@ -8,77 +8,66 @@
                     <o-tabs>
                         <o-tab name="Content">
                             {% for field in fields %}
-                                {% if field.show_in_admin_form %}
+                                <!-- {{ field.name | plural | capitalize }} -->
+                                <o-form-field
+                                    input="{{ field.name }}"
+                                    label="{{ field.label }}"
+                                    {%+ if field.required %}required{% endif -%}
+                                >
+                                    {% if field.type == 'text' %}
+                                        <o-input
+                                            id="{{ field.name }}"
+                                            v-model="form.{{ field.name }}"
+                                            {%+ if field.required %}required{% endif -%}
+                                        />
+                                    {% endif -%}
 
-                                    <!-- {{ field.identifiers.label }} -->
-                                    <o-form-field
-                                        input="{{ field.identifiers.snake }}"
-                                        label="{{ field.identifiers.label }}"
-                                        {%+ if field.required %}required{% endif -%}
-                                    >
-                                        {% if field.type == 'string' %}
-                                            <o-input
-                                                id="{{ field.identifiers.snake }}"
-                                                v-model="form.{{ field.identifiers.snake }}"
-                                                {%+ if field.required %}required{% endif -%}
-                                            />
-                                        {% endif %}
+                                    {% if field.type == 'editor' %}
+                                        <editor
+                                            id="{{ field.name }}"
+                                            v-model="form.{{ field.name }}"
+                                        />
+                                    {% endif -%}
 
-                                        {% if field.type == 'text' %}
-                                            <editor
-                                                id="{{ field.identifiers.snake }}"
-                                                v-model="form.{{ field.identifiers.snake }}"
-                                            />
-                                        {% endif %}
-
-                                        {% if field.type == 'date' %}
-                                            <div class="field addons">
-                                                <div class="control">
-                                                    <div class="button static">
-                                                        <icon icon="calendar-alt" />
-                                                    </div>
-                                                </div>
-
-                                                <div class="control">
-                                                    <o-input
-                                                        id="{{ field.identifiers.snake }}"
-                                                        v-model="form.{{ field.identifiers.snake }}"
-                                                        type="datetime-local"
-                                                        {%+ if field.required %}required{% endif %}
-                                                    />
+                                    {% if field.type == 'date' %}
+                                        <div class="field addons">
+                                            <div class="control">
+                                                <div class="button static">
+                                                    <icon icon="calendar-alt" />
                                                 </div>
                                             </div>
-                                        {% endif %}
 
-                                        {% if field.type == 'boolean' %}
-                                            <o-checkbox
-                                                id="{{ field.identifiers.snake }}"
-                                                v-model="form.{{ field.identifiers.snake }}"
-                                                label="Yes"
-                                                {%+ if field.required %}required{% endif %}
-                                            />
-                                        {% endif %}
+                                            <div class="control">
+                                                <o-input
+                                                    id="{{ field.name }}"
+                                                    v-model="form.{{ field.name }}"
+                                                    type="datetime-local"
+                                                    {%+ if field.required %}required{% endif %}
+                                                />
+                                            </div>
+                                        </div>
+                                    {% endif -%}
 
-                                        {% if field.type == 'image' %}
-                                            <media-picker
-                                                id="{{ field.identifiers.snake }}_id"
-                                                v-model="form.{{ field.identifiers.snake }}_id"
-                                                :media="getItemAttribute('{{ field.identifiers.snake }}')"
-                                                show-preview
-                                                accepted-extensions="image"
-                                            />
+                                    {% if field.type == 'image' %}
+                                        <media-picker
+                                            id="{{ field.name }}_id"
+                                            v-model="form.{{ field.name }}_id"
+                                            :media="getItemAttribute('{{ field.name }}')"
+                                            show-preview
+                                            accepted-extensions="image"
+                                        />
 
-                                            <template slot="help">
-                                                This image will be resized to TODOpx.
-                                            </template>
-                                        {% endif %}
-                                    </o-form-field>
-                                {% endif %}
+                                        <template slot="help">
+                                            This image will be resized to TODOpx.
+                                        </template>
+                                    {% endif -%}
+                                </o-form-field>
+
                             {% endfor %}
                         </o-tab>
 
                         <o-tab name="Meta">
-                            {% if has_feature('HasSlug') %}
+                            {% if has_feature('slug') %}
                                 <!-- Slug -->
                                 <o-form-field
                                     input="slug"
@@ -92,7 +81,7 @@
                                 </o-form-field>
                             {% endif %}
 
-                            {% if has_feature('HasSeoFields') %}
+                            {% if has_feature('seo') %}
                                 <o-meta-fields
                                     v-model="form.meta"
                                     :item="getItemAttribute('meta')"
@@ -124,8 +113,8 @@
 import { formMixin } from '@optimuscms/theme';
 
 import {
-    create{{ identifiers.pascal_singular }},
-    update{{ identifiers.pascal_singular }},
+    create{{ name | singular | pascal }},
+    update{{ name | singular | pascal }},
 } from '../../routes/api';
 
 import moment from 'moment';
@@ -136,23 +125,19 @@ export default {
     data() {
         return {
             form: {
-                {% if has_feature('HasSlug') %}
+                {% if has_feature('slug') %}
                     slug: '',
                 {% endif %}
 
                 {% for field in fields %}
-                    {% if field.show_in_admin_form %}
-                        {% if field.type == 'string' %}
-                            {{ field.identifiers.snake }}: '',
-                        {% elif field.type == 'text' %}
-                            {{ field.identifiers.snake }}: '',
-                        {% elif field.type == 'date' %}
-                            {{ field.identifiers.snake }}: moment().format('YYYY-MM-DDTHH:mm'),
-                        {% elif field.type == 'boolean' %}
-                            {{ field.identifiers.snake }}: {{ field.identifiers.default }},
-                        {% elif field.type == 'image' %}
-                            {{ field.identifiers.snake }}_id: null,
-                        {% endif %}
+                    {% if in_array(field.type, ['string', 'textarea', 'editor']) %}
+                        {{ field.name }}: '',
+                    {% elif field.type == 'date' %}
+                        {{ field.name }}: moment().format('YYYY-MM-DDTHH:mm'),
+                    {% elif field.type == 'boolean' %}
+                        {{ field.name }}: False
+                    {% elif field.type == 'image' %}
+                        {{ field.name }}_id: null,
                     {% endif %}
                 {% endfor %}
             },
@@ -161,32 +146,26 @@ export default {
 
     watch: {
         item(item) {
-            {% if has_feature('HasSeoFields') %}
+            {% if has_feature('seo') %}
                 const meta = item.meta;
             {% endif %}
 
             this.form = {
-                {% if has_feature('HasSlug') %}
+                {% if has_feature('slug') %}
                     slug: item.slug,
                 {% endif %}
                 
                 {% for field in fields %}
-                    {% if field.show_in_admin_form %}
-                        {% if field.type == 'string' %}
-                            {{ field.identifiers.snake }}: item.{{ field.identifiers.snake }},
-                        {% elif field.type == 'text' %}
-                            {{ field.identifiers.snake }}: item.{{ field.identifiers.snake }},
-                        {% elif field.type == 'date' %}
-                            {{ field.identifiers.snake }}: moment(item.{{ field.identifiers.snake }}).format('YYYY-MM-DDTHH:mm'),
-                        {% elif field.type == 'boolean' %}
-                            {{ field.identifiers.snake }}: false,
-                        {% elif field.type == 'image' %}
-                            {{ field.identifiers.snake }}_id: item.{{ field.identifiers.snake }} ? item.{{ field.identifiers.snake }}.id : null,
-                        {% endif %}
+                    {% if in_array(field.type, ['string', 'textarea', 'editor']) %}
+                        {{ field.name }}: item.{{ field.name }},
+                    {% elif field.type == 'date' %}
+                        {{ field.name }}: moment(item.{{ field.name }}).format('YYYY-MM-DDTHH:mm'),
+                    {% elif field.type == 'image' %}
+                        {{ field.name }}_id: item.{{ field.name }} ? item.{{ field.name }}.id : null,
                     {% endif %}
                 {% endfor %}
 
-                {% if has_feature('HasSeoFields') %}
+                {% if has_feature('seo') %}
                     meta: {
                         title: meta.title,
                         description: meta.description,
@@ -203,15 +182,15 @@ export default {
     methods: {
         save() {
             if (this.isEditing) {
-                return update{{ identifiers.pascal_singular }}(this.item.id, this.form);
+                return update{{ name | singular | pascal }}(this.item.id, this.form);
             }
 
-            return create{{ identifiers.pascal_singular }}(this.form);
+            return create{{ name | singular | pascal }}(this.form);
         },
 
         onSuccess() {
             this.$router.push({
-                name: '{{ identifiers.kebab_plural }}.index',
+                name: '{{ name | plural | kebab }}.index',
             });
         },
     },

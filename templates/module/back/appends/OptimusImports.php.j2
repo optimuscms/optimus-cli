@@ -1,5 +1,5 @@
-{% if has_feature('Linkable') %}
-    use App\Models\{{ identifiers.pascal_singular }};
+{% if has_feature('menu') %}
+    use App\Models\{{ name | singular | pascal }};
 {% endif %}
 
 /*--OPTIMUS-CLI:imports--*/

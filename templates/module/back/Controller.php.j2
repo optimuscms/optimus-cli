@@ -1,8 +1,8 @@
-{% macro validation_rule(field_name, field_validation, is_required, is_nullable) %}
-    '{{ field_name }}' => '
-        {%- if is_nullable %}nullable|{% endif %}
-        {%- if is_required %}required|{% endif %}
-        {{- field_validation -}}
+{% macro validation_rule(name, type, rules) %}
+    '{{ name }}' => '
+        {%- if rules.nullable %}nullable|{% endif %}
+        {%- if rules.required %}required|{% endif %}
+        {{- type -}}
     ',
 {% endmacro -%}
 
@@ -11,170 +11,170 @@
 namespace App\Http\Controllers\Back\Api;
 
 use App\Http\Controllers\Back\Controller;
-use App\Http\Resources\{{ identifiers.pascal_singular }}Resource;
+use App\Http\Resources\{{ name | singular | pascal }}Resource;
 use App\Models\Meta;
-use App\Models\{{ identifiers.pascal_singular }};
+use App\Models\{{ name | singular | pascal }};
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 
-class {{ identifiers.pascal_plural }}Controller extends Controller
+class {{ name | plural | pascal }}Controller extends Controller
 {
     /**
-     * Display a paginated list of {{ identifiers.label_plural | lower }}.
+     * Display a paginated list of {{ name | plural | lower }}.
      *
      * @param Request $request
      * @return ResourceCollection
      */
     public function index(Request $request)
     {
-        /** @var Collection ${{ identifiers.camel_plural }} */
-        ${{ identifiers.camel_plural }} = {{ identifiers.pascal_singular }}::query()
-            {% if has_feature('Draftable') %}
+        /** @var Collection ${{ name | plural | camel }} */
+        ${{ name | plural | camel }} = {{ name | singular | pascal }}::query()
+            {% if has_feature('draft') %}
                 ->withDrafts()
             {% endif -%}
 
-            {% if has_feature('HasMedia') or has_feature('HasSeoFields') %}
+            {% if has_feature('media') or has_feature('seo') %}
                 ->with([
-                    {% if has_feature('HasMedia') %}
+                    {% if has_feature('media') %}
                         'media',
                     {% endif -%}
 
-                    {% if has_feature('HasSeoFields') %}
+                    {% if has_feature('seo') %}
                         'meta',
                     {% endif %}
                 ])
             {% endif -%}
 
-            {% if has_feature('Sortable') %}
+            {% if has_feature('sort') %}
                 ->ordered()
             {% endif -%}
 
             ->applyFilters($request->all())
             ->paginate();
 
-        return {{ identifiers.pascal_singular }}Resource::collection(${{ identifiers.camel_plural }});
+        return {{ name | singular | pascal }}Resource::collection(${{ name | plural | camel }});
     }
 
     /**
-     * Create a new {{ identifiers.label_singular | lower }}.
+     * Create a new {{ name | singular | lower }}.
      *
      * @param Request $request
-     * @return {{ identifiers.pascal_singular }}Resource
+     * @return {{ name | singular | pascal }}Resource
      */
     public function store(Request $request)
     {
-        $this->validate{{ identifiers.pascal_singular }}($request);
+        $this->validate{{ name | singular | pascal }}($request);
 
-        ${{ identifiers.camel_singular }} = $this->populate{{ identifiers.pascal_singular }}(
-            new {{ identifiers.pascal_singular }}(), $request
+        ${{ name | singular | camel }} = $this->populate{{ name | singular | pascal }}(
+            new {{ name | singular | pascal }}(), $request
         );
 
-        ${{ identifiers.camel_singular }}->save();
+        ${{ name | singular | camel }}->save();
 
-        {% if has_feature('HasMedia') %}
-            $this->attachMedia(${{ identifiers.camel_singular }}, $request);
+        {% if has_feature('media') %}
+            $this->attachMedia(${{ name | singular | camel }}, $request);
         {% endif %}
 
-        {% if has_feature('HasSeoFields') %}
+        {% if has_feature('seo') %}
             // Save meta...
-            ${{ identifiers.camel_singular }}->saveMeta(
+            ${{ name | singular | camel }}->saveMeta(
                 $request->input('meta', [])
             );
         {% endif %}
 
-        {% if has_feature('Draftable') %}
-            // Schedule the {{ identifiers.label_singular | lower }}...
-            ${{ identifiers.camel_singular }}->publishAt(
+        {% if has_feature('draft') %}
+            // Schedule the {{ name | singular | lower }}...
+            ${{ name | singular | camel }}->publishAt(
                 Carbon::parse($request->input('published_at'))
             );
         {% endif %}
 
-        return new {{ identifiers.pascal_singular }}Resource(${{ identifiers.camel_singular }});
+        return new {{ name | singular | pascal }}Resource(${{ name | singular | camel }});
     }
 
     /**
-     * Display the specified {{ identifiers.label_singular | lower }}.
+     * Display the specified {{ name | singular | lower }}.
      *
      * @param int $id
-     * @return {{ identifiers.pascal_singular }}Resource
+     * @return {{ name | singular | pascal }}Resource
      */
     public function show($id)
     {
-        /** @var {{ identifiers.pascal_singular }} ${{ identifiers.pascal_singular }} */
-        ${{ identifiers.camel_singular }} = {{ identifiers.pascal_singular }}::query()
-            {% if has_feature('Draftable') %}
+        /** @var {{ name | singular | pascal }} ${{ name | singular | pascal }} */
+        ${{ name | singular | camel }} = {{ name | singular | pascal }}::query()
+            {% if has_feature('draft') %}
                 ->withDrafts()
             {% endif -%}
 
-            {% if has_feature('HasMedia') or has_feature('HasSeoFields') %}
+            {% if has_feature('media') or has_feature('seo') %}
                 ->with([
-                    {% if has_feature('HasMedia') %}
+                    {% if has_feature('media') %}
                         'media',
                     {% endif -%}
 
-                    {% if has_feature('HasSeoFields') %}
+                    {% if has_feature('seo') %}
                         'meta',
                     {% endif %}
                 ])
             {% endif %}
             ->findOrFail($id);
 
-        return new {{ identifiers.pascal_singular }}Resource(${{ identifiers.camel_singular }});
+        return new {{ name | singular | pascal }}Resource(${{ name | singular | camel }});
     }
 
     /**
-     * Update the specified {{ identifiers.label_singular | lower }}.
+     * Update the specified {{ name | singular | lower }}.
      *
      * @param Request $request
      * @param int $id
-     * @return {{ identifiers.pascal_singular }}Resource
+     * @return {{ name | singular | pascal }}Resource
      */
     public function update(Request $request, $id)
     {
-        /** @var {{ identifiers.camel_singular }} ${{ identifiers.pascal_singular }} */
-        ${{ identifiers.camel_singular }} = {{ identifiers.pascal_singular }}::query()
-            {% if has_feature('Draftable') %}
+        /** @var {{ name | singular | camel }} ${{ name | singular | pascal }} */
+        ${{ name | singular | camel }} = {{ name | singular | pascal }}::query()
+            {% if has_feature('draft') %}
                 ->withDrafts()
             {% endif %}
             ->findOrFail($id);
 
-        $this->validate{{ identifiers.pascal_singular }}($request);
+        $this->validate{{ name | singular | pascal }}($request);
 
-        ${{ identifiers.camel_singular }} = $this->populate{{ identifiers.pascal_singular }}(
-            ${{ identifiers.camel_singular }}, $request
+        ${{ name | singular | camel }} = $this->populate{{ name | singular | pascal }}(
+            ${{ name | singular | camel }}, $request
         );
 
-        ${{ identifiers.camel_singular }}->save();
+        ${{ name | singular | camel }}->save();
 
-        {% if has_feature('HasMedia') %}
+        {% if has_feature('media') %}
             $this->detatchMedia();
 
-            $this->attachMedia(${{ identifiers.camel_singular }}, $request);
+            $this->attachMedia(${{ name | singular | camel }}, $request);
         {% endif %}
 
-        {% if has_feature('HasSeoFields') %}
+        {% if has_feature('seo') %}
             // Save meta...
-            ${{ identifiers.camel_singular }}->saveMeta(
+            ${{ name | singular | camel }}->saveMeta(
                 $request->input('meta', [])
             );
         {% endif %}
 
-        {% if has_feature('Draftable') %}
-            // Schedule the {{ identifiers.label_singular | lower }}...
-            ${{ identifiers.camel_singular }}->publishAt(
+        {% if has_feature('draft') %}
+            // Schedule the {{ name | singular | lower }}...
+            ${{ name | singular | camel }}->publishAt(
                 Carbon::parse($request->input('published_at'))
             );
         {% endif %}
 
-        return new {{ identifiers.pascal_singular }}Resource(${{ identifiers.camel_singular }});
+        return new {{ name | singular | pascal }}Resource(${{ name | singular | camel }});
     }
 
-    {% if has_feature('Sortable') %}
+    {% if has_feature('sort') %}
         /**
-        * Move the specified {{ identifiers.label_singular | lower }}.
+        * Move the specified {{ name | singular | lower }}.
         *
         * @param Request $request
         * @param int $id
@@ -182,8 +182,8 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
         */
         public function move(Request $request, $id)
         {
-            ${{ identifiers.camel_singular }} = {{ identifiers.pascal_singular }}::query()
-                {% if has_feature('Draftable') %}
+            ${{ name | singular | camel }} = {{ name | singular | pascal }}::query()
+                {% if has_feature('draft') %}
                     ->withDrafts()
                 {% endif %}
                 ->findOrFail($id);
@@ -193,23 +193,23 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
             ]);
 
             $request->input('direction') === 'down'
-                ? ${{ identifiers.camel_singular }}->moveOrderDown()
-                : ${{ identifiers.camel_singular }}->moveOrderUp();
+                ? ${{ name | singular | camel }}->moveOrderDown()
+                : ${{ name | singular | camel }}->moveOrderUp();
 
             return response()->noContent();
         }
     {% endif %}
 
     /**
-     * Delete the specified {{ identifiers.label_singular | lower }}.
+     * Delete the specified {{ name | singular | lower }}.
      *
      * @param int $id
      * @return Response
      */
     public function destroy($id)
     {
-        {{ identifiers.camel_singular }}::query()
-            {% if has_feature('Draftable') %}
+        {{ name | singular | camel }}::query()
+            {% if has_feature('draft') %}
                 ->withDrafts()
             {% endif -%}
 
@@ -225,69 +225,61 @@ class {{ identifiers.pascal_plural }}Controller extends Controller
      * @param Request $request
      * @return void*
      */
-    protected function validate{{ identifiers.pascal_singular }}(Request $request)
+    protected function validate{{ name | singular | pascal }}(Request $request)
     {
-        {% if has_feature('HasSeoFields') %}
+        {% if has_feature('seo') %}
             $request->validate(array_merge([
         {% else %}
             $request->validate([
         {% endif -%}
 
         {% for field in fields %}
-            {% if field.validate_in_controller %}
-                {%- if field.type == 'string' %}
-                    {{ validation_rule(field.identifiers.snake, 'string:max:255', field.required, field.nullable) }}
-                
-                {%- elif field.type == 'text' %}
-                    {{ validation_rule(field.identifiers.snake, 'string', field.required, field.nullable) }}
-                
-                {%- elif field.type == 'date' %}
-                    {{ validation_rule(field.identifiers.snake, 'date', field.required, field.nullable) }}
+            {%- if field.type == 'text' %}
+                {{ validation_rule(field.name, 'string|max:255', field.rules) }}
+            
+            {%- elif field.type == 'textarea' or field.type == 'editor' %}
+                {{ validation_rule(field.name, 'string', field.rules) }}
+            
+            {%- elif field.type == 'date' %}
+                {{ validation_rule(field.name, 'date', field.rules) }}
 
-                {%- elif field.type == 'integer' %}
-                    {{ validation_rule(field.identifiers.snake, 'number', field.required, field.nullable) }}
-
-                {%- elif field.type == 'boolean' %}
-                    {{ validation_rule(field.identifiers.snake, 'boolean', field.required, field.nullable) }}
-
-                {%- elif field.type == 'image' %}
-                    {{ validation_rule(field.identifiers.snake ~ '_id', 'exists:media,id', field.required, field.nullable) }}
-                {%- endif %}
-            {% endif %}
+            {%- elif field.type == 'image' %}
+                {{ validation_rule(field.name ~ '_id', 'exists:media,id', field.rules) }}
+            {%- endif %}
         {% endfor -%}
 
-        {% if has_feature('HasSeoFields') %}
+        {% if has_feature('seo') %}
             ], Meta::rules()));
         {% else %}
             ]);
         {% endif %}
     }
 
-    protected function populate{{ identifiers.pascal_singular }}(
-        {{ identifiers.pascal_singular }} ${{ identifiers.camel_singular }},
+    protected function populate{{ name | singular | pascal }}(
+        {{ name | singular | pascal }} ${{ name | singular | camel }},
         Request $request
     ) {
-        return tap (${{ identifiers.camel_singular }}, function ({{ identifiers.pascal_singular }} ${{ identifiers.camel_singular }}) use (
+        return tap (${{ name | singular | camel }}, function ({{ name | singular | pascal }} ${{ name | singular | camel }}) use (
             $request
         ) {
             {% for field in fields %}
-                {% if field.update_in_controller and not field.type == 'image' %}
-                    ${{ identifiers.camel_singular }}->{{ field.identifiers.snake }} = $request->input('{{ field.identifiers.snake }}');
+                {% if not field.type == 'image' %}
+                    ${{ name | singular | camel }}->{{ field.name }} = $request->input('{{ field.name }}');
                 {% endif %}
             {% endfor %}
         });
     }
 
-    {% if has_feature('HasMedia') %}
+    {% if has_feature('media') %}
         protected function attachMedia (
-            {{ identifiers.pascal_singular }} ${{ identifiers.camel_singular }}, 
+            {{ name | singular | pascal }} ${{ name | singular | camel }}, 
             Request $request
         ) {
             {% for field in fields %}
-                {% if field.update_in_controller and field.type == 'image'  %}
-                    ${{ identifiers.camel_singular }}->attachMedia(
-                        $request->input('{{ field.identifiers.snake }}_id'),
-                        '{{ field.identifiers.snake }}'
+                {% if field.type == 'image'  %}
+                    ${{ name | singular | camel }}->attachMedia(
+                        $request->input('{{ field.name }}_id'),
+                        '{{ field.name }}'
                     );
                 {% endif %}
             {% endfor %}

@@ -1,85 +1,83 @@
 {
-    "identifiers": {
-        "template_id": "demo",
-        "template_name": "Demo",
-        "file_name": "Demo"
+  "id": "sub-services",
+  "name": "Sub Services",
+  "fields": [
+    {
+      "type": "text",
+      "name": "banner_heading",
+      "label": "Banner Heading",
+      "options": {},
+      "rules": {
+        "required": true,
+        "nullable": false,
+        "url": false,
+        "max": 255
+      }
     },
-
-    "fields": [
-        {
-            "type": "string",
-            "required": true,
-            "options": {},
-            "identifiers": {
-                "label": "Banner Heading",
-                "snake": "banner_heading"
-            }
-        },
-
-        {
-            "type": "string",
-            "required": true,
-            "options": {},
-            "identifiers": {
-                "label": "Banner Subheading",
-                "snake": "banner_subheading"
-            }
-        },
-
-        {
-            "type": "image",
-            "required": true,
-            "options": {
-                "group": "banner_image",
-                "conversions": [
-                    "1200x630"
-                ]
-
-            },            
-            "identifiers": {
-                "label": "Banner Image",
-                "snake": "banner_image"
-            }
-        },
-
-        {
-            "type": "string",
-            "required": true,
-            "options": {},            
-            "identifiers": {
-                "label": "Introduction Heading",
-                "snake": "introduction_heading"
-            }
-        },
-
-        {
-            "type": "string",
-            "required": true,
-            "options": {},            
-            "identifiers": {
-                "label": "Introduction Subheading",
-                "snake": "introduction_subheading"
-            }
-        },
-
-        {
-            "type": "text",
-            "required": true,
-            "options": {},            
-            "identifiers": {
-                "label": "Introduction Content",
-                "snake": "introduction_content"
-            }
-        },
-
-        {
-            "type": "url",
-            "required": true,
-            "options": {},            
-            "identifiers": {
-                "label": "Introduction Video URL",
-                "snake": "introduction_video_url"
-            }
-        }
-    ]
+    {
+      "type": "text",
+      "name": "banner_subheading",
+      "label": "Banner Subeading",
+      "options": {},
+      "rules": {
+        "required": true,
+        "nullable": false
+      }
+    },
+    {
+      "type": "text",
+      "name": "introduction_subheading",
+      "label": "Introduction Subeading",
+      "options": {},
+      "rules": {
+        "required": true,
+        "nullable": false
+      }
+    },
+    {
+      "type": "text",
+      "name": "introduction_subheading",
+      "label": "Introduction Subeading",
+      "options": {},
+      "rules": {
+        "required": true,
+        "nullable": false
+      }
+    },
+    {
+      "type": "text",
+      "name": "introduction_subheading",
+      "label": "Introduction Subeading",
+      "options": {},
+      "rules": {
+        "required": true,
+        "nullable": false
+      }
+    },
+    {
+      "type": "editor",
+      "name": "introduction_content",
+      "label": "Introduction Content",
+      "options": {},
+      "rules": {
+        "required": true,
+        "nullable": false
+      }
+    },
+    {
+      "type": "media",
+      "name": "banner_image",
+      "label": "Banner Image",
+      "rules": {
+        "required": true,
+        "nullable": false
+      },
+      "options": {
+        "media_group": "image",
+        "conversions": [
+          "1400x600"
+        ]
+      }
+    }
+  ]
 }

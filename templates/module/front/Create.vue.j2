@@ -1,15 +1,15 @@
 <template>
-    <{{ identifiers.kebab_singular }}-form />
+    <{{ name | singular | kebab }}-form />
 </template>
 
 <script>
-import {{ identifiers.pascal_singular }}Form from './partials/Form';
+import {{ name | singular | pascal }}Form from './partials/Form';
 
 export default {
-    components: { {{ identifiers.pascal_singular }}Form },
+    components: { {{ name | singular | pascal }}Form },
 
     created() {
-        this.setTitle('Add {{ identifiers.label_singular }}');
+        this.setTitle('Add {{ name | singular }}');
     },
 };
 </script>

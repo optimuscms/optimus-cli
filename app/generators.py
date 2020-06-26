@@ -1,97 +1,137 @@
 import os
 import re
+import json
 from app import config
-from app.util import TemplateParser
+from app.template import TemplateParser
+from app.schema import ModuleConfigParser
+from app.schema import PageTemplateConfigParser
+
 from datetime import datetime
 
 
 class Generator(object):
-    def __init__(self, template_path):
-        self.__template_path = template_path
-        self.__parser = TemplateParser(template_path)
-        self.__identifiers = self.__parser.get_template_data()['identifiers']
 
-    def build(self):
-        """Builds new and existing project files from the provided templates and dynamic files"""
-        if self.__generate_templates() and self.__update_dynamic_files():
-            print('Successfully generated files for %s, formatting...' %
-                  self.__template_path)
+    @classmethod
+    def build(cls, config_path: str, args: list):
+        """Builds new and existing project files for the provided json config"""
+
+        # Ensure the provided config file exists
+        if not os.path.exists(config_path):
+            return print('Config file does not exist, please check the provided path and try again')
+
+        # Read the config file and convert to JSON
+        with open(config_path, 'r') as config_file:
+            try:
+                config_dict = json.loads(config_file.read())
+            except:
+                return print('Could not parse provided config as JSON, please check input file and try again')
+
+        # Ensure the JSON config is valid
+        try:
+            cls._get_config_parser().parse(config_dict)
+        except Exception as exception:
+            return print('The following error detected was in was detected in your config file, please fix it and run the generator again:\n\n%s' % str(exception))
+
+        parser = TemplateParser(config_dict)
+
+        # Generate new template files
+        if not "--skip-templates" in args:
+            try:
+                cls.__generate_templates(parser, args)
+            except Exception as exception:
+                return print('The following error occured during template generation, aborting:\n\n%s' % str(exception))
+
+        # Update existing dynamic files
+        if not "--skip-updates" in args:
+            try:
+                cls.__update_dynamic_files(parser, args)
+            except Exception as exception:
+                return print('The following error occured during updating dynamic files, aborting:\n\n%s' % str(exception))
 
         # Run php-cs-fixer and eslint
-        os.system('php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
+        if not "--skip-cs-fix" in args:
+            os.system(
+                'php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
 
-        print('New files formatted successfully.')
+        print('New files generated successfully.')
 
-    def _get_dynamic_files(self):
+    @classmethod
+    def _get_dynamic_files(cls) -> list:
         """Returns a list of dynamic files which are updated when the generator is run
 
         :return: a nested array containing the source path, destination tag and destination path of the dynamic file
         """
         return []
 
-    def _get_template_files(self):
+    @classmethod
+    def _get_template_files(cls) -> list:
         """Returns a list of templates used to generate new files in the project
 
         :return: a nested array containing the source and destination path of the template.
         """
         return []
 
-    def _get_template_subdirectory(self):
+    @classmethod
+    def _get_template_subdirectory(cls) -> str:
         return ''
 
-    def __generate_templates(self):
+    @classmethod
+    def _get_config_parser(cls):
+        return None
+
+    @classmethod
+    def __generate_templates(cls, parser: TemplateParser, args: list):
         """Generate new project files defined by _get_template_files
 
         :return: if the operation completed successfully
         """
-        for (source_path, destination_path) in self._get_template_files():
-            destination_path = self.__parse_file_path(destination_path)
+        for (source_path, destination_path) in cls._get_template_files():
+            destination_path = parser.render_string(destination_path)
             destination_directory = os.path.dirname(destination_path)
 
             # Create the destination folder if it doesn't exist already
             if not os.path.exists(destination_directory):
                 os.makedirs(destination_directory)
 
-            #Abort if the destination file already exists to prevent overwriting
-            if os.path.isfile(destination_path):
-                 print('File %s already exists, aborting...' % destination_path)
-                 return
+            # Abort if the destination file already exists to prevent overwriting
+            if os.path.isfile(destination_path) and not "--overwrite" in args:
+                raise(Exception('%s already exists.\nUse --overwrite to ignore this warning.' %
+                                destination_path))
 
             # Render and write the template to the destination file
             with open(destination_path, 'w') as destination_file:
-                rendered_template = self.__parser.render_file(
+                rendered_template = parser.render_file(
                     '%s/%s/%s' % (config.TEMPLATE_DIR,
-                                  self._get_template_subdirectory(), source_path)
+                                  cls._get_template_subdirectory(), source_path)
                 )
 
                 destination_file.write(rendered_template)
 
             # Run prettier if destination file is PHP
-            if destination_path.endswith('.php'):
+            if not "--skip-cs-fixer" in args and destination_path.endswith('.php'):
                 os.system('prettier %s --write &>/dev/null' % destination_path)
 
         return True
 
-    def __update_dynamic_files(self):
+    @ classmethod
+    def __update_dynamic_files(cls, parser: TemplateParser, args: list):
         """Updates existing project files defined by _get_dynamic_files
 
         :return: if the operation completed successfully
         """
-        for (source_path, tag, destination_path) in self._get_dynamic_files():
-            destination_path = self.__parse_file_path(destination_path)
+        for (source_path, tag, destination_path) in cls._get_dynamic_files():
+            destination_path = parser.render_string(destination_path)
             destination_directory = os.path.dirname(destination_path)
 
             # Ensure the destination folder exists
             if not os.path.exists(destination_directory):
-                print('Couldn\'t find the directory "%s" to update append, aborting...' %
-                      destination_directory)
-                return False
+                raise(Exception('Couldn\'t find the directory "%s" to update append.' %
+                                destination_directory))
 
             # Ensure the destination file exists
             if not os.path.isfile(destination_path):
-                print('Couldn\'t find the file "%s" to update, aborting...' %
-                      destination_path)
-                return False
+                raise(Exception('Couldn\'t find the file "%s" to update, aborting.' %
+                                destination_path))
 
             # Read the current contents of the destination file and locate tags
             with open(destination_path, 'r') as destination_file:
@@ -99,6 +139,7 @@ class Generator(object):
 
                 code_tags = re.findall(
                     r'\/\*--OPTIMUS-CLI:([\w-]*)--\*\/', destination_contents)
+
                 view_tags = re.findall(
                     r'<\!--OPTIMUS-CLI:([\w-]*)-->', destination_contents)
 
@@ -106,21 +147,19 @@ class Generator(object):
 
             # Ensure the tag we are updating is in the destination file
             if tag not in destination_tags:
-                print('Could not find marker tag %s in file %s, aborting...' %
-                      (tag, destination_path))
-                return False
+                raise(Exception('Could not find marker tag %s in file %s.' %
+                                (tag, destination_path)))
 
             # Ensure there is only one occurrence of the tag we are updating
             if destination_tags.count(tag) > 1:
-                print('Duplicate marker tag %s in file %s, aborting...' %
-                      (tag, destination_path))
-                return False
+                raise(Exception('Duplicate marker tag %s in file %s.' %
+                                (tag, destination_path)))
 
             # Render and write the dynamic content and place it in the destination file
             with open(destination_path, 'w') as destination_file:
-                rendered_content = self.__parser.render_file(
+                rendered_content = cls.__parser.render_file(
                     '%s/%s/%s' % (config.TEMPLATE_DIR,
-                                  self._get_template_subdirectory(), source_path)
+                                  cls._get_template_subdirectory(), source_path)
                 )
 
                 updated_contents = destination_contents.replace(
@@ -134,69 +173,67 @@ class Generator(object):
                 destination_file.write(updated_contents)
 
             # Run prettier if destination file is PHP
-            if destination_path.endswith('.php'):
+            if not "--skip-cs-fixer" in args and destination_path.endswith('.php'):
                 os.system('prettier %s --write &>/dev/null' % destination_path)
-
-        return True
-
-    def __parse_file_path(self, file_path):
-        """Parses variables in a template file path
-
-        :param file_path: the file path to parse
-        :return: the parsed file path
-        """
-        return self.__parser.render_string(file_path)
 
 
 class ModuleGenerator(Generator):
-    def _get_template_subdirectory(self):
+
+    @ classmethod
+    def _get_template_subdirectory(cls) -> str:
         return 'module'
 
-    def _get_template_files(self):
+    @ classmethod
+    def _get_config_parser(cls):
+        return ModuleConfigParser()
+
+    @ classmethod
+    def _get_template_files(cls) -> list:
         return [
             [
                 'back/Controller.php.j2',
-                'app/Http/Controllers/Back/Api/{{ identifiers.pascal_plural }}Controller.php'
+                'app/Http/Controllers/Back/Api/{{ name | plural | pascal }}Controller.php'
             ],
             [
                 'back/Model.php.j2',
-                'app/Models/{{ identifiers.pascal_singular }}.php'
+                'app/Models/{{ name | singular | pascal }}.php'
             ],
             [
                 'back/Resource.php.j2',
-                'app/Http/Resources/{{ identifiers.pascal_singular }}Resource.php'
+                'app/Http/Resources/{{ name | singular | pascal }}Resource.php'
             ],
             [
                 'back/Migration.php.j2',
-                'database/migrations/%s_create_{{ identifiers.snake_plural }}_table.php' % self.__get_datetime()
+                'database/migrations/%s_create_{{ name | plural | snake }}_table.php' % cls.__get_datetime()
             ],
             [
                 'front/api.js.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/routes/api.js'
+                'resources/js/back/modules/{{ name | plural | kebab }}/routes/api.js'
             ],
             [
                 'front/app.js.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/routes/app.js'
+                'resources/js/back/modules/{{ name | plural | kebab }}/routes/app.js'
             ],
             [
                 'front/Create.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Create.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/Create.vue'
             ],
             [
                 'front/Edit.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Edit.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/Edit.vue'
             ],
             [
                 'front/Index.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/Index.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/Index.vue'
             ],
             [
                 'front/Form.vue.j2',
-                'resources/js/back/modules/{{ identifiers.kebab_plural }}/views/partials/Form.vue'
+                'resources/js/back/modules/{{ name | plural | kebab }}/views/partials/Form.vue'
             ]
         ]
 
-    def _get_dynamic_files(self):
+    @ classmethod
+    def _get_dynamic_files(cls) -> list:
         return [
             [
                 'back/dynamic/Routes.php.j2',
@@ -235,27 +272,36 @@ class ModuleGenerator(Generator):
             ],
         ]
 
-    def __get_datetime(self):
+    @ classmethod
+    def __get_datetime(cls) -> str:
         return datetime.utcnow().strftime('%Y_%m_%d_%H%M%S')
 
 
 class PageGenerator(Generator):
-    def _get_template_subdirectory(self):
+
+    @ classmethod
+    def _get_template_subdirectory(cls) -> str:
         return 'page'
 
-    def _get_template_files(self):
+    @ classmethod
+    def _get_config_parser(cls):
+        return PageTemplateConfigParser()
+
+    @ classmethod
+    def _get_template_files(cls) -> list:
         return [
             [
                 'back/Template.php.j2',
-                'app/PageTemplates/{{ identifiers.file_name }}Template.php'
+                'app/PageTemplates/{{ name | pascal }}Template.php'
             ],
             [
                 'front/Form.vue.j2',
-                'resources/js/back/modules/pages/views/templates/{{ identifiers.file_name }}.vue'
+                'resources/js/back/modules/pages/views/templates/{{ name | pascal }}.vue'
             ]
         ]
 
-    def _get_dynamic_files(self):
+    @ classmethod
+    def _get_dynamic_files(cls) -> list:
         return [
             [
                 'back/dynamic/OptimusImports.php.j2',

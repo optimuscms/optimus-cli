@@ -1,35 +1,28 @@
 <template>
     <div class="field">
         {% for field in fields %}
-            <!-- {{ field.identifiers.label }} -->
+            <!-- {{ field.label }} -->
             <o-form-field
-                input="{{ field.identifiers.snake }}"
-                label="{{ field.identifiers.label }}"
-                {% if field.required %}required{% endif %}
+                input="{{ field.name }}"
+                label="{{ field.label }}"
+                {%+ if field.rules.required %}required{% endif %}
             >
-                {% if field.type == 'string' %}
+                {% if field.type == 'text' %}
                     <o-input
-                        id="{{ field.identifiers.snake }}"
-                        v-model="form.{{ field.identifiers.snake }}"
-                        {% if field.required %}required{% endif %}
+                        id="{{ field.name }}"
+                        v-model="form.{{ field.name }}"
+                        {%+ if field.rules.required %}required{% endif %}
                     />
-                {% elif field.type == 'text' %}
+                {% elif field.type == 'editor' %}
                     <editor
-                        id="{{ field.identifiers.snake }}"
-                        v-model="form.{{ field.identifiers.snake }}"
+                        id="{{ field.name }}"
+                        v-model="form.{{ field.name }}"
                     />
-                {% elif field.type == 'url' %}
-                    <o-input
-                        id="{{ field.identifiers.snake }}"
-                        v-model="form.{{ field.identifiers.snake }}"
-                        type="url"
-                        {% if field.required %}required{% endif %}
-                    />
-                {% elif field.type == 'image' %}
+                {% elif field.type == 'media' %}
                     <media-picker
-                        id="{{ field.identifiers.snake}}_id"
-                        v-model="form.{{ field.identifiers.snake}}_id"
-                        :media="getItemAttribute('{{ field.identifiers.snake }}')"
+                        id="{{ field.name}}_id"
+                        v-model="form.{{ field.name}}_id"
+                        :media="getItemAttribute('{{ field.name }}')"
                         show-preview
                     />
 
@@ -38,6 +31,7 @@
                     </template>
                 {% endif %}
             </o-form-field>
+
         {% endfor %}
     </div>
 </template>
@@ -52,10 +46,10 @@ export default {
         return {
             form: {
                 {% for field in fields %}
-                    {% if field.type != 'image' %}
-                        {{ field.identifiers.snake }}: '',
+                    {% if field.type != 'media' %}
+                        {{ field.name }}: '',
                     {% else %}
-                        {{ field.identifiers.snake }}_id: null,
+                        {{ field.name }}_id: null,
                     {% endif %}
                 {% endfor %}
             },
@@ -71,10 +65,10 @@ export default {
 
                 this.form = {
                     {% for field in fields %}
-                        {% if field.type != 'image' %}
-                            {{ field.identifiers.snake }}: item.{{ field.identifiers.snake }},
+                        {% if field.type != 'media' %}
+                            {{ field.name }}: item.{{ field.name }},
                         {% else %}
-                            {{ field.identifiers.snake }}_id: item.{{ field.identifiers.snake }} ? item.{{ field.identifiers.snake }}.id : null,
+                            {{ field.name }}_id: item.{{ field.name }} ? item.{{ field.name }}.id : null,
                         {% endif %}
                     {% endfor %}
                 };
