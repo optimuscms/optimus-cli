@@ -12,10 +12,10 @@ class ConfigParser():
     def _validate_config(self, config: dict) -> None:
         jsonschema.validate(
             config,
-            self._get_config_schema(),
+            self._get_config_schema(config),
         )
 
-    def _get_config_schema(self) -> dict:
+    def _get_config_schema(self, config: dict) -> dict:
         pass
 
     def _merge_default_settings(self, config: dict) -> dict:
@@ -24,213 +24,9 @@ class ConfigParser():
 
 class ModuleConfigParser(ConfigParser):
 
-    def _get_config_schema(self) -> dict:
-        return {
-            'type': 'object',
-            'properties': {
-                'name': {'type': 'string'},
-                'fields': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'object',
-                        'properties': {
-                            'type': {
-                                'type': 'string',
-                                'enum': [
-                                    'text',
-                                    'textarea',
-                                    'editor',
-                                    'date',
-                                    'media',
-                                ],
-                            },
-                            'name': {'type': 'string'},
-                            'label': {'type': 'string'},
-                            'rules': {
-                                'type': 'object',
-                                'properties': {
-                                    'required': {'type': 'boolean'},
-                                    'nullable': {'type': 'boolean'},
-                                },
-                            },
-                            'show_on_admin_index': {'type': 'boolean'},
-                        },
-                        'required': ['name'],
-                        'if': {
-                            'properties': {
-                                'type': {'const': 'media'},
-                            },
-                        },
-                        'then': {
-                            'properties': {
-                                'options': {
-                                    'type': 'object',
-                                    'properties': {
-                                        'media_group': {'type': 'string'},
-                                        'conversions': {
-                                            'type': 'array',
-                                            'items': {'type': 'string'},
-                                        },
-                                    },
-                                    'required': ['media_group'],
-                                },
-                            },
-                            'required': ['name', 'options'],
-                        }
-                    },
-                },
-                'features': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'object',
-                        'properties': {
-                            'type': {
-                                'type': 'string',
-                                'enum': [
-                                    'sort',
-                                    'slug',
-                                    'seo',
-                                    'media',
-                                    'draft',
-                                    'menu',
-                                ],
-                            },
-                        },
-                        'required': ['type'],
-                        'allOf': [
-                            {
-                                'if': {
-                                    'properties': {
-                                        'type': {'const': 'sort'},
-                                    },
-                                },
-                                'then': {
-                                    'properties': {
-                                        'options': {
-                                            'type': 'object',
-                                            'properties': {
-                                                'order_column_name': {'type': 'string'},
-                                            },
-                                        },
-                                    },
-                                    'required': ['options'],
-                                },
-                            },
-                            {
-                                'if': {
-                                    'properties': {
-                                        'type': {'const': 'slug'},
-                                    },
-                                },
-                                'then': {
-                                    'properties': {
-                                        'options': {
-                                            'type': 'object',
-                                            'properties': {
-                                                'generate_from_field': {'type': 'string'},
-                                                'save_to_field': {'type': 'string'},
-                                            },
-                                            'required': [
-                                                'generate_from_field',
-                                                'save_to_field',
-                                            ],
-                                        },
-                                    },
-                                    'required': ['options'],
-                                },
-                            },
-                            {
-                                'if': {
-                                    'properties': {
-                                        'type': {'const': 'media'},
-                                    },
-                                },
-                                'then': {
-                                    'properties': {
-                                        'options': {
-                                            'type': 'object',
-                                            'properties': {
-                                                'media_groups': {
-                                                    'type': 'array',
-                                                    'items': {
-                                                        'type': 'object',
-                                                        'properties': {
-                                                            'name': {'type': 'string'},
-                                                            'conversions': {
-                                                                'type': 'array',
-                                                                'items': {'type': 'string'},
-                                                            },
-                                                        },
-                                                        'required': ['name'],
-                                                    },
-                                                },
-                                                'conversions': {
-                                                    'type': 'array',
-                                                    'items': {
-                                                        'type': 'object',
-                                                        'properties': {
-                                                            'name': {'type': 'string'},
-                                                            'width': {'type': 'integer'},
-                                                            'height': {'type': 'integer'},
-                                                        },
-                                                        'required': ['name', 'width', 'height'],
-                                                    },
-                                                },
-                                            },
-                                            'required': ['media_groups'],
-                                        },
-                                    },
-                                    'required': ['options'],
-                                },
-                            },
-                            {
-                                'if': {
-                                    'properties': {
-                                        'type': {'const': 'draft'},
-                                    },
-                                },
-                                'then': {
-                                    'properties': {
-                                        'options': {
-                                            'type': 'object',
-                                            'properties': {
-                                                'published_at_column_name': {'type': 'string'},
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                            {
-                                'if': {
-                                    'properties': {
-                                        'type': {'const': 'menu'},
-                                    },
-                                },
-                                'then': {
-                                    'properties': {
-                                        'options': {
-                                            'type': 'object',
-                                            'properties': {
-                                                'url_field': {'type': 'string'},
-                                                'label_field': {'type': 'string'},
-                                                'search_query_field': {'type': 'string'},
-                                            },
-                                            'required': [
-                                                'url_field',
-                                                'label_field',
-                                                'search_query_field',
-                                            ],
-                                        },
-                                    },
-                                    'required': ['options'],
-                                },
-                            },
-                        ],
-                    },
-                },
-            },
-            'required': ['name'],
-        }
+    def _get_config_schema(self, config: dict) -> dict:
+        with open('schema/module_config.json', 'r') as schema_file:
+            return json.loads(schema_file.read())
 
     def _merge_default_settings(self, config: dict) -> dict:
         if 'fields' not in config:
@@ -299,64 +95,9 @@ class ModuleConfigParser(ConfigParser):
 
 class PageTemplateConfigParser(ConfigParser):
 
-    def _get_config_schema(self) -> dict:
-        return {
-            'type': 'object',
-            'properties': {
-                'id': {'type': 'string'},
-                'name': {'type': 'string'},
-                'fields': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'object',
-                        'properties': {
-                            'type': {
-                                'type': 'string',
-                                'enum': [
-                                    'text',
-                                    'textarea',
-                                    'editor',
-                                    'date',
-                                    'media',
-                                ],
-                            },
-                            'name': {'type': 'string'},
-                            'label': {'type': 'string'},
-                            'rules': {
-                                'type': 'object',
-                                'properties': {
-                                    'required': {'type': 'boolean'},
-                                    'nullable': {'type': 'boolean'},
-                                },
-                            },
-                        },
-                        'required': ['name'],
-                        'if': {
-                            'properties': {
-                                'type': {'const': 'media'},
-                            },
-                        },
-                        'then': {
-                            'properties': {
-                                'options': {
-                                    'type': 'object',
-                                    'properties': {
-                                        'media_group': {'type': 'string'},
-                                        'conversions': {
-                                            'type': 'array',
-                                            'items': {'type': 'string'},
-                                        },
-                                    },
-                                    'required': ['media_group'],
-                                },
-                            },
-                            'required': ['name', 'options'],
-                        },
-                    },
-                },
-            },
-            'required': ['id'],
-        }
+    def _get_config_schema(self, config: dict) -> dict:
+        with open('schema/page_template_config.json', 'r') as schema_file:
+            return json.loads(schema_file.read())
 
     def _merge_default_settings(self, config: dict) -> dict:
         if 'name' not in config:
