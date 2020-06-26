@@ -8,17 +8,17 @@
                     <o-tabs>
                         <o-tab name="Content">
                             {% for field in fields %}
-                                <!-- {{ field.name | plural | capitalize }} -->
+                                <!-- {{ field.name | plural | singular }} -->
                                 <o-form-field
                                     input="{{ field.name }}"
                                     label="{{ field.label }}"
-                                    {%+ if field.required %}required{% endif -%}
+                                    {%+ if field.rules.required %}required{% endif -%}
                                 >
                                     {% if field.type == 'text' %}
                                         <o-input
                                             id="{{ field.name }}"
                                             v-model="form.{{ field.name }}"
-                                            {%+ if field.required %}required{% endif -%}
+                                            {%+ if field.rules.required %}required{% endif -%}
                                         />
                                     {% endif -%}
 
@@ -42,13 +42,13 @@
                                                     id="{{ field.name }}"
                                                     v-model="form.{{ field.name }}"
                                                     type="datetime-local"
-                                                    {%+ if field.required %}required{% endif %}
+                                                    {%+ if field.rules.required %}required{% endif %}
                                                 />
                                             </div>
                                         </div>
                                     {% endif -%}
 
-                                    {% if field.type == 'image' %}
+                                    {% if field.type == 'media' %}
                                         <media-picker
                                             id="{{ field.name }}_id"
                                             v-model="form.{{ field.name }}_id"
@@ -156,7 +156,7 @@ export default {
         return {
             form: {
                 {% for field in fields %}
-                    {% if in_array(field.type, ['string', 'textarea', 'editor']) %}
+                    {% if in_array(field.type, ['text', 'textarea', 'editor']) %}
                         {{ field.name }}: '',
                     {% elif field.type == 'image' %}
                         {{ field.name }}_id: null,
@@ -183,7 +183,7 @@ export default {
 
             this.form = {
                 {% for field in fields %}
-                    {% if in_array(field.type, ['string', 'textarea', 'editor']) %}
+                    {% if in_array(field.type, ['text', 'textarea', 'editor']) %}
                         {{ field.name }}: item.{{ field.name }},
                     {% elif field.type == 'image' %}
                         {{ field.name }}_id: item.{{ field.name }} ? item.{{ field.name }}.id : null,
