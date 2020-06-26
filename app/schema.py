@@ -1,3 +1,4 @@
+import os
 import json
 import jsonschema
 
@@ -25,7 +26,12 @@ class ConfigParser():
 class ModuleConfigParser(ConfigParser):
 
     def _get_config_schema(self, config: dict) -> dict:
-        with open('schema/module_config.json', 'r') as schema_file:
+        file_path = os.path.join(
+            os.path.dirname(__file__),
+            'schema/module_config.json'
+        )
+
+        with open(file_path, 'r') as schema_file:
             return json.loads(schema_file.read())
 
     def _merge_default_settings(self, config: dict) -> dict:
@@ -96,7 +102,12 @@ class ModuleConfigParser(ConfigParser):
 class PageTemplateConfigParser(ConfigParser):
 
     def _get_config_schema(self, config: dict) -> dict:
-        with open('schema/page_template_config.json', 'r') as schema_file:
+        file_path = os.path.join(
+            os.path.dirname(__file__),
+            'schema/page_template_config.json'
+        )
+
+        with open(file_path, 'r') as schema_file:
             return json.loads(schema_file.read())
 
     def _merge_default_settings(self, config: dict) -> dict:
