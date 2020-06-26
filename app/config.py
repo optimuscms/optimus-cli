@@ -4,11 +4,11 @@ from app.generators import ModuleGenerator, PageGenerator
 COMMANDS = [
     {
         'name': 'generate:module',
-        'callback': lambda args: ModuleGenerator(args[1]).build()
+        'callback': lambda args: ModuleGenerator().build(args[1])
     },
     {
         'name': 'generate:page',
-        'callback': lambda args: PageGenerator(args[1]).build()
+        'callback': lambda args: PageGenerator().build(args[1])
     }
 ]
 

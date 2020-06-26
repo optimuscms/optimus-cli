@@ -12,10 +12,10 @@ class ConfigParser():
     def _validate_config(self, config: dict) -> None:
         jsonschema.validate(
             config,
-            self._get_config_schema(config),
+            self._get_config_schema(),
         )
 
-    def _get_config_schema(self, config: dict) -> dict:
+    def _get_config_schema(self) -> dict:
         pass
 
     def _merge_default_settings(self, config: dict) -> dict:
@@ -306,7 +306,7 @@ class ModuleConfigParser(ConfigParser):
 
 class PageTemplateConfigParser(ConfigParser):
 
-    def _get_config_schema(self, config: dict) -> dict:
+    def _get_config_schema(self) -> dict:
         return {
             'type': 'object',
             'properties': {

@@ -84,9 +84,9 @@ class Generator(object):
                 os.makedirs(destination_directory)
 
             # Abort if the destination file already exists to prevent overwriting
-            if os.path.isfile(destination_path):
-                print('File %s already exists, aborting...' % destination_path)
-                return
+            # if os.path.isfile(destination_path):
+            #     print('File %s already exists, aborting...' % destination_path)
+            #     return
 
             # Render and write the template to the destination file
             with open(destination_path, 'w') as destination_file:
