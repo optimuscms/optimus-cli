@@ -40,7 +40,7 @@ class ModuleConfigParser(ConfigParser):
 
         # Field defaults
 
-        for field in enumerate(config['fields']):
+        for field in config['fields']:
             if 'label' not in field:
                 field['label'] = field['name']
 
@@ -70,8 +70,8 @@ class ModuleConfigParser(ConfigParser):
         if 'features' not in config:
             config['features'] = []
 
-        for feature in enumerate(config['features']):
-            if 'options' not in feature['options']:
+        for feature in config['features']:
+            if 'options' not in feature:
                 feature['options'] = {}
 
             options = feature['options']
@@ -83,7 +83,7 @@ class ModuleConfigParser(ConfigParser):
                 options['order_column_name'] = 'order'
 
             if feature['type'] == 'media':
-                for media_group in enumerate(options['media_groups']):
+                for media_group in options['media_groups']:
                     if 'conversions' not in media_group:
                         media_group['conversions'] = []
 
@@ -119,7 +119,7 @@ class PageTemplateConfigParser(ConfigParser):
 
         # Field defaults
 
-        for field in enumerate(config['fields']):
+        for field in config['fields']:
             if 'label' not in field:
                 config['label'] = self.__convert_to_title(field['name'])
 
