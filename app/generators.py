@@ -51,7 +51,7 @@ class Generator(object):
         # Run php-cs-fixer and eslint
         if not "--skip-cs-fix" in args:
             os.system(
-                'php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
+                'composer lint &>/dev/null && yarn lint --fix &>/dev/null')
 
         print('New files generated successfully.')
 
