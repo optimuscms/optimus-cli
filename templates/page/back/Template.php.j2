@@ -69,7 +69,7 @@ class {{ name | pascal }}Template implements PageTemplate
                 {% if field.type != 'media' %}
                     '{{ field.name }}' => $page->getContent('{{ field.name }}'),
                 {% else %}
-                    '{{ field.name }}_id' => new MediaResource($page->getFirstMedia('{{ field.options.media_group }}')),
+                    '{{ field.name }}' => new MediaResource($page->getFirstMedia('{{ field.options.media_group }}')),
                 {% endif %}
             {% endfor %}
         ];

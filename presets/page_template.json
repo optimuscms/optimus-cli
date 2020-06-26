@@ -26,8 +26,18 @@
     },
     {
       "type": "text",
+      "name": "introduction_heading",
+      "label": "Introduction Heading",
+      "options": {},
+      "rules": {
+        "required": true,
+        "nullable": false
+      }
+    },
+    {
+      "type": "text",
       "name": "introduction_subheading",
-      "label": "Introduction Subeading",
+      "label": "Introduction Subheading",
       "options": {},
       "rules": {
         "required": true,
