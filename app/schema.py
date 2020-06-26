@@ -1,6 +1,7 @@
 import json
 import jsonschema
 
+
 class ConfigParser():
 
     def parse(self, config: dict) -> dict:
@@ -9,13 +10,17 @@ class ConfigParser():
         return self._merge_default_settings(config)
 
     def _validate_config(self, config: dict) -> None:
-        jsonschema.validate(config, self._get_config_schema())
+        jsonschema.validate(
+            config,
+            self._get_config_schema(config),
+        )
 
-    def _get_config_schema(self) -> dict:
+    def _get_config_schema(self, config: dict) -> dict:
         pass
 
     def _merge_default_settings(self, config: dict) -> dict:
         pass
+
 
 class ModuleConfigParser(ConfigParser):
 
@@ -23,7 +28,7 @@ class ModuleConfigParser(ConfigParser):
         return {
             'type': 'object',
             'properties': {
-                'name': { 'type': 'string' },
+                'name': {'type': 'string'},
                 'fields': {
                     'type': 'array',
                     'items': {
@@ -39,19 +44,21 @@ class ModuleConfigParser(ConfigParser):
                                     'media',
                                 ],
                             },
-                            'name': { 'type': 'string' },
+                            'name': {'type': 'string'},
+                            'label': {'type': 'string'},
                             'rules': {
                                 'type': 'object',
                                 'properties': {
-                                    'required': { 'type': 'boolean' },
-                                    'nullable': { 'type': 'boolean' },
+                                    'required': {'type': 'boolean'},
+                                    'nullable': {'type': 'boolean'},
                                 },
                             },
+                            'show_on_admin_index': {'type': 'boolean'},
                         },
                         'required': ['name'],
                         'if': {
-                            'properties': { 
-                                'type': { 'const': 'media' },
+                            'properties': {
+                                'type': {'const': 'media'},
                             },
                         },
                         'then': {
@@ -59,10 +66,10 @@ class ModuleConfigParser(ConfigParser):
                                 'options': {
                                     'type': 'object',
                                     'properties': {
-                                        'media_group': { 'type': 'string' },
+                                        'media_group': {'type': 'string'},
                                         'conversions': {
                                             'type': 'array',
-                                            'items': { 'type': 'string' },
+                                            'items': {'type': 'string'},
                                         },
                                     },
                                     'required': ['media_group'],
@@ -94,7 +101,7 @@ class ModuleConfigParser(ConfigParser):
                             {
                                 'if': {
                                     'properties': {
-                                        'type': { 'const': 'sort' },
+                                        'type': {'const': 'sort'},
                                     },
                                 },
                                 'then': {
@@ -102,7 +109,7 @@ class ModuleConfigParser(ConfigParser):
                                         'options': {
                                             'type': 'object',
                                             'properties': {
-                                                'order_column_name': { 'type': 'string' },
+                                                'order_column_name': {'type': 'string'},
                                             },
                                         },
                                     },
@@ -112,7 +119,7 @@ class ModuleConfigParser(ConfigParser):
                             {
                                 'if': {
                                     'properties': {
-                                        'type': { 'const': 'slug' },
+                                        'type': {'const': 'slug'},
                                     },
                                 },
                                 'then': {
@@ -120,8 +127,8 @@ class ModuleConfigParser(ConfigParser):
                                         'options': {
                                             'type': 'object',
                                             'properties': {
-                                                'generate_from_field': { 'type': 'string' },
-                                                'save_to_field': { 'type': 'string' },
+                                                'generate_from_field': {'type': 'string'},
+                                                'save_to_field': {'type': 'string'},
                                             },
                                             'required': [
                                                 'generate_from_field',
@@ -135,7 +142,7 @@ class ModuleConfigParser(ConfigParser):
                             {
                                 'if': {
                                     'properties': {
-                                        'type': { 'const': 'media' },
+                                        'type': {'const': 'media'},
                                     },
                                 },
                                 'then': {
@@ -148,10 +155,10 @@ class ModuleConfigParser(ConfigParser):
                                                     'items': {
                                                         'type': 'object',
                                                         'properties': {
-                                                            'name': { 'type': 'string' },
+                                                            'name': {'type': 'string'},
                                                             'conversions': {
                                                                 'type': 'array',
-                                                                'items': { 'type': 'string' },
+                                                                'items': {'type': 'string'},
                                                             },
                                                         },
                                                         'required': ['name'],
@@ -162,9 +169,9 @@ class ModuleConfigParser(ConfigParser):
                                                     'items': {
                                                         'type': 'object',
                                                         'properties': {
-                                                            'name': { 'type': 'string' },
-                                                            'width': { 'type': 'integer' },
-                                                            'height': { 'type': 'integer' },
+                                                            'name': {'type': 'string'},
+                                                            'width': {'type': 'integer'},
+                                                            'height': {'type': 'integer'},
                                                         },
                                                         'required': ['name', 'width', 'height'],
                                                     },
@@ -179,7 +186,7 @@ class ModuleConfigParser(ConfigParser):
                             {
                                 'if': {
                                     'properties': {
-                                        'type': { 'const': 'draft' },
+                                        'type': {'const': 'draft'},
                                     },
                                 },
                                 'then': {
@@ -187,7 +194,7 @@ class ModuleConfigParser(ConfigParser):
                                         'options': {
                                             'type': 'object',
                                             'properties': {
-                                                'published_at_column_name': { 'type': 'string' },
+                                                'published_at_column_name': {'type': 'string'},
                                             },
                                         },
                                     },
@@ -196,7 +203,7 @@ class ModuleConfigParser(ConfigParser):
                             {
                                 'if': {
                                     'properties': {
-                                        'type': { 'const': 'menu' },
+                                        'type': {'const': 'menu'},
                                     },
                                 },
                                 'then': {
@@ -204,9 +211,9 @@ class ModuleConfigParser(ConfigParser):
                                         'options': {
                                             'type': 'object',
                                             'properties': {
-                                                'url_field': { 'type': 'string' },
-                                                'label_field': { 'type': 'string' },
-                                                'search_query_field': { 'type': 'string' },
+                                                'url_field': {'type': 'string'},
+                                                'label_field': {'type': 'string'},
+                                                'search_query_field': {'type': 'string'},
                                             },
                                             'required': [
                                                 'url_field',
@@ -226,13 +233,80 @@ class ModuleConfigParser(ConfigParser):
         }
 
     def _merge_default_settings(self, config: dict) -> dict:
-        # TODO: Merge the default settings into the config
+        if 'fields' not in config:
+            config['fields'] = []
+
+        # Field defaults
+
+        for i, field in enumerate(config['fields']):
+            if 'label' not in field:
+                field['label'] = field['name']
+
+            if 'show_on_admin_index' not in field:
+                field['show_on_admin_index'] = False
+
+            default_rules = {
+                'required': False,
+                'nullable': False,
+            }
+
+            if 'rules' not in field:
+                field['rules'] = default_rules
+            else:
+                for rule_key in default_rules:
+                    if rule_key not in field['rules']:
+                        field['rules'][rule_key] = default_rules[rule_key]
+
+            # Type specific defaults
+
+            if field['type'] == 'media':
+                if 'conversions' not in field['options']:
+                    field['options']['conversions'] = []
+
+            config['fields'][i] = field
+
+        # Feature defaults
+
+        if 'features' not in config:
+            config['features'] = []
+
+        for i, feature in enumerate(config['features']):
+            options = {}
+
+            if 'options' in feature:
+                options = feature['options']
+
+            if (
+                feature['type'] == 'sort' and
+                'order_column_name' not in options
+            ):
+                options['order_column_name'] = 'order'
+
+            if feature['type'] == 'media':
+                for j, media_group in enumerate(options['media_groups']):
+                    if 'conversions' not in media_group:
+                        media_group['conversions'] = []
+
+                    options['media_groups'][j] = media_group
+
+                if 'conversions' not in options:
+                    options['conversions'] = []
+
+            if (
+                feature['type'] == 'draft' and
+                'published_at_column_name' not in options
+            ):
+                options['published_at_column_name'] = 'published_at'
+
+            feature['options'] = options
+            config['features'][i] = feature
 
         return config
 
+
 class PageTemplateConfigParser(ConfigParser):
 
-    def _get_config_schema(self) -> dict:
+    def _get_config_schema(self, config: dict) -> dict:
         return {
             'type': 'object',
             'properties': {
@@ -241,101 +315,50 @@ class PageTemplateConfigParser(ConfigParser):
                 'fields': {
                     'type': 'array',
                     'items': {
-                        'oneOf': [
-                            {
+                        'type': 'object',
+                        'properties': {
+                            'type': {
+                                'type': 'string',
+                                'enum': [
+                                    'text',
+                                    'textarea',
+                                    'editor',
+                                    'date',
+                                    'media',
+                                ],
+                            },
+                            'name': {'type': 'string'},
+                            'label': {'type': 'string'},
+                            'rules': {
                                 'type': 'object',
                                 'properties': {
-                                    'type': {'const': 'text'},
-                                    'name': {'type': 'string'},
-                                    'label': {'type': 'string'},
-                                    'rules': {
-                                        'type': 'object',
-                                        'properties': {
-                                            'required': {'type': 'boolean'},
-                                            'nullable': {'type': 'boolean'},
-                                        },
-                                    },
+                                    'required': {'type': 'boolean'},
+                                    'nullable': {'type': 'boolean'},
                                 },
-                                'required': ['name'],
                             },
-                            {
-                                'type': 'object',
-                                'properties': {
-                                    'type': {'const': 'textarea'},
-                                    'name': {'type': 'string'},
-                                    'label': {'type': 'string'},
-                                    'rules': {
-                                        'type': 'object',
-                                        'properties': {
-                                            'required': {'type': 'boolean'},
-                                            'nullable': {'type': 'boolean'},
+                        },
+                        'required': ['name'],
+                        'if': {
+                            'properties': {
+                                'type': {'const': 'media'},
+                            },
+                        },
+                        'then': {
+                            'properties': {
+                                'options': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'media_group': {'type': 'string'},
+                                        'conversions': {
+                                            'type': 'array',
+                                            'items': {'type': 'string'},
                                         },
                                     },
+                                    'required': ['media_group'],
                                 },
-                                'required': ['name'],
                             },
-                            {
-                                'type': 'object',
-                                'properties': {
-                                    'type': {'const': 'editor'},
-                                    'name': {'type': 'string'},
-                                    'label': {'type': 'string'},
-                                    'rules': {
-                                        'type': 'object',
-                                        'properties': {
-                                            'required': {'type': 'boolean'},
-                                            'nullable': {'type': 'boolean'},
-                                        },
-                                    },
-                                },
-                                'required': ['name'],
-                            },
-                            {
-                                'type': 'object',
-                                'properties': {
-                                    'type': {'const': 'date'},
-                                    'name': {'type': 'string'},
-                                    'label': {'type': 'string'},
-                                    'rules': {
-                                        'type': 'object',
-                                        'properties': {
-                                            'required': {'type': 'boolean'},
-                                            'nullable': {'type': 'boolean'},
-                                        },
-                                    },
-                                },
-                                'required': ['name'],
-                            },
-                            {
-                                'type': 'object',
-                                'properties': {
-                                    'type': {'const': 'media'},
-                                    'name': {'type': 'string'},
-                                    'label': {'type': 'string'},
-                                    'rules': {
-                                        'type': 'object',
-                                        'properties': {
-                                            'required': {'type': 'boolean'},
-                                            'nullable': {'type': 'boolean'},
-                                        },
-                                    },
-                                    'options': {
-                                        'type': 'object',
-                                        'properties': {
-                                            'media_group': {'type': 'string'},
-                                            'conversions': {
-                                                'type': 'array',
-                                                'items': {
-                                                    'type': 'string',
-                                                },
-                                            },
-                                        },
-                                        'required': ['media_group'],
-                                    },
-                                },
-                                'required': ['name', 'options'],
-                            },
-                        ],
+                            'required': ['name', 'options'],
+                        },
                     },
                 },
             },
@@ -348,6 +371,8 @@ class PageTemplateConfigParser(ConfigParser):
 
         if 'fields' not in config:
             config['fields'] = []
+
+        # Field defaults
 
         for i, field in enumerate(config['fields']):
             if 'label' not in field:
