@@ -32,7 +32,7 @@ class Generator(object):
         except Exception as exception:
             return print('The following error detected in was detected in your config file, please fix it and run the generator again:\n\n%s' % str(exception))
 
-        parser = TemplateParser(config_path)
+        parser = TemplateParser(config_dict)
 
         # Generate new files
         cls.__generate_templates(parser)

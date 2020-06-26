@@ -23,8 +23,8 @@ class TemplateParser(object):
             lstrip_blocks=True,
         )
 
-        self.__helpers = TemplateHelpers()
         self.__filters = TemplateFilters()
+        self.__helpers = TemplateHelpers(self.__config_dict)
 
         self.__environment.filters = {
             **self.__environment.filters,

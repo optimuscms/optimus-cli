@@ -8,9 +8,7 @@
       "show_on_admin_index": true,
       "rules": {
         "required": true,
-        "nullable": false,
-        "url": false,
-        "max": 255
+        "nullable": false
       },
       "options": {}
     },
@@ -21,9 +19,7 @@
       "show_on_admin_index": false,
       "rules": {
         "required": true,
-        "nullable": false,
-        "url": false,
-        "max": 255
+        "nullable": false
       },
       "options": {}
     },
@@ -34,8 +30,7 @@
       "show_on_admin_index": false,
       "rules": {
         "required": true,
-        "nullable": false,
-        "url": false
+        "nullable": false
       },
       "options": {}
     },
@@ -46,9 +41,7 @@
       "show_on_admin_index": false,
       "rules": {
         "required": false,
-        "nullable": true,
-        "url": true,
-        "max": 255
+        "nullable": true
       },
       "options": {}
     },
@@ -59,12 +52,10 @@
       "show_on_admin_index": false,
       "rules": {
         "required": true,
-        "nullable": false,
-        "url": false
+        "nullable": false
       },
       "options": {
-        "accepted_extensions": "image",
-        "group": "image",
+        "media_group": "image",
         "conversions": [
           "1400x600"
         ]
@@ -73,7 +64,7 @@
   ],
   "features": [
     {
-      "type": "order",
+      "type": "sort",
       "options": {
         "order_field": "order"
       }
@@ -92,10 +83,12 @@
     {
       "type": "media",
       "options": {
-        "groups": [
+        "media_groups": [
           {
             "name": "image",
-            "conversion": "1400x600"
+            "conversions": [
+              "1400x600"
+            ]
           }
         ],
         "conversions": [
@@ -108,13 +101,13 @@
       }
     },
     {
-      "type": "draftable",
+      "type": "draft",
       "options": {
         "published_at_field": "published_at"
       }
     },
     {
-      "type": "linkable",
+      "type": "menu",
       "options": {
         "url_field": "slug",
         "label_field": "title",

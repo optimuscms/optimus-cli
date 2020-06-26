@@ -6,7 +6,7 @@ Route::prefix('{{ name | plural | kebab }}')->group(function () {
     Route::patch('{id}', '{{ name | plural | pascal }}Controller@update');
     Route::delete('{id}', '{{ name | plural | pascal }}Controller@destroy');
 
-    {% if has_feature('order') %}
+    {% if has_feature('sort') %}
         Route::put('{id}/move', '{{ name | plural | pascal }}Controller@move');
     {% endif %}
 });

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-{% if has_feature('draftable') %}
+{% if has_feature('draft') %}
     use Optix\Draftable\Draftable;
 {% endif -%}
 
@@ -21,24 +21,24 @@ use Illuminate\Database\Eloquent\Model;
     use App\Traits\HasSeoFields;
 {% endif -%}
 
-{% if has_feature('linkable') %}
+{% if has_feature('menu') %}
     use App\Contracts\Linkable;
     use App\Traits\LinkableTrait;
     use App\Contracts\SynchronisesMenuItemUrls;
 {% endif -%}
 
-{% if has_feature('order') %}
+{% if has_feature('sort') %}
     use Spatie\EloquentSortable\Sortable;
     use Spatie\EloquentSortable\SortableTrait;
 {% endif %}
 
 class {{ name | singular | pascal }} extends Model implements
 {% for feature in features %}
-    {%- if feature.type == 'linkable' -%}
+    {%- if feature.type == 'menu' -%}
         Linkable, SynchronisesMenuItemUrls{% if not loop.last %},{% endif -%}
     {%- endif -%}
 
-    {%- if feature.type == 'order' -%}
+    {%- if feature.type == 'sort' -%}
         Sortable{% if not loop.last %},{% endif -%}
     {%- endif -%}
 {%- endfor %}
@@ -46,17 +46,17 @@ class {{ name | singular | pascal }} extends Model implements
 {
     use 
     {% for feature in features %}
-        {%- if feature.type == 'draftable' %}Draftable{%- endif -%}
+        {%- if feature.type == 'draft' %}Draftable{%- endif -%}
         {%- if feature.type == 'slug' %}HasSlug{%- endif -%}
         {%- if feature.type == 'media' %}HasMedia{%- endif -%}
         {%- if feature.type == 'seo' %}HasSeoFields{%- endif -%}
-        {%- if feature.type == 'linkable' %}LinkableTrait{%- endif -%}
-        {%- if feature.type == 'order' %}SortableTrait{%- endif -%}
+        {%- if feature.type == 'menu' %}LinkableTrait{%- endif -%}
+        {%- if feature.type == 'sort' %}SortableTrait{%- endif -%}
         {% if not loop.last %},{% endif %}
     {% endfor %};
     
     {% for feature in features %}
-        {% if feature.type == 'draftable' %}
+        {% if feature.type == 'draft' %}
             /**
             * The attributes that should be cast to native types.
             *
@@ -111,16 +111,18 @@ class {{ name | singular | pascal }} extends Model implements
             */
             public function registerMediaGroups()
             {
-                {% for group in feature.options.groups %}
+                {% for group in feature.options.media_groups %}
                     $this->addMediaGroup('{{ group.name }}')
                         ->performConversions(
-                            '{{ group.conversion }}'
+                            {% for conversion in group.conversions %}
+                                '{{ conversion }}'{% if not loop.last %},{% endif -%}
+                            {% endfor %}
                         );
                 {% endfor %}
             }
         {% endif %}
 
-        {% if feature.type == 'linkable' %}
+        {% if feature.type == 'menu' %}
             /**
             * Returns the linkable type identifier for this model instance.
             *
@@ -195,7 +197,7 @@ class {{ name | singular | pascal }} extends Model implements
             }
         {% endif %}
 
-        {% if feature.type == 'order' %}
+        {% if feature.type == 'sort' %}
             /**
             * The model's order options.
             *
@@ -216,7 +218,7 @@ class {{ name | singular | pascal }} extends Model implements
      */
     public function scopeApplyFilters(Builder $query, array $filters)
     {
-        {% if has_feature('order') %}
+        {% if has_feature('sort') %}
             // Sort
             if ($sort = $filters['sort'] ?? false) {
                 if (in_array($sort, [

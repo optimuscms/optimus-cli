@@ -7,6 +7,6 @@ export const create{{ name | singular | pascal }} = params => client.create('{{ 
 export const update{{ name | singular | pascal }} = (id, params) => client.update(`{{ name | plural | kebab }}/${id}`, params);
 export const delete{{ name | singular | pascal }} = id => client.destroy(`{{ name | plural | kebab }}/${id}`);
 
-{% if has_feature('order') %}
+{% if has_feature('sort') %}
     export const move{{ name | singular | pascal }} = (id, direction) => client.put(`{{name | plural | kebab }}/${id}/move`, { direction });
 {% endif %}

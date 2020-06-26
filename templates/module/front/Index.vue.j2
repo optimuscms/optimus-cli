@@ -16,7 +16,7 @@
         <table v-else class="table">
             <thead>
                 <tr>
-                    {% if has_feature('order') %}
+                    {% if has_feature('sort') %}
                         <th class="narrow" />
                     {% endif %}
 
@@ -38,11 +38,11 @@
                 <tr
                     v-for="{{ name | singular | camel }} in {{ name | plural | camel }}"
                     :key="{{ name | singular | camel }}.id"
-                    {% if has_feature('draftable') %}
+                    {% if has_feature('draft') %}
                         :class="{ 'draft': ! {{ name | singular | camel }}.is_published }"
                     {% endif %}
                 >
-                    {% if has_feature('order') %}
+                    {% if has_feature('sort') %}
                         <td class="actions">
                             <a
                                 class="icon"
@@ -113,7 +113,7 @@ import { orderMixin } from '@optimuscms/theme';
 import {
     get{{ name | plural | pascal }},
     delete{{ name | singular | pascal }},
-    {% if has_feature('order') %}move{{ name | singular | pascal }}{% endif %}
+    {% if has_feature('sort') %}move{{ name | singular | pascal }}{% endif %}
 } from '../routes/api';
 
 export default {
@@ -142,7 +142,7 @@ export default {
             });
         },
 
-        {% if has_feature('order') %}
+        {% if has_feature('sort') %}
             move(id, from, to) {
                 move{{ name | singular | pascal }}(id, this.getMoveDirection(from, to));
 

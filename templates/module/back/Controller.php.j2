@@ -32,7 +32,7 @@ class {{ name | plural | pascal }}Controller extends Controller
     {
         /** @var Collection ${{ name | plural | camel }} */
         ${{ name | plural | camel }} = {{ name | singular | pascal }}::query()
-            {% if has_feature('draftable') %}
+            {% if has_feature('draft') %}
                 ->withDrafts()
             {% endif -%}
 
@@ -48,7 +48,7 @@ class {{ name | plural | pascal }}Controller extends Controller
                 ])
             {% endif -%}
 
-            {% if has_feature('order') %}
+            {% if has_feature('sort') %}
                 ->ordered()
             {% endif -%}
 
@@ -85,7 +85,7 @@ class {{ name | plural | pascal }}Controller extends Controller
             );
         {% endif %}
 
-        {% if has_feature('draftable') %}
+        {% if has_feature('draft') %}
             // Schedule the {{ name | singular | lower }}...
             ${{ name | singular | camel }}->publishAt(
                 Carbon::parse($request->input('published_at'))
@@ -105,7 +105,7 @@ class {{ name | plural | pascal }}Controller extends Controller
     {
         /** @var {{ name | singular | pascal }} ${{ name | singular | pascal }} */
         ${{ name | singular | camel }} = {{ name | singular | pascal }}::query()
-            {% if has_feature('draftable') %}
+            {% if has_feature('draft') %}
                 ->withDrafts()
             {% endif -%}
 
@@ -136,7 +136,7 @@ class {{ name | plural | pascal }}Controller extends Controller
     {
         /** @var {{ name | singular | camel }} ${{ name | singular | pascal }} */
         ${{ name | singular | camel }} = {{ name | singular | pascal }}::query()
-            {% if has_feature('draftable') %}
+            {% if has_feature('draft') %}
                 ->withDrafts()
             {% endif %}
             ->findOrFail($id);
@@ -162,7 +162,7 @@ class {{ name | plural | pascal }}Controller extends Controller
             );
         {% endif %}
 
-        {% if has_feature('draftable') %}
+        {% if has_feature('draft') %}
             // Schedule the {{ name | singular | lower }}...
             ${{ name | singular | camel }}->publishAt(
                 Carbon::parse($request->input('published_at'))
@@ -172,7 +172,7 @@ class {{ name | plural | pascal }}Controller extends Controller
         return new {{ name | singular | pascal }}Resource(${{ name | singular | camel }});
     }
 
-    {% if has_feature('order') %}
+    {% if has_feature('sort') %}
         /**
         * Move the specified {{ name | singular | lower }}.
         *
@@ -183,7 +183,7 @@ class {{ name | plural | pascal }}Controller extends Controller
         public function move(Request $request, $id)
         {
             ${{ name | singular | camel }} = {{ name | singular | pascal }}::query()
-                {% if has_feature('draftable') %}
+                {% if has_feature('draft') %}
                     ->withDrafts()
                 {% endif %}
                 ->findOrFail($id);
@@ -209,7 +209,7 @@ class {{ name | plural | pascal }}Controller extends Controller
     public function destroy($id)
     {
         {{ name | singular | camel }}::query()
-            {% if has_feature('draftable') %}
+            {% if has_feature('draft') %}
                 ->withDrafts()
             {% endif -%}
 

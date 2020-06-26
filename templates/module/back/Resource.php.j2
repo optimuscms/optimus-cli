@@ -25,7 +25,7 @@ class {{ name | singular | pascal }}Resource extends JsonResource
                 {% endif %}
             {% endfor -%}
 
-            {% if has_feature('draftable') %}
+            {% if has_feature('draft') %}
                 'is_published' => $this->isPublished(),
             {% endif -%}
 
