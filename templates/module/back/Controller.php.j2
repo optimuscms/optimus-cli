@@ -289,10 +289,10 @@ class {{ name | plural | pascal }}Controller extends Controller
             Request $request
         ) {
             {% for field in fields %}
-                {% if field.type == 'image'  %}
+                {% if field.type == 'media'  %}
                     ${{ name | singular | camel }}->attachMedia(
                         $request->input('{{ field.name }}_id'),
-                        '{{ field.name }}'
+                        '{{ field.options.media_group }}'
                     );
                 {% endif %}
             {% endfor %}
