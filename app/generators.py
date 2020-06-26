@@ -61,7 +61,7 @@ class Generator(object):
             os.system(
                 'composer lint &>/dev/null && yarn lint --fix &>/dev/null')
 
-        print('Generation successfully completed.')
+        print('Generation completed successfully.')
 
     @classmethod
     def _get_dynamic_files(cls) -> list:

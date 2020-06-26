@@ -142,14 +142,22 @@ class TemplateFilters(object):
 class TemplateHelpers(object):
     def __init__(self, config_dict: dict):
         self.__config_dict = config_dict
+        self.__feature_cache = {}
 
     def has_feature(self, feature_type: str) -> bool:
+        if feature_type in self.__feature_cache:
+            return self.__feature_cache[feature_type]
+    
         matching_features = list(
             filter(lambda feature: feature['type'] ==
                    feature_type, self.__config_dict['features'])
         )
 
-        return len(matching_features) != 0
+        module_has_feature = len(matching_features) != 0
+
+        self.__feature_cache[feature_type] = module_has_feature
+
+        return module_has_feature
 
     def in_array(self, text: str, array: list) -> bool:
         return text in array
