@@ -157,7 +157,7 @@ class Generator(object):
 
             # Render and write the dynamic content and place it in the destination file
             with open(destination_path, 'w') as destination_file:
-                rendered_content = cls.__parser.render_file(
+                rendered_content = parser.render_file(
                     '%s/%s/%s' % (config.TEMPLATE_DIR,
                                   cls._get_template_subdirectory(), source_path)
                 )
