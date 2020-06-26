@@ -12,7 +12,7 @@ from datetime import datetime
 class Generator(object):
 
     @classmethod
-    def build(cls, config_path: str):
+    def build(cls, config_path: str, args: list):
         """Builds new and existing project files for the provided json config"""
 
         # Ensure the provided config file exists
@@ -30,18 +30,28 @@ class Generator(object):
         try:
             cls._get_config_parser().parse(config_dict)
         except Exception as exception:
-            return print('The following error detected in was detected in your config file, please fix it and run the generator again:\n\n%s' % str(exception))
+            return print('The following error detected was in was detected in your config file, please fix it and run the generator again:\n\n%s' % str(exception))
 
         parser = TemplateParser(config_dict)
 
-        # Generate new files
-        cls.__generate_templates(parser)
+        # Generate new template files
+        if not "--skip-templates" in args:
+            try:
+                cls.__generate_templates(parser, args)
+            except Exception as exception:
+                return print('The following error occured during template generation, aborting:\n\n%s' % str(exception))
 
-        # Update existing files
-        cls.__update_dynamic_files(parser)
+        # Update existing dynamic files
+        if not "--skip-updates" in args:
+            try:
+                cls.__update_dynamic_files(parser, args)
+            except Exception as exception:
+                return print('The following error occured during updating dynamic files, aborting:\n\n%s' % str(exception))
 
         # Run php-cs-fixer and eslint
-        os.system('php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
+        if not "--skip-cs-fix" in args:
+            os.system(
+                'php-cs-fixer fix &>/dev/null && yarn lint --fix &>/dev/null')
 
         print('New files generated successfully.')
 
@@ -70,7 +80,7 @@ class Generator(object):
         return None
 
     @classmethod
-    def __generate_templates(cls, parser: TemplateParser):
+    def __generate_templates(cls, parser: TemplateParser, args: list):
         """Generate new project files defined by _get_template_files
 
         :return: if the operation completed successfully
@@ -84,9 +94,9 @@ class Generator(object):
                 os.makedirs(destination_directory)
 
             # Abort if the destination file already exists to prevent overwriting
-            # if os.path.isfile(destination_path):
-            #     print('File %s already exists, aborting...' % destination_path)
-            #     return
+            if os.path.isfile(destination_path) and not "--overwrite" in args:
+                raise(Exception('%s already exists.\nUse --overwrite to ignore this warning.' %
+                                destination_path))
 
             # Render and write the template to the destination file
             with open(destination_path, 'w') as destination_file:
@@ -98,13 +108,13 @@ class Generator(object):
                 destination_file.write(rendered_template)
 
             # Run prettier if destination file is PHP
-            if destination_path.endswith('.php'):
+            if not "--skip-cs-fixer" in args and destination_path.endswith('.php'):
                 os.system('prettier %s --write &>/dev/null' % destination_path)
 
         return True
 
-    @classmethod
-    def __update_dynamic_files(cls, parser: TemplateParser):
+    @ classmethod
+    def __update_dynamic_files(cls, parser: TemplateParser, args: list):
         """Updates existing project files defined by _get_dynamic_files
 
         :return: if the operation completed successfully
@@ -115,13 +125,13 @@ class Generator(object):
 
             # Ensure the destination folder exists
             if not os.path.exists(destination_directory):
-                print('Couldn\'t find the directory "%s" to update append, aborting...' %
-                      destination_directory)
+                raise(Exception('Couldn\'t find the directory "%s" to update append.' %
+                                destination_directory))
 
             # Ensure the destination file exists
             if not os.path.isfile(destination_path):
-                print('Couldn\'t find the file "%s" to update, aborting...' %
-                      destination_path)
+                raise(Exception('Couldn\'t find the file "%s" to update, aborting.' %
+                                destination_path))
 
             # Read the current contents of the destination file and locate tags
             with open(destination_path, 'r') as destination_file:
@@ -137,13 +147,13 @@ class Generator(object):
 
             # Ensure the tag we are updating is in the destination file
             if tag not in destination_tags:
-                print('Could not find marker tag %s in file %s, aborting...' %
-                      (tag, destination_path))
+                raise(Exception('Could not find marker tag %s in file %s.' %
+                                (tag, destination_path)))
 
             # Ensure there is only one occurrence of the tag we are updating
             if destination_tags.count(tag) > 1:
-                print('Duplicate marker tag %s in file %s, aborting...' %
-                      (tag, destination_path))
+                raise(Exception('Duplicate marker tag %s in file %s.' %
+                                (tag, destination_path)))
 
             # Render and write the dynamic content and place it in the destination file
             with open(destination_path, 'w') as destination_file:
@@ -163,21 +173,21 @@ class Generator(object):
                 destination_file.write(updated_contents)
 
             # Run prettier if destination file is PHP
-            if destination_path.endswith('.php'):
+            if not "--skip-cs-fixer" in args and destination_path.endswith('.php'):
                 os.system('prettier %s --write &>/dev/null' % destination_path)
 
 
 class ModuleGenerator(Generator):
 
-    @classmethod
+    @ classmethod
     def _get_template_subdirectory(cls) -> str:
         return 'module'
 
-    @classmethod
+    @ classmethod
     def _get_config_parser(cls):
         return ModuleConfigParser()
 
-    @classmethod
+    @ classmethod
     def _get_template_files(cls) -> list:
         return [
             [
@@ -222,62 +232,62 @@ class ModuleGenerator(Generator):
             ]
         ]
 
-    @classmethod
+    @ classmethod
     def _get_dynamic_files(cls) -> list:
         return [
-            # [
-            #     'back/dynamic/Routes.php.j2',
-            #     'routes',
-            #     'routes/admin.php'
-            # ],
-            # [
-            #     'back/dynamic/OptimusImports.php.j2',
-            #     'imports',
-            #     'app/Providers/OptimusServiceProvider.php'
-            # ],
-            # [
-            #     'back/dynamic/OptimusLinkableTypes.php.j2',
-            #     'linkable-types',
-            #     'app/Providers/OptimusServiceProvider.php'
-            # ],
-            # [
-            #     'back/dynamic/OptimusMediaConversions.php.j2',
-            #     'media-conversions',
-            #     'app/Providers/OptimusServiceProvider.php'
-            # ],
-            # [
-            #     'front/dynamic/Dashboard.vue.j2',
-            #     'navigation',
-            #     'resources/js/back/components/ui/Dashboard.vue'
-            # ],
-            # [
-            #     'front/dynamic/RouterImports.js.j2',
-            #     'imports',
-            #     'resources/js/back/router/index.js'
-            # ],
-            # [
-            #     'front/dynamic/RouterRoutes.js.j2',
-            #     'routes',
-            #     'resources/js/back/router/index.js'
-            # ],
+            [
+                'back/dynamic/Routes.php.j2',
+                'routes',
+                'routes/admin.php'
+            ],
+            [
+                'back/dynamic/OptimusImports.php.j2',
+                'imports',
+                'app/Providers/OptimusServiceProvider.php'
+            ],
+            [
+                'back/dynamic/OptimusLinkableTypes.php.j2',
+                'linkable-types',
+                'app/Providers/OptimusServiceProvider.php'
+            ],
+            [
+                'back/dynamic/OptimusMediaConversions.php.j2',
+                'media-conversions',
+                'app/Providers/OptimusServiceProvider.php'
+            ],
+            [
+                'front/dynamic/Dashboard.vue.j2',
+                'navigation',
+                'resources/js/back/components/ui/Dashboard.vue'
+            ],
+            [
+                'front/dynamic/RouterImports.js.j2',
+                'imports',
+                'resources/js/back/router/index.js'
+            ],
+            [
+                'front/dynamic/RouterRoutes.js.j2',
+                'routes',
+                'resources/js/back/router/index.js'
+            ],
         ]
 
-    @classmethod
+    @ classmethod
     def __get_datetime(cls) -> str:
         return datetime.utcnow().strftime('%Y_%m_%d_%H%M%S')
 
 
 class PageGenerator(Generator):
 
-    @classmethod
+    @ classmethod
     def _get_template_subdirectory(cls) -> str:
         return 'page'
 
-    @classmethod
+    @ classmethod
     def _get_config_parser(cls):
         return PageTemplateConfigParser()
 
-    @classmethod
+    @ classmethod
     def _get_template_files(cls) -> list:
         return [
             [
@@ -290,7 +300,7 @@ class PageGenerator(Generator):
             ]
         ]
 
-    @classmethod
+    @ classmethod
     def _get_dynamic_files(cls) -> list:
         return [
             [
