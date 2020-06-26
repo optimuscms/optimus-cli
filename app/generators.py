@@ -15,6 +15,8 @@ class Generator(object):
     def build(cls, config_path: str, args: list):
         """Builds new and existing project files for the provided json config"""
 
+        print('Parsing JSON config...')
+
         # Ensure the provided config file exists
         if not os.path.exists(config_path):
             return print('Config file does not exist, please check the provided path and try again')
@@ -34,12 +36,16 @@ class Generator(object):
 
         parser = TemplateParser(config_dict)
 
+        print('Generating template files...')
+
         # Generate new template files
         if not "--skip-templates" in args:
             try:
                 cls.__generate_templates(parser, args)
             except Exception as exception:
                 return print('The following error occured during template generation, aborting:\n\n%s' % str(exception))
+
+        print('Updating dynamic files...')
 
         # Update existing dynamic files
         if not "--skip-updates" in args:
@@ -48,12 +54,14 @@ class Generator(object):
             except Exception as exception:
                 return print('The following error occured during updating dynamic files, aborting:\n\n%s' % str(exception))
 
+        print('Fixing cs..')
+
         # Run php-cs-fixer and eslint
         if not "--skip-cs-fix" in args:
             os.system(
                 'composer lint &>/dev/null && yarn lint --fix &>/dev/null')
 
-        print('New files generated successfully.')
+        print('Generation successfully completed.')
 
     @classmethod
     def _get_dynamic_files(cls) -> list:
@@ -147,7 +155,7 @@ class Generator(object):
 
             # Ensure the tag we are updating is in the destination file
             if tag not in destination_tags:
-                raise(Exception('Could not find marker tag %s in file %s.' %
+                raise(Exception('Could not find marker tag "%s" in file %s.' %
                                 (tag, destination_path)))
 
             # Ensure there is only one occurrence of the tag we are updating
