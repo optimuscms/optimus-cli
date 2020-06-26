@@ -66,7 +66,7 @@
                             {% endfor %}
 
                             {%- for feature in features %}
-                                {% if feature.type="draft" %}
+                                {% if feature.type == "draft" %}
                                     <!-- Published at -->
                                     <o-form-field
                                         input="{{ feature.options.published_at_field }}"
@@ -91,7 +91,7 @@
                                         </div>
                                     </o-form-field>
                                 {% endif %}
-                            {% endfor %}}
+                            {% endfor %}
                         </o-tab>
 
                         <o-tab name="Meta">
@@ -165,10 +165,10 @@ export default {
                     {% if feature.type == 'slug' %}
                         {{ feature.options.save_to_field }}: '',
                     {% endif %}
-                    {% if feature.type="draft" %}
+                    {% if feature.type == "draft" %}
                         {{ feature.options.published_at_field }}: moment().format('YYYY-MM-DDTHH:mm'),
                     {% endif %}
-                {% endfor %}}
+                {% endfor %}
             },
         };
     },
@@ -192,10 +192,10 @@ export default {
                     {% if feature.type == 'slug' %}
                         {{ feature.options.save_to_field }}: item.{{ feature.options.save_to_field }},
                     {% endif %}
-                    {% if feature.type="draft" %}
+                    {% if feature.type == "draft" %}
                         {{ feature.options.published_at_field }}: moment(item.{{ feature.options.published_at_field }}).format('YYYY-MM-DDTHH:mm'),
                     {% endif %}
-                {% endfor %}}
+                {% endfor %}
 
                 {% if has_feature('seo') %}
                     meta: {

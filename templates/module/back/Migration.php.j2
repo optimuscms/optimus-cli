@@ -38,10 +38,10 @@ class Create{{ name | plural | pascal }}Table extends Migration
                 {% if feature.type == 'slug' %}
                     $table->string('{{ feature.options.save_to_field }})->nullable();
                 {% endif %}
-                {% if feature.type="draft" %}
+                {% if feature.type == "draft" %}
                     $table->timestamp('{{ feature.options.published_at_field }}')->nullable();
                 {% endif %}
-            {% endfor %}}
+            {% endfor %}
             $table->timestamps();
         });
     }
