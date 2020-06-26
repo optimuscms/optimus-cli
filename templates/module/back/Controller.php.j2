@@ -248,6 +248,13 @@ class {{ name | plural | pascal }}Controller extends Controller
             {%- endif %}
         {% endfor -%}
 
+        
+        {%- for feature in features %}
+            {% if feature.type == 'slug' %}
+                {{ validation_rule(feature.options.save_to_field, 'string|max:255', {'required': False, 'nullable': True}) }}
+            {% endif %}
+        {% endfor %}
+
         {% if has_feature('seo') %}
             ], Meta::rules()));
         {% else %}
@@ -267,6 +274,13 @@ class {{ name | plural | pascal }}Controller extends Controller
                     ${{ name | singular | camel }}->{{ field.name }} = $request->input('{{ field.name }}');
                 {% endif %}
             {% endfor %}
+
+            {%- for feature in features %}
+                {% if feature.type == 'slug' %}
+                    $table->string('{{ feature.options.save_to_field }})->nullable();
+                {% endif %}
+            {% endfor %}
+        }
         });
     }
 
@@ -283,6 +297,5 @@ class {{ name | plural | pascal }}Controller extends Controller
                     );
                 {% endif %}
             {% endfor %}
-        }
     {% endif %}
 }

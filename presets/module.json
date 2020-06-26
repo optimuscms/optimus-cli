@@ -1,10 +1,10 @@
 {
-  "name": "Post Category",
+  "name": "Posts",
   "fields": [
     {
       "type": "text",
-      "name": "name",
-      "label": "Name",
+      "name": "title",
+      "label": "Title",
       "show_on_admin_index": true,
       "rules": {
         "required": true,
@@ -13,9 +13,9 @@
       "options": {}
     },
     {
-      "type": "text",
-      "name": "slug",
-      "label": "Slug",
+      "type": "editor",
+      "name": "excerpt",
+      "label": "Excerpt",
       "show_on_admin_index": false,
       "rules": {
         "required": true,
@@ -36,19 +36,30 @@
     },
     {
       "type": "text",
-      "name": "url",
-      "label": "Website URL",
+      "name": "author_name",
+      "label": "Author Name",
       "show_on_admin_index": false,
       "rules": {
-        "required": false,
-        "nullable": true
+        "required": true,
+        "nullable": false
+      },
+      "options": {}
+    },
+    {
+      "type": "text",
+      "name": "author_strapline",
+      "label": "Author Strapline",
+      "show_on_admin_index": false,
+      "rules": {
+        "required": true,
+        "nullable": false
       },
       "options": {}
     },
     {
       "type": "media",
-      "name": "banner_image",
-      "label": "Banner Image",
+      "name": "image",
+      "label": "Image",
       "show_on_admin_index": false,
       "rules": {
         "required": true,

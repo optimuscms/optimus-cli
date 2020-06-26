@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { orderMixin } from '@optimuscms/theme';
+import { sortableMixin } from '@optimuscms/theme';
 
 import {
     get{{ name | plural | pascal }},
@@ -117,7 +117,7 @@ import {
 } from '../routes/api';
 
 export default {
-    mixins: [ orderMixin ],
+    mixins: [ sortableMixin ],
 
     data() {
         return {

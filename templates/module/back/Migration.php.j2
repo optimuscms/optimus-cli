@@ -30,6 +30,18 @@ class Create{{ name | plural | pascal }}Table extends Migration
                     {%- if field.default %}->default(){% endif %};
                 {% endif %}
             {% endfor %}
+
+            {%- for feature in features %}
+                {% if feature.type == 'sort' %}
+                    $table->unsignedInteger('{{ feature.options.order_field }});
+                {% endif %}
+                {% if feature.type == 'slug' %}
+                    $table->string('{{ feature.options.save_to_field }})->nullable();
+                {% endif %}
+                {% if feature.type="draft" %}
+                    $table->timestamp('{{ feature.options.published_at_field }}')->nullable();
+                {% endif %}
+            {% endfor %}}
             $table->timestamps();
         });
     }
