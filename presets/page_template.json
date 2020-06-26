@@ -17,27 +17,7 @@
     {
       "type": "text",
       "name": "banner_subheading",
-      "label": "Banner Subeading",
-      "options": {},
-      "rules": {
-        "required": true,
-        "nullable": false
-      }
-    },
-    {
-      "type": "text",
-      "name": "introduction_subheading",
-      "label": "Introduction Subeading",
-      "options": {},
-      "rules": {
-        "required": true,
-        "nullable": false
-      }
-    },
-    {
-      "type": "text",
-      "name": "introduction_subheading",
-      "label": "Introduction Subeading",
+      "label": "Banner Subheading",
       "options": {},
       "rules": {
         "required": true,

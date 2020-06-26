@@ -27,7 +27,7 @@ class {{ name | singular | pascal }}Resource extends JsonResource
 
             {% for feature in features %}
                 {% if feature.type == 'slug' %}
-                    {{ feature.options.save_to_field }} => $this->{{ feature.options.save_to_field }}
+                    '{{ feature.options.save_to_field }}' => $this->{{ feature.options.save_to_field }},
                 {% endif %}
 
                 {% if feature.type == 'draft' %}
