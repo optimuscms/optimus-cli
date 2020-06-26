@@ -277,10 +277,9 @@ class {{ name | plural | pascal }}Controller extends Controller
 
             {%- for feature in features %}
                 {% if feature.type == 'slug' %}
-                    $table->string('{{ feature.options.save_to_field }})->nullable();
+                    ${{ name | singular | camel }}->('{{ feature.options.save_to_field }}) = $request->input('{{ feature.options.save_to_field }}');
                 {% endif %}
             {% endfor %}
-        }
         });
     }
 
