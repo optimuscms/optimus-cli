@@ -238,7 +238,7 @@ class ModuleConfigParser(ConfigParser):
 
         # Field defaults
 
-        for i, field in enumerate(config['fields']):
+        for field in enumerate(config['fields']):
             if 'label' not in field:
                 field['label'] = field['name']
 
@@ -263,18 +263,16 @@ class ModuleConfigParser(ConfigParser):
                 if 'conversions' not in field['options']:
                     field['options']['conversions'] = []
 
-            config['fields'][i] = field
-
         # Feature defaults
 
         if 'features' not in config:
             config['features'] = []
 
-        for i, feature in enumerate(config['features']):
-            options = {}
+        for feature in enumerate(config['features']):
+            if 'options' not in feature['options']:
+                feature['options'] = {}
 
-            if 'options' in feature:
-                options = feature['options']
+            options = feature['options']
 
             if (
                 feature['type'] == 'sort' and
@@ -283,11 +281,9 @@ class ModuleConfigParser(ConfigParser):
                 options['order_column_name'] = 'order'
 
             if feature['type'] == 'media':
-                for j, media_group in enumerate(options['media_groups']):
+                for media_group in enumerate(options['media_groups']):
                     if 'conversions' not in media_group:
                         media_group['conversions'] = []
-
-                    options['media_groups'][j] = media_group
 
                 if 'conversions' not in options:
                     options['conversions'] = []
@@ -297,9 +293,6 @@ class ModuleConfigParser(ConfigParser):
                 'published_at_column_name' not in options
             ):
                 options['published_at_column_name'] = 'published_at'
-
-            feature['options'] = options
-            config['features'][i] = feature
 
         return config
 
@@ -374,7 +367,7 @@ class PageTemplateConfigParser(ConfigParser):
 
         # Field defaults
 
-        for i, field in enumerate(config['fields']):
+        for field in enumerate(config['fields']):
             if 'label' not in field:
                 config['label'] = self.__convert_to_title(field['name'])
 
@@ -395,8 +388,6 @@ class PageTemplateConfigParser(ConfigParser):
             if field['type'] == 'media':
                 if 'conversions' not in field['options']:
                     field['options']['conversions'] = []
-
-            config['fields'][i] = field
 
         return config
 
