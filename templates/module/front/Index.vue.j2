@@ -21,7 +21,7 @@
                     {% endif %}
 
                     {% for field in fields %}
-                        {% if field.show_on_index %}
+                        {% if field.show_on_admin_index %}
                             <th>
                                 {{ label }}
                             </th>
@@ -67,7 +67,7 @@
                     {% endif %}
 
                     {% for field in fields %}
-                        {% if field.show_on_index %}
+                        {% if field.show_on_admin_index %}
                             <td>
                                 {{ '{{ ' + name | singular | camel + '.' + field.name + ' }}' }}
                             </td>
