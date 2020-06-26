@@ -1,8 +1,12 @@
 {
   "type": "object",
   "properties": {
-    "id": { "type": "string" },
-    "name": { "type": "string" },
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
     "fields": {
       "type": "array",
       "items": {
@@ -10,24 +14,42 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["text", "textarea", "editor", "date", "media"]
+            "enum": [
+              "text",
+              "textarea",
+              "editor",
+              "date",
+              "media"
+            ]
           },
-          "name": { "type": "string" },
-          "label": { "type": "string" },
+          "name": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
           "rules": {
             "type": "object",
             "properties": {
-              "required": { "type": "boolean" },
-              "nullable": { "type": "boolean" }
+              "required": {
+                "type": "boolean"
+              },
+              "nullable": {
+                "type": "boolean"
+              }
             }
           }
         },
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "allOf": [
           {
             "if": {
               "properties": {
-                "type": { "const": "media" }
+                "type": {
+                  "const": "media"
+                }
               }
             },
             "then": {
@@ -35,21 +57,54 @@
                 "options": {
                   "type": "object",
                   "properties": {
-                    "media_group": { "type": "string" },
+                    "media_group": {
+                      "type": "string"
+                    },
                     "conversions": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   },
-                  "required": ["media_group"]
+                  "required": [
+                    "media_group"
+                  ]
                 }
               },
-              "required": ["name", "options"]
+              "required": [
+                "name",
+                "options"
+              ]
             }
           }
         ]
       }
+    },
+    "conversions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "width",
+          "height"
+        ]
+      }
     }
   },
-  "required": ["id"]
+  "required": [
+    "id"
+  ]
 }

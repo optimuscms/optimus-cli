@@ -1,0 +1,10 @@
+{% for conversion in conversions %}
+    Conversion::register(
+        '{{ conversion.name }}',
+        function (Image $image) {
+            return $image->fit({{ conversion.width }}, {{ conversion.height }});
+        }
+    );
+{% endfor %}
+
+/*--OPTIMUS-CLI:media-conversions--*/

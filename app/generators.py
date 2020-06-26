@@ -320,5 +320,10 @@ class PageGenerator(Generator):
                 'back/dynamic/OptimusPageTemplates.php.j2',
                 'page-templates',
                 'app/Providers/OptimusServiceProvider.php'
+            ],
+            [
+                'back/dynamic/OptimusMediaConversions.php.j2',
+                'media-conversions',
+                'app/Providers/OptimusServiceProvider.php'
             ]
         ]

@@ -117,6 +117,9 @@ class PageTemplateConfigParser(ConfigParser):
         if 'fields' not in config:
             config['fields'] = []
 
+        if 'conversions' not in config:
+            config['conversions'] = []
+
         # Field defaults
 
         for field in config['fields']:
