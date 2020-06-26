@@ -85,8 +85,8 @@ class {{ name | singular | pascal }} extends Model implements
             public function getSlugOptions(): SlugOptions
             {
                 return SlugOptions::create()
-                    ->generateSlugsFrom('{{ feature.options.generate_from }}')
-                    ->saveSlugsTo('{{ feature.options.save_to }}');
+                    ->generateSlugsFrom('{{ feature.options.generate_from_field }}')
+                    ->saveSlugsTo('{{ feature.options.save_to_field }}');
             }
 
             /**
@@ -203,7 +203,7 @@ class {{ name | singular | pascal }} extends Model implements
             *
             * @var array
             */
-            protected $order = [
+            protected $sortable = [
                 'order_column_name' => '{{ feature.options.order_field }}',
             ];
         {% endif %}

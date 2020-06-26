@@ -158,7 +158,7 @@ export default {
                 {% for field in fields %}
                     {% if in_array(field.type, ['text', 'textarea', 'editor']) %}
                         {{ field.name }}: '',
-                    {% elif field.type == 'image' %}
+                    {% elif field.type == 'media' %}
                         {{ field.name }}_id: null,
                     {% endif %}
                 {% endfor %}
@@ -185,7 +185,7 @@ export default {
                 {% for field in fields %}
                     {% if in_array(field.type, ['text', 'textarea', 'editor']) %}
                         {{ field.name }}: item.{{ field.name }},
-                    {% elif field.type == 'image' %}
+                    {% elif field.type == 'media' %}
                         {{ field.name }}_id: item.{{ field.name }} ? item.{{ field.name }}.id : null,
                     {% endif %}
                 {% endfor %}

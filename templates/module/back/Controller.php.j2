@@ -243,7 +243,7 @@ class {{ name | plural | pascal }}Controller extends Controller
             {%- elif field.type == 'date' %}
                 {{ validation_rule(field.name, 'date', field.rules) }}
 
-            {%- elif field.type == 'image' %}
+            {%- elif field.type == 'media' %}
                 {{ validation_rule(field.name ~ '_id', 'exists:media,id', field.rules) }}
             {%- endif %}
         {% endfor -%}
@@ -270,7 +270,7 @@ class {{ name | plural | pascal }}Controller extends Controller
             $request
         ) {
             {% for field in fields %}
-                {% if not field.type == 'image' %}
+                {% if not field.type == 'media' %}
                     ${{ name | singular | camel }}->{{ field.name }} = $request->input('{{ field.name }}');
                 {% endif %}
             {% endfor %}

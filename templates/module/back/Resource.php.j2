@@ -20,7 +20,7 @@ class {{ name | singular | pascal }}Resource extends JsonResource
             'updated_at' => (string) $this->updated_at,
             'created_at' => (string) $this->created_at,
             {% for field in fields %}
-                {% if not field.type == 'image' %}
+                {% if not field.type == 'media' %}
                     '{{ field.name }}' => $this->{{ field.name }},
                 {% endif %}
             {% endfor -%}
@@ -39,7 +39,7 @@ class {{ name | singular | pascal }}Resource extends JsonResource
                 $this->mergeWhen($this->resource->relationLoaded('media'), function () {
                     return [
                         {% for field in fields %}
-                            {% if field.type == 'image' %}
+                            {% if field.type == 'media' %}
                                 '{{ field.name }}' => new MediaResource($this->getFirstMedia('{{ field.name }}'))
                             {% endif %}
                         {% endfor %}

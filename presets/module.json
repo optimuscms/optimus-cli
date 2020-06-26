@@ -83,7 +83,7 @@
     {
       "type": "slug",
       "options": {
-        "generate_from_field": "name",
+        "generate_from_field": "title",
         "save_to_field": "slug"
       }
     },
