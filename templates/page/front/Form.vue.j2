@@ -13,6 +13,13 @@
                         v-model="form.{{ field.name }}"
                         {%+ if field.rules.required %}required{% endif %}
                     />
+                {% if field.type == 'textarea' %}
+                    <o-input
+                        id="{{ field.name }}"
+                        v-model="form.{{ field.name }}"
+                        type="textarea"
+                        {%+ if field.rules.required %}required{% endif %}
+                    />
                 {% elif field.type == 'editor' %}
                     <editor
                         id="{{ field.name }}"
