@@ -50,7 +50,9 @@ class TemplateParser(object):
         return compiled_template.render(
             self.__config_dict,
             in_array=self.__helpers.in_array,
-            has_feature=self.__helpers.has_feature
+            has_feature=self.__helpers.has_feature,
+            get_model_traits=self.__helpers.get_model_traits,
+            get_model_parents=self.__helpers.get_model_parents
         )
 
     def render_string(self, to_render: str) -> str:
@@ -143,6 +145,36 @@ class TemplateHelpers(object):
     def __init__(self, config_dict: dict):
         self.__config_dict = config_dict
         self.__feature_cache = {}
+
+    def get_model_parents(self):
+        parents = []
+
+        if self.has_feature('menu'):
+            parents.append('Linkable')
+            parents.append('SynchronisesMenuItemUrls')
+
+        if self.has_feature('sort'):
+            parents.append('Sortable')
+
+        return ','.join(parents)
+
+    def get_model_traits(self):
+        traitMap = {
+            'draft': 'Draftable',
+            'slug': 'HasSlug',
+            'media': 'HasMedia',
+            'seo': 'HasSeoFields',
+            'menu': 'LinkableTrait',
+            'sort': 'SortableTrait'
+        }
+
+        traits = []
+
+        for (feature, trait) in traitMap.items():
+            if self.has_feature(feature):
+                traits.append(trait)
+
+        return ','.join(traits)
 
     def has_feature(self, feature_type: str) -> bool:
         if feature_type in self.__feature_cache:

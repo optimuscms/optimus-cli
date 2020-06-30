@@ -32,28 +32,9 @@ use Illuminate\Database\Eloquent\Model;
     use Spatie\EloquentSortable\SortableTrait;
 {% endif %}
 
-class {{ name | singular | pascal }} extends Model implements
-{% for feature in features %}
-    {%- if feature.type == 'menu' -%}
-        Linkable, SynchronisesMenuItemUrls{% if not loop.last %},{% endif -%}
-    {%- endif -%}
-
-    {%- if feature.type == 'sort' -%}
-        Sortable{% if not loop.last %},{% endif -%}
-    {%- endif -%}
-{%- endfor %}
-
+class {{ name | singular | pascal }} extends Model implements {{ get_model_parents() }}
 {
-    use 
-    {% for feature in features %}
-        {%- if feature.type == 'draft' %}Draftable{%- endif -%}
-        {%- if feature.type == 'slug' %}HasSlug{%- endif -%}
-        {%- if feature.type == 'media' %}HasMedia{%- endif -%}
-        {%- if feature.type == 'seo' %}HasSeoFields{%- endif -%}
-        {%- if feature.type == 'menu' %}LinkableTrait{%- endif -%}
-        {%- if feature.type == 'sort' %}SortableTrait{%- endif -%}
-        {% if not loop.last %},{% endif %}
-    {% endfor %};
+    use {{ get_model_traits() }};
     
     {% for feature in features %}
         {% if feature.type == 'draft' %}
