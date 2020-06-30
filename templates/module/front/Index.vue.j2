@@ -96,6 +96,13 @@
             </transition-group>
         </table>
 
+        <section v-if="pagination" class="p-8">
+            <o-pagination
+                :options="pagination"
+                @change-page="value => filters.page = value"
+            />
+        </section>
+
         <o-confirmation
             v-slot="{ item: {{ name | singular | camel }} }"
             button-class="red"
@@ -108,7 +115,8 @@
 </template>
 
 <script>
-import { sortableMixin } from '@optimuscms/theme';
+import { listingMixin } from '@optimuscms/theme';
+{% if has_feature('sort') %}import { sortableMixin } from '@optimuscms/theme';{% endif %}
 
 import {
     get{{ name | plural | pascal }},
@@ -117,28 +125,43 @@ import {
 } from '../routes/api';
 
 export default {
-    mixins: [ sortableMixin ],
+    mixins: [ listingMixin, {% if has_feature('sort') %}sortableMixin{% endif %} ],
 
     data() {
         return {
             {{ name | plural | camel }}: [],
+            pagination: {},
+
+            filters: {
+                page: null,
+            },
         };
     },
 
     created() {
         this.setTitle('Manage {{ name | plural }}');
 
-        this.fetch{{ name | plural | pascal }}();
+        this.startLoading('primary.{{ name | plural | kebab }}');
+
+        this.fetch{{ name | plural | pascal }}(this.query).then(() => {
+            this.stopLoading('primary.{{ name | plural | kebab }}');
+        });
     },
 
     methods: {
-        fetch{{ name | plural | pascal }}() {
-            this.startLoading('primary.{{ name | plural | kebab }}');
+        fetch{{ name | plural | pascal }}(queryParams = {}) {
 
-            get{{ name | plural | pascal }}().then(response => {
+            return get{{ name | plural | pascal }}(queryParams).then(response => {
                 this.{{ name | plural | camel }} = response.data.data;
+                this.pagination = response.data.meta;
+            });
+        },
 
-                this.stopLoading('primary.{{ name | plural | kebab }}');
+        onFilter(queryParams) {
+            this.startLoading('secondary.{{ name | plural | kebab }}');
+
+            this.fetch{{ name | plural | pascal }}(queryParams).then(() => {
+                this.stopLoading('secondary.{{ name | plural | kebab }}');
             });
         },
 
