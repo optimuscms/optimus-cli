@@ -8,7 +8,7 @@
                     <o-tabs>
                         <o-tab name="Content">
                             {% for field in fields %}
-                                <!-- {{ field.name | plural | singular }} -->
+                                <!-- {{ field.name | plural | singular | capitalize }} -->
                                 <o-form-field
                                     input="{{ field.name }}"
                                     label="{{ field.label }}"
