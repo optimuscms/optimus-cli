@@ -50,7 +50,7 @@ class {{ name | singular | pascal }}Resource extends JsonResource
                     return [
                         {% for field in fields %}
                             {% if field.type == 'media' %}
-                                '{{ field.name }}' => new MediaResource($this->getFirstMedia('{{ field.name }}'))
+                                '{{ field.name }}' => new MediaResource($this->getFirstMedia('{{ field.name }}')),
                             {% endif %}
                         {% endfor %}
                     ];
